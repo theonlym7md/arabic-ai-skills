@@ -34,11 +34,13 @@
 
     // Recommended Options
     "strict": true,
+    "noImplicitAny": true,
+    "forceConsistentCasingInFileNames": true,
     "jsx": "react-jsx",
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true,
+    "skipLibCheck": true
   }
 }
