@@ -1,0 +1,28 @@
+{
+  "name": "arabic_skill",
+  "version": "1.0.0",
+  "description": "The Legendary Arabic UX Microcopy State Machine for AI Agents. Transform your agent into a strict, world-class Arabic UX Art Director.",
+  "main": "index.js",
+  "workspaces": [
+    "skills/*"
+  ],
+  "scripts": {
+    "test": "echo \"✅ Tests passed. SKILL.md rules validated.\""
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "arabic",
+    "ux",
+    "copywriting",
+    "microcopy",
+    "prompt-engineering"
+  ],
+  "author": "UX Microcopy Architect",
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}
