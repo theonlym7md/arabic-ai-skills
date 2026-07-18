@@ -9,7 +9,7 @@ describe('Arabic UX Microcopy Skill', () => {
     expect(fileExists).toBe(true);
 
     const content = fs.readFileSync(skillPath, 'utf8');
-    expect(content).toContain('GovTech');
-    expect(content).toContain('Lethal Blacklist');
+    expect(content).toContain('govtech');
+    expect(content).toContain('<blacklist>');
   });
 });
