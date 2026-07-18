@@ -67,10 +67,10 @@ export async function generateArabicCopy(params: GenerateArabicCopyParams): Prom
   // Load the core system prompt
   let systemPrompt = '';
   try {
-    const promptPath = path.join(__dirname, '..', 'SKILL.md');
+    const promptPath = path.join(__dirname, '../skills/arabic-ux-microcopy/SKILL.md');
     systemPrompt = fs.readFileSync(promptPath, 'utf-8');
   } catch (error) {
-    throw new Error('Failed to load SKILL.md. Make sure it is located in the root of the package.');
+    throw new Error('Failed to load SKILL.md. Make sure it is located in the skills directory.');
   }
 
   const userMessage = `

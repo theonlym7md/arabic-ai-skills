@@ -4,7 +4,7 @@
   <p><b>The Enterprise-Grade Repository for World-Class Arabic AI Agent Skills</b></p>
 
   <p>
-    <a href="https://github.com/yourusername/arabic-ai-skills/actions"><img src="https://img.shields.io/github/actions/workflow/status/yourusername/arabic-ai-skills/ci.yml?branch=main" alt="CI Status" /></a>
+    <a href="https://github.com/theonlym7md/arabic-ai-skills/actions"><img src="https://img.shields.io/github/actions/workflow/status/theonlym7md/arabic-ai-skills/ci.yml?branch=main" alt="CI Status" /></a>
     <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a>
     <img src="https://img.shields.io/badge/Architecture-Monorepo-blueviolet" alt="Monorepo Architecture" />
   </p>
@@ -20,7 +20,7 @@
 
 | المهارة | الوصف | القطاعات المدعومة | التثبيت السريع |
 | :--- | :--- | :--- | :--- |
-| **[Arabic UX Microcopy](./skills/arabic-ux-microcopy/README.md)** | أول محرك UX عربي مزود بآلة حالة ذكية. | حكومي، إعلامي، تجارة | `npx skills add <user>/arabic-ux-microcopy` |
+| **[Arabic UX Microcopy](./skills/arabic-ux-microcopy/README.md)** | أول محرك UX عربي مزود بآلة حالة ذكية. | حكومي، إعلامي، تجارة | `npx skills add theonlym7md/arabic-ai-skills/skills/arabic-ux-microcopy` |
 | *(قريباً)* **Arabic FinTech UX** | متخصص في تجربة البنوك والتقنية المالية. | بنوك، مدفوعات | - |
 
 ---

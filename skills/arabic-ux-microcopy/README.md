@@ -4,7 +4,7 @@
   <p><b>The World's 1st Multi-Sector Arabic UX AI Agent</b></p>
 
   <p>
-    <a href="https://github.com/yourusername/arabic_skill"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome" /></a>
+    <a href="https://github.com/theonlym7md/arabic-ai-skills"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome" /></a>
     <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a>
     <img src="https://img.shields.io/badge/State%20Machine-Active-orange" alt="State Machine Active" />
   </p>
@@ -38,7 +38,7 @@
 لإضافة هذه المهارة الأسطورية إلى مشروعك، كل ما عليك فعله هو تشغيل الأمر التالي في التيرمنال:
 
 ```bash
-npx skills add <username>/arabic-ux-microcopy
+npx skills add theonlym7md/arabic-ai-skills/skills/arabic-ux-microcopy
 ```
 
 **بمجرد التثبيت، سيعمل الذكاء الاصطناعي (Claude/Gemini/GPT) كـ Art Director خبير بتجربة المستخدم العربية.**
@@ -47,7 +47,7 @@ npx skills add <username>/arabic-ux-microcopy
 
 ## ⚙️ آلة الحالة (The State Machine: Grill Mode)
 
-المهارة مزودة بآلة حالة ذكية. إذا طلبت من المودل: "اكتب لي نص لزر"، لن يعطيك نصاً عشوائياً، بل سيقوم بـ:
+المهارة مزودة بآلة حالة ذكية. إذا طلبت من المودل: "اكتب لي نصاً لزر"، لن يعطيك نصاً عشوائياً، بل سيقوم بـ:
 1. **قراءة مشروعك (Context Acquisition):** لمحاولة فهم نوع الموقع من ملفاتك.
 2. **وضع الاستجواب (Grill Mode):** إذا لم يفهم نوع الموقع، سيتوقف ويسألك: "أي قطاع تستهدف؟ (حكومي، إعلامي، تجاري)".
 3. **وزن المؤشرات (The 3 Dials):** سيقوم داخلياً بوزن (الرسمية، العاطفة، الاختصار) قبل استخراج أي حرف.
@@ -57,7 +57,7 @@ npx skills add <username>/arabic-ux-microcopy
 ## 🧹 وضع المسح النشط (Sweep Mode)
 
 هل لديك مشروع قديم مليء بالنصوص الركيكة (Slop)؟ 
-اطلب من الوكيل: *"قم بتنظيف واجهاتي باستخدام مهارة الـ UX العربية"*.
+اطلب من الوكيل: *"نظِّف واجهاتي باستخدام مهارة الـ UX العربية"*.
 سيقوم الوكيل بالبحث في ملفات `tsx` أو `html` عن الكلمات المحرمة في (Lethal Blacklist) مثل "قم بـ" أو "تم بنجاح"، وسيقترح عليك تعديلات احترافية فورية تليق بأكبر المنصات السعودية!
 
 ---
@@ -66,7 +66,7 @@ npx skills add <username>/arabic-ux-microcopy
 
 نطمح لأن يكون هذا المستودع الدستور العالمي للـ UX العربي.
 هل تريد إضافة **محرك القطاع الطبي**؟ أو **محرك التقنية المالية (FinTech)**؟
-المرجو قراءة ملف [CONTRIBUTING.md](CONTRIBUTING.md) وتقديم Pull Request. نرحب بكل خبراء كتابة تجربة المستخدم العربية!
+يُرجى قراءة دليل التوجيهات العالمية في ملف [AGENTS.md](../../AGENTS.md) وتقديم Pull Request. نرحب بكل خبراء كتابة تجربة المستخدم العربية!
 
 ---
 

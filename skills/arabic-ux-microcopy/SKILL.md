@@ -53,7 +53,7 @@ You must strictly adopt the rules of the selected engine. Never mix GovTech rule
 - **Gamification & FOMO:** Turn actions into challenges or exclusive opportunities. 
   - ❌ `العب الآن` ➔ ✅ `ادخل التحدي`
   - ❌ `اشترك في النشرة` ➔ ✅ `ابدأ صباحك بوجبة معرفية`
-- **Empty States:** Never say "No results". Say: "بحثنا في كل مكان ولم نجد شيئاً.. جرب كلمات أخرى" or "ما في تحديات حالياً؟ لا توقف، ارسل دعوة لأصحابك!".
+- **Empty States:** Never say "No results". Say: "بحثنا في كل مكان ولم نجد شيئاً... جرب كلمات أخرى" or "ما في تحديات حالياً؟ لا توقف، ارسل دعوة لأصحابك!".
 
 ### 🛒 3. E-commerce & SaaS Engine (The Salla/Saham Standard)
 **Vibe:** Conversion-driven, Persuasive, Trust-building, Direct.
