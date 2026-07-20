@@ -18,7 +18,7 @@
 
 | المهارة | الوصف | التثبيت |
 | :--- | :--- | :--- |
-| **[Arabic UX Microcopy](./skills/arabic-ux-microcopy/README.md)** | توجيه الذكاء الاصطناعي لكتابة نصوص واجهات مستخدم متوافقة مع قطاعات محددة (حكومي، إعلامي، تجاري). | `npx skills add theonlym7md/arabic-ai-skills/skills/arabic-ux-microcopy` |
+| **[Arabic UX Masterclass System (Knowledge Ecosystem)](./skills/arabic-ux-microcopy/README.md)** | أضخم نظام معرفي (Knowledge System) مبني على سيكولوجيا المستخدم، يحاكي عقل فريق كامل من كتاب الـ UX وعلماء اللغة لإنتاج نصوص واجهات لا تشوبها لغة الآلة، مع 4 محركات هوية (حكومي، إعلامي، تجارة، ضيافة). | `npx skills add theonlym7md/arabic-ai-skills/skills/arabic-ux-microcopy` |
 
 ---
 
