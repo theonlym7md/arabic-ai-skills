@@ -18,7 +18,7 @@
 
 | المهارة | الوصف | التثبيت |
 | :--- | :--- | :--- |
-| **[Arabic UX Masterclass System (Knowledge Ecosystem)](./skills/arabic-ux-microcopy/README.md)** | أضخم نظام معرفي (Knowledge System) مبني على سيكولوجيا المستخدم، يحاكي عقل فريق كامل من كتاب الـ UX وعلماء اللغة لإنتاج نصوص واجهات لا تشوبها لغة الآلة، مع 4 محركات هوية (حكومي، إعلامي، تجارة، ضيافة). | `npx skills add theonlym7md/arabic-ai-skills/skills/arabic-ux-microcopy` |
+| **[Arabic Intelligence OS (Cognitive Architecture)](./skills/arabic-intelligence/README.md)** | أضخم نظام معرفي (Knowledge System) مبني على سيكولوجيا المستخدم، يحاكي عقل فريق كامل من كتاب الـ UX وعلماء اللغة لإنتاج نصوص واجهات لا تشوبها لغة الآلة، مع 4 محركات هوية (حكومي، إعلامي، تجارة، ضيافة). | `npx skills add theonlym7md/arabic-ai-skills/skills/arabic-intelligence` |
 
 ---
 
@@ -28,7 +28,7 @@
 
 ```text
 ├── skills/                  # المجلد الأساسي للمهارات
-│   └── arabic-ux-microcopy/ # ملفات المهارة (SKILL.md, README.md)
+│   └── arabic-intelligence/ # معمارية النظام (Reasoning Engine, Memory, Knowledge Graph)
 ├── tests/                   # اختبارات الجودة
 ├── AGENTS.md                # قواعد عامة للذكاء الاصطناعي
 └── package.json             # إعدادات المشروع و Workspaces
