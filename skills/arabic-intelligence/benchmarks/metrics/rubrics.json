@@ -1,0 +1,28 @@
+{
+  "rubrics": {
+    "human_score": {
+      "scale": "1-10",
+      "description": "Measures how natural and empathetic the text feels to a Saudi reader.",
+      "penalties": [
+        {"condition": "Uses literal translation of English idioms (e.g. 'Oops!')", "penalty": -5},
+        {"condition": "Sounds like a corporate press release", "penalty": -3}
+      ]
+    },
+    "cognitive_load": {
+      "scale": "1-10",
+      "description": "Measures reading difficulty. 1 = Extremely easy, 10 = Exhausting.",
+      "penalties": [
+        {"condition": "Sentence exceeds 15 words", "penalty": +2},
+        {"condition": "Multiple CTAs present", "penalty": +4}
+      ]
+    },
+    "trust_score": {
+      "scale": "1-10",
+      "description": "Measures brand authority and clarity.",
+      "penalties": [
+        {"condition": "Uses marketing hyperbole (e.g. 'ثورة', 'سحري')", "penalty": -4},
+        {"condition": "Hides fees or risks", "penalty": -6}
+      ]
+    }
+  }
+}
