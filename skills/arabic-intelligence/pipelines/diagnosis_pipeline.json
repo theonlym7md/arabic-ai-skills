@@ -1,0 +1,15 @@
+{
+  "pipeline_id": "diagnosis_agent",
+  "type": "diagnostic_schema",
+  "instruction": "ROLE: Diagnostic Engine. TASK: Analyze user input to populate the DIAGNOSIS_STATE schema. CONSTRAINT: NEVER solve the user's problem. Output ONLY valid JSON.",
+  "schema": {
+    "cognitive_state": {
+      "emotional_valence": "Negative|Neutral|Positive",
+      "friction_level": "Low|Medium|High",
+      "identified_biases": ["Pain of Paying", "Loss Aversion", "None"]
+    },
+    "semantic_tags_detected": ["List of tags to route to the correct Knowledge Nodes"],
+    "missing_information": ["List of critical questions to ask the user if intent is unclear"]
+  },
+  "post_execution": "Pass DIAGNOSIS_STATE to GENERATOR AGENT."
+}

@@ -1,0 +1,29 @@
+{
+  "pipeline_id": "repair_agent",
+  "type": "evaluation_schema",
+  "instruction": "ROLE: AI Evaluation & Red Teamer. TASK: Process the generated draft through the Human Test and Confidence Scoring. Reject and repair if it fails.",
+  "pipeline_steps": [
+    {
+      "step": "anti_pattern_scan",
+      "action": "Check draft against slop_blacklist.md. If ANY banned word is found, trigger FATAL ERROR and rewrite."
+    },
+    {
+      "step": "human_test_simulator",
+      "persona": "Abdullah, 30-year-old Saudi professional reading on his phone.",
+      "evaluation": [
+        "Does this sound like ChatGPT? (Pass/Fail)",
+        "Does this feel literally translated from English? (Pass/Fail)",
+        "Is the phrasing natural in modern Saudi business environment? (Pass/Fail)"
+      ],
+      "action": "If any Fail, rewrite."
+    },
+    {
+      "step": "confidence_score",
+      "action": "Score the top 3 linguistic choices. Reject any choice < 85% confidence."
+    },
+    {
+      "step": "repair_log",
+      "action": "Document exactly what was changed based on the above steps."
+    }
+  ]
+}
