@@ -1,6 +1,6 @@
 ---
 name: arabic-intelligence
-description: "A structured reasoning framework for Arabic UX writing, product copy, and AI agents."
+description: "A 10-stage structured reasoning framework for Arabic UX writing, product copy, digital microcopy, localized Arabic interfaces, and Arabic content strategy. Make sure to use this skill whenever the user asks to write, refine, translate, analyze, or generate Arabic copy, Arabic UI buttons, Arabic empty states, error messages, landing pages, SaaS messaging, GovTech/FinTech Arabic copy, or Arabic product interfaces, even if they don't explicitly mention 'arabic-intelligence'."
 version: 8.0.0
 ---
 
