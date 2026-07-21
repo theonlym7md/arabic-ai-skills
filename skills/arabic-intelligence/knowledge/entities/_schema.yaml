@@ -1,0 +1,36 @@
+# Ontological Entity Schema
+# Standard format for all entities in knowledge/entities/
+
+$schema: "https://json-schema.org/draft/2020-12/schema"
+title: "OntologyEntity"
+type: "object"
+properties:
+  entity:
+    type: "string"
+    description: "Unique identifier of the entity"
+  priority:
+    type: "integer"
+    description: "Base priority score (1-100)"
+  inherits:
+    type: "array"
+    items:
+      type: "string"
+    description: "Parent entities inherited by this node"
+  depends_on:
+    type: "array"
+    items:
+      type: "string"
+    description: "Prerequisite entities that must be loaded"
+  aliases:
+    type: "array"
+    items:
+      type: "string"
+    description: "Semantic search triggers and alternate names"
+  relationship:
+    type: "string"
+    description: "Relationship type (e.g. Domain_Archetype, Cognitive_Rule)"
+  directives:
+    type: "array"
+    items:
+      type: "string"
+    description: "Actionable instructions enforced by this entity"

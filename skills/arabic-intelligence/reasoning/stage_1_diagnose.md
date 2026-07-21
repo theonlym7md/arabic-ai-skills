@@ -1,27 +1,28 @@
 ---
 name: stage_1_diagnose
-description: "Extracts 10 crucial dimensions from the user request."
+description: "Extracts 10 crucial dimensions and resolves missing context."
 ---
 
 # `Stage 1 — Diagnose`
 
 ## Algorithm: 10-Dimensional Context Extraction
-Analyze the user prompt to extract the following dimensions.
 
-1. **Domain:** The industry (e.g., GovTech, FinTech, E-commerce, EdTech).
-2. **Emotional Goal:** What the user should feel (e.g., Reassured, Urgent, Delighted, Respected).
-3. **Trust Level:** Required trust (Low, Medium, High, Critical).
-4. **Target Audience:** Who is reading (e.g., Experts, Gen-Z, Citizens, B2B).
-5. **Tone of Voice:** (e.g., Official, Friendly, Direct, Witty).
-6. **Product Type:** (e.g., Dashboard, Landing Page, Error Message).
-7. **Region:** Cultural targeting (e.g., KSA, Gulf, MENA).
-8. **Reading Level:** (e.g., Grade 6, Academic).
-9. **Constraints:** Hard rules (e.g., Max 10 words, No passive voice).
-10. **Missing Context:** Any critical information needed before generation.
+Extract the following dimensions from prompt and planner context:
+1. `Domain` (GovTech, FinTech, E-commerce, SaaS, Health).
+2. `EmotionalGoal` (Reassured, Empowered, Urgency, Respect).
+3. `TrustLevel` (Low, Medium, High, Critical).
+4. `Audience` (Citizens, Executives, Gen-Z, Developers).
+5. `Tone` (Official, Friendly, Direct, Witty).
+6. `ProductType` (Dashboard, Mobile App, Web Landing).
+7. `Region` (KSA, Gulf, Levant, General Arabic).
+8. `ReadingLevel` (Simple, Moderate, Academic).
+9. `Constraints` (Length, specific vocabulary, active voice).
+10. `MissingContext` (Unspecified details).
 
 ## Missing Context Resolution Rule
-- **IF CRITICAL:** (e.g. Missing what the button actually does). Action: **Ask the user.**
-- **ELSE:** (e.g. Missing specific tone preference). Action: **Continue with assumptions** based on the Domain.
+- **IF CRITICAL MISSING:** (e.g. Unknown action goal of a payment button).
+  `Action: Ask User`
+- **ELSE (NON-CRITICAL):** (e.g. Preferred regional sub-dialect).
+  `Action: Assume default best-practice for Domain -> Continue execution.`
 
-## Output
-Populate `State.diagnostics` and append reasoning to `State.trace`.
+Record structured log to `WorkingMemory.trace`.

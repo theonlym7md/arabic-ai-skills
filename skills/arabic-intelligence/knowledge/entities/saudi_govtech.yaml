@@ -1,0 +1,16 @@
+entity: "saudi_govtech"
+priority: 100
+inherits:
+  - "institutional_authority"
+depends_on:
+  - "saudi_terminology_standard"
+aliases:
+  - "الحكومة السعودية"
+  - "القطاع الحكومي"
+  - "سدايا"
+  - "رؤية 2030"
+relationship: "Domain_Archetype"
+directives:
+  - "استخدام الفعل المبني للمعلوم المباشر (مثل: أتمم الطلب وليس يتم إتمام الطلب)."
+  - "تجنب الكلمات الرنانة الخالية من المعنى مثل: رائد، شامخ، ثوري."
+  - "الحفاظ على الوقار المؤسسي مع الوضوح التام في خطوات الإجراء."
