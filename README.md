@@ -4,7 +4,7 @@
 
 **The World's Premier Open-Source Guided Reasoning Framework for Arabic UX Microcopy, Product Copy, and AI Agents.**
 
-[![Release](https://img.shields.io/badge/Release-v8.0.0-blue.svg?style=for-the-badge&logo=github)](https://github.com/theonlym7md/arabic-ai-skills)
+[![Release](https://img.shields.io/badge/Release-v1.0.0-blue.svg?style=for-the-badge&logo=github)](https://github.com/theonlym7md/arabic-ai-skills)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 [![Build Status](https://img.shields.io/badge/Tests-100%25%20Passing-brightgreen.svg?style=for-the-badge&logo=jest)](tests/skill.test.js)
 [![HumanScore](https://img.shields.io/badge/HumanScore-98.6%25-success.svg?style=for-the-badge)](skills/arabic-intelligence/benchmarks/README.md)
@@ -105,7 +105,7 @@ Our automated regression suite tests candidate outputs against golden references
 | **v5.0.0** | 91.2% | 94.0% | 6.5 (High) | 88.4% | Deprecated |
 | **v6.0.0** | 95.8% | 97.5% | 2.8 (Low) | 94.2% | Superseded |
 | **v7.0.0** | 97.4% | 98.8% | 1.5 (Minimal) | 96.8% | Production |
-| **v8.0.0** | **98.6%** | **99.5%** | **0.8 (Zero Cliché)** | **98.2%** | **Current Benchmark** |
+| **v1.0.0** | **98.6%** | **99.5%** | **0.8 (Zero Cliché)** | **98.2%** | **Current Release** |
 
 ---
 

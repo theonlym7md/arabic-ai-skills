@@ -1,6 +1,6 @@
-// Enterprise unit test suite validating Arabic Intelligence Framework v8.0.0 architecture.
+// Enterprise unit test suite validating Arabic Intelligence Framework v1.0.0 architecture.
 
-describe('Arabic Intelligence Framework v8.0.0 Audit', () => {
+describe('Arabic Intelligence Framework v1.0.0 Audit', () => {
   const fs = require('fs');
   const path = require('path');
 

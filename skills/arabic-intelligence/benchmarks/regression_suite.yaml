@@ -1,7 +1,7 @@
 # Regression Testing Specification
 
 suite_name: "Arabic Intelligence Regression Suite"
-version: "7.0.0"
+version: "1.0.0"
 
 threshold_rules:
   fail_on_human_score_drop: 2.0
@@ -9,15 +9,7 @@ threshold_rules:
   fail_on_trust_drop: 1.0
 
 version_history_baselines:
-  v5.0.0:
-    mean_human_score: 91.2
-    mean_ai_smell: 6.5
-    mean_trust: 94.0
-  v6.0.0:
-    mean_human_score: 95.8
-    mean_ai_smell: 2.8
-    mean_trust: 97.5
-  v7.0.0:
-    mean_human_score: 97.4
-    mean_ai_smell: 1.5
-    mean_trust: 98.8
+  v1.0.0:
+    mean_human_score: 98.6
+    mean_ai_smell: 0.8
+    mean_trust: 99.5

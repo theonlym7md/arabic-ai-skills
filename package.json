@@ -1,6 +1,6 @@
 {
   "name": "arabic_skill",
-  "version": "8.0.0",
+  "version": "1.0.0",
   "description": "Arabic Intelligence Framework - A structured reasoning framework for Arabic UX writing, product copy, and AI agents.",
   "main": "dist/index.js",
   "private": true,
