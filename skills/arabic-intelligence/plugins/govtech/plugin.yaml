@@ -1,0 +1,8 @@
+name: "govtech"
+version: "1.0.0"
+description: "Saudi GovTech domain rules and compliance entities."
+triggers:
+  domain: ["Government", "GovTech"]
+  region: ["KSA"]
+entities:
+  - "saudi_govtech"

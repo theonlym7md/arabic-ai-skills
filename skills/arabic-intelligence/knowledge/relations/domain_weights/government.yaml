@@ -1,0 +1,13 @@
+domain: "Government"
+weights:
+  quality:
+    Trust: 100
+    Clarity: 100
+    Accessibility: 95
+  style:
+    Localization: 95
+    Brand: 90
+    Tone: 90
+  optimization:
+    Creativity: 15
+    SentenceRhythm: 80

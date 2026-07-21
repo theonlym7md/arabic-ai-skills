@@ -1,0 +1,11 @@
+case_id: "govtech_empty_state_01"
+domain: "Government"
+target_metrics:
+  HumanScore: 90
+  Trust: 95
+  AISmell: 5
+  Clarity: 95
+forbidden_phrases:
+  - "في إطار حرصنا"
+  - "يسعدنا خدمتكم"
+  - "يرجى التكرم"

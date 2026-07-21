@@ -1,17 +1,17 @@
 ---
 name: arabic-intelligence
-description: "A modular reasoning framework for Arabic UX writing and AI agents."
-version: 6.0.0
+description: "A structured reasoning framework for Arabic UX writing, product copy, and AI agents."
+version: 7.0.0
 ---
 
 # Arabic Intelligence Framework
 
-A deterministic reasoning framework for generating high-quality Arabic UX microcopy, product interfaces, and digital content.
+A structured reasoning framework for generating natural, culturally localized Arabic UX microcopy and digital product experiences.
 
-## Execution Rules
+## Execution Principles
 1. Maintain explicit state across the 4 decoupled context objects.
-2. Execute the 10-stage decision graph sequentially.
-3. Record a structured trace for every stage execution.
+2. Execute the 10-stage Decision Graph.
+3. Allow conditional feedback loops between Evaluation, Repair, and Reasoning.
 
 ## Decoupled Execution Contexts
 
@@ -21,6 +21,7 @@ A deterministic reasoning framework for generating high-quality Arabic UX microc
     "TaskType": "",
     "goals": [],
     "constraints": [],
+    "assumptions": [],
     "risks": [],
     "success_criteria": [],
     "required_knowledge": [],
@@ -67,22 +68,37 @@ A deterministic reasoning framework for generating high-quality Arabic UX microc
       "knowledge_used": [],
       "alternatives_rejected": [],
       "confidence": 0.0,
-      "duration_ms": 0
+      "token_estimate": 0,
+      "latency_ms": 0
     }
   ]
 }
 ```
 
-## The 10-Stage Decision Loop
+## The 10-Stage Decision Graph Topology
 
-- **Stage 0 — Planning:** Formulate goals, risks, criteria, and strategy.
-- **Stage 1 — Diagnose:** Extract 10-dim context. (If MissingContextKeys > 2 -> Ask user; Else -> Assume defaults).
-- **Stage 2 — Intent Mapping:** Establish primary goal and emotional target.
-- **Stage 3 — Audience & Domain Profiling:** Profile demographic and reading expectations.
-- **Stage 4 — Risk Assessment:** Define compliance boundaries and hard constraints.
-- **Stage 5 — Knowledge Selection:** Execute 6-step filter against `knowledge/entities/`.
+```text
+[Stage 0: Planning] -> [Stage 1: Diagnose] -> [Stage 2: Intent] -> [Stage 3: Audience] 
+                                                                             │
+[Stage 7: Weights] <- [Stage 6: Reasoning] <-> [Stage 5: Knowledge] <- [Stage 4: Risk]
+       │                    │
+       ▼                    ▼
+[Stage 8: Evaluation] ──(Metrics Fail?)──> [Stage 9: Repair]
+       │                                         │
+ (Metrics Pass)                            (Loop back to Stage 6)
+       ▼
+[Stage 10: Output]
+```
+
+### Stage Summary
+- **Stage 0 — Planning:** Formulate goals, assumptions, risks, criteria, and strategy.
+- **Stage 1 — Diagnose:** Extract 10-dim context. (If MissingContextKeys > 2 -> Ask user; Else -> Assume).
+- **Stage 2 — Intent:** Map primary goal and emotional target.
+- **Stage 3 — Audience:** Profile demographics and reading expectations.
+- **Stage 4 — Risk:** Define trust boundaries and hard constraints.
+- **Stage 5 — Knowledge Selection:** Query `knowledge/entities/` & active `plugins/`.
 - **Stage 6 — Reasoning & Generation:** Draft candidate text.
-- **Stage 7 — Rule Weights Application:** Resolve conflicts via `knowledge/relations/weights.yaml`.
+- **Stage 7 — Rule Weights:** Apply `knowledge/relations/domain_weights/`.
 - **Stage 8 — Evaluation:** Measure against 18 rubric metrics.
-- **Stage 9 — Repair:** Trigger dynamic threshold auto-correction if metrics fail.
-- **Stage 10 — Output:** Emit final Arabic UX text cleanly.
+- **Stage 9 — Repair:** Auto-correct if metrics fail dynamic threshold; loop back to Stage 6 (Max 2 cycles).
+- **Stage 10 — Output:** Emit final Arabic copy.

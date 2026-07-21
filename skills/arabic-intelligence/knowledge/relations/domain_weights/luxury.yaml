@@ -1,0 +1,13 @@
+domain: "Luxury"
+weights:
+  quality:
+    Trust: 90
+    Clarity: 85
+  style:
+    Brand: 100
+    Tone: 95
+    Localization: 90
+    EmotionalPrecision: 100
+  optimization:
+    Creativity: 90
+    SentenceRhythm: 95

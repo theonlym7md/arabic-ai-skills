@@ -1,30 +1,32 @@
 ---
 name: stage_0_planner
-description: "Generates a structured execution plan including goals, risks, and strategy."
+description: "Generates a structured execution plan including goals, assumptions, risks, and strategy."
 ---
 
 # `Stage 0 — Task Planning`
 
 ## Planning Pipeline
 
-Do not just classify the prompt. Build a concrete plan object inside `PlanningContext`:
+Construct a concrete plan object inside `PlanningContext`:
 
-1. **`goals`:** List explicit user goals (e.g., "Reduce payment friction", "Communicate violation error clearly").
-2. **`constraints`:** Technical and linguistic boundaries (e.g., "Max 8 words", "No passive voice").
-3. **`risks`:** Potential points of failure (e.g., "User panics due to fine wording", "Ambiguous action button").
-4. **`success_criteria`:** Verifiable outcomes (e.g., "HumanScore > 90", "AISmell < 5").
-5. **`required_knowledge`:** Needed entity nodes (e.g., `saudi_govtech`, `traffic_fine_terms`).
-6. **`execution_strategy`:** The operational path for the remaining stages.
+1. **`goals`:** Explicit user targets.
+2. **`constraints`:** Technical and linguistic boundaries.
+3. **`assumptions`:** Contextual assumptions (e.g., "User is authenticated", "First interaction", "Payment card already added").
+4. **`risks`:** Failure modes to mitigate.
+5. **`success_criteria`:** Quantifiable targets (e.g., "HumanScore > 90", "AISmell < 5").
+6. **`required_knowledge`:** Target entity nodes and plugins.
+7. **`execution_strategy`:** Operational strategy.
 
 Record structured decision in `trace`:
 ```json
 {
   "stage": "Planning",
-  "decision": "Generated execution strategy for GovTech Traffic Violation Notice",
-  "why": "High risk of user alarm requires calm, authoritative, actionable wording.",
+  "decision": "Generated execution strategy with 3 explicit context assumptions",
+  "why": "Context requires assuming authenticated session.",
   "knowledge_used": ["saudi_govtech"],
-  "alternatives_rejected": ["Marketing tone execution plan"],
+  "alternatives_rejected": ["Unauthenticated visitor assumption"],
   "confidence": 0.98,
-  "duration_ms": 12
+  "token_estimate": 120,
+  "latency_ms": 14
 }
 ```

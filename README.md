@@ -1,32 +1,39 @@
 # Arabic Intelligence Framework
 
-A modular reasoning framework for Arabic UX writing and AI agents.
+A structured reasoning framework for Arabic UX writing, product copy, and AI agents.
 
 ## Overview
-Arabic Intelligence provides a deterministic 10-stage decision loop for generating natural, culturally localized, and human-grade Arabic product copy, microcopy, and digital user experiences.
+Arabic Intelligence provides a structured 10-stage decision graph for generating natural, culturally localized Arabic UX microcopy and digital user experiences.
+
+## Capability Matrix
+
+| Capability Category | Status | Supported Framework Features |
+| :--- | :---: | :--- |
+| **GovTech & Official** | `Production / Stable` | Full Saudi & Gulf GovTech tone, empty states, compliance checks |
+| **FinTech & Payments** | `Production / Stable` | Payment retry friction removal, trust anchors, checkout microcopy |
+| **SaaS & Landing Pages** | `Production / Stable` | Hero value propositions, action CTAs, feature cards |
+| **E-Commerce** | `Production / Stable` | Cart recovery, transactional alerts, product descriptions |
+| **Healthcare & Medical** | `Experimental` | Patient onboarding, appointment booking microcopy |
+| **Legal & Compliance** | `Experimental` | Terms of service framing, consent dialogs |
 
 ## Core Features
-- **10-Stage Decision Graph:** Sequential reasoning pipeline from planning to repair.
-- **Decoupled Memory Contexts:** Clear separation between Planning, Reasoning, Knowledge, and Evaluation states.
-- **Ontology Knowledge Graph:** Machine-parseable YAML entity schema supporting inheritance, dependencies, and conflict detection.
-- **Categorized Rule Weights:** Structured weightings (`quality`, `style`, `optimization`) for mathematical conflict resolution.
-- **18 Metric Rubric:** Comprehensive scoring system including Arabic-specific metrics (`SentenceRhythm`, `InformationDensity`, `LexicalDiversity`).
-- **Dynamic Repair Engine:** Automated threshold-based intervention for eliminating AI clichés.
+- **10-Stage Decision Graph Topology:** Graph execution with explicit feedback loops (`Evaluation <-> Repair <-> Reasoning`).
+- **Decoupled Memory Contexts:** Clear separation between `PlanningContext`, `ReasoningContext`, `KnowledgeContext`, and `EvaluationContext`.
+- **Extensible Plugin System:** Add custom domain packs in `plugins/` without modifying core logic.
+- **Categorized Rule Weights:** Machine-parseable weightings (`quality`, `style`, `optimization`) in `knowledge/relations/domain_weights/`.
+- **Anti-Examples Enforcement:** Explicit negative pattern filtering (`anti_examples`) in entity schemas.
+- **18 Metric Rubric:** Arabic-specific metrics including `SentenceRhythm`, `InformationDensity`, and `LexicalDiversity`.
 
 ## Directory Structure
 ```text
 arabic-intelligence/
-├── SKILL.md                  # Lean core instructions (< 300 lines)
-├── reasoning/                # Modular reasoning stage definitions
+├── SKILL.md                  # Core instructions (< 100 lines)
+├── reasoning/                # Modular 10-stage reasoning definitions
 ├── knowledge/
-│   ├── entities/             # YAML ontology entity definitions
-│   └── relations/            # Categorized rule weights (weights.yaml)
-├── benchmarks/               # Fixed test suite & golden references
-└── examples/                 # Full end-to-end execution traces
+│   ├── entities/             # YAML entity definitions with anti-examples
+│   └── relations/
+│       └── domain_weights/   # Domain-specific rule weights
+├── plugins/                  # Community extensibility packages
+├── benchmarks/               # Structured test cases & regression suite
+└── examples/                 # Full execution trace walkthroughs
 ```
-
-## Quick Start
-To use this framework with any LLM or AI Agent:
-1. Initialize the 4 `Context` objects.
-2. Follow the 10 stages in `SKILL.md`.
-3. Query `knowledge/entities/` for domain-specific directives.

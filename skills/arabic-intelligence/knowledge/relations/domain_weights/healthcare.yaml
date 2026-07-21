@@ -1,0 +1,13 @@
+domain: "Healthcare"
+weights:
+  quality:
+    Trust: 100
+    Clarity: 100
+    Accessibility: 100
+    InformationDensity: 90
+  style:
+    Tone: 95
+    Localization: 90
+  optimization:
+    Creativity: 10
+    Humanization: 85
