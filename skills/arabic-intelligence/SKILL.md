@@ -1,31 +1,28 @@
 ---
 name: arabic-intelligence
 description: "A structured reasoning framework for Arabic UX writing, product copy, and AI agents."
-version: 7.0.0
+version: 8.0.0
 ---
 
 # Arabic Intelligence Framework
 
 A structured reasoning framework for generating natural, culturally localized Arabic UX microcopy and digital product experiences.
 
-## Execution Principles
-1. Maintain explicit state across the 4 decoupled context objects.
-2. Execute the 10-stage Decision Graph.
-3. Allow conditional feedback loops between Evaluation, Repair, and Reasoning.
+## Execution Rules & Stage Contracts
+
+Every stage in the 10-Stage Decision Graph adheres to an explicit Stage Contract:
+- **`Input`:** Required context objects.
+- **`Output`:** Modified context objects.
+- **`FailureCondition`:** Metrics or missing keys that break execution.
+- **`RetryPolicy`:** Permitted re-execution loops.
 
 ## Decoupled Execution Contexts
 
 ```json
 {
   "PlanningContext": {
-    "TaskType": "",
-    "goals": [],
-    "constraints": [],
-    "assumptions": [],
-    "risks": [],
-    "success_criteria": [],
-    "required_knowledge": [],
-    "execution_strategy": ""
+    "TaskType": "", "goals": [], "constraints": [], "assumptions": [],
+    "risks": [], "success_criteria": [], "required_knowledge": [], "execution_strategy": ""
   },
   "ReasoningContext": {
     "diagnostics": {
@@ -37,13 +34,7 @@ A structured reasoning framework for generating natural, culturally localized Ar
   },
   "KnowledgeContext": {
     "entities_loaded": [
-      {
-        "entity": "",
-        "confidence": 0.0,
-        "priority": 0,
-        "reason": "",
-        "dependencies": []
-      }
+      { "entity": "", "confidence": 0.0, "priority": 0, "reason": "", "dependencies": [] }
     ]
   },
   "EvaluationContext": {
@@ -56,20 +47,13 @@ A structured reasoning framework for generating natural, culturally localized Ar
       "LexicalDiversity": 0, "Actionability": 0, "EmotionalPrecision": 0
     },
     "confidence": {
-      "planner": 0.0, "diagnosis": 0.0, "knowledge": 0.0,
-      "generation": 0.0, "evaluation": 0.0, "overall": 0.0
+      "planner": 0.0, "diagnosis": 0.0, "knowledge": 0.0, "generation": 0.0, "evaluation": 0.0, "overall": 0.0
     }
   },
   "trace": [
     {
-      "stage": "",
-      "decision": "",
-      "why": "",
-      "knowledge_used": [],
-      "alternatives_rejected": [],
-      "confidence": 0.0,
-      "token_estimate": 0,
-      "latency_ms": 0
+      "stage": "", "decision": "", "why": "", "knowledge_used": [], "alternatives_rejected": [],
+      "confidence": 0.0, "token_estimate": 0, "latency_ms": 0, "cache_hit": false, "cache_miss": true
     }
   ]
 }
@@ -90,15 +74,9 @@ A structured reasoning framework for generating natural, culturally localized Ar
 [Stage 10: Output]
 ```
 
-### Stage Summary
-- **Stage 0 — Planning:** Formulate goals, assumptions, risks, criteria, and strategy.
-- **Stage 1 — Diagnose:** Extract 10-dim context. (If MissingContextKeys > 2 -> Ask user; Else -> Assume).
-- **Stage 2 — Intent:** Map primary goal and emotional target.
-- **Stage 3 — Audience:** Profile demographics and reading expectations.
-- **Stage 4 — Risk:** Define trust boundaries and hard constraints.
-- **Stage 5 — Knowledge Selection:** Query `knowledge/entities/` & active `plugins/`.
-- **Stage 6 — Reasoning & Generation:** Draft candidate text.
-- **Stage 7 — Rule Weights:** Apply `knowledge/relations/domain_weights/`.
-- **Stage 8 — Evaluation:** Measure against 18 rubric metrics.
-- **Stage 9 — Repair:** Auto-correct if metrics fail dynamic threshold; loop back to Stage 6 (Max 2 cycles).
-- **Stage 10 — Output:** Emit final Arabic copy.
+### Stage Contracts Reference
+- **Stage 0 (Planning):** `Input: Prompt` -> `Output: PlanningContext` | `Failure: Empty Intent`.
+- **Stage 1 (Diagnose):** `Input: PlanningContext` -> `Output: ReasoningContext.diagnostics` | `Failure: MissingContextKeys > 2`.
+- **Stage 5 (Knowledge):** `Input: diagnostics` -> `Output: KnowledgeContext` | `Failure: Entity Load Failure`.
+- **Stage 8 (Evaluation):** `Input: current_draft` -> `Output: EvaluationContext` | `Failure: Metric Below Threshold`.
+- **Stage 9 (Repair):** `Input: EvaluationContext` -> `Output: Revised Draft` | `Retry: Max 2 Loops`.

@@ -2,38 +2,32 @@
 
 A structured reasoning framework for Arabic UX writing, product copy, and AI agents.
 
-## Overview
-Arabic Intelligence provides a structured 10-stage decision graph for generating natural, culturally localized Arabic UX microcopy and digital user experiences.
+## Quick Read (60 Seconds)
+
+Arabic Intelligence provides a structured 10-stage decision graph for generating natural, culturally localized Arabic UX microcopy and digital product experiences.
+
+- **Architecture:** Decoupled memory contexts (`PlanningContext`, `ReasoningContext`, `KnowledgeContext`, `EvaluationContext`).
+- **Ontology Engine:** YAML entity definitions with strict anti-example clichés filtering.
+- **Rule Weights:** Machine-parseable priority weightings per domain.
+- **Plugins:** Community domain packs in `plugins/` without modifying core logic.
 
 ## Capability Matrix
 
-| Capability Category | Status | Supported Framework Features |
+| Category | Status | Details |
 | :--- | :---: | :--- |
-| **GovTech & Official** | `Production / Stable` | Full Saudi & Gulf GovTech tone, empty states, compliance checks |
-| **FinTech & Payments** | `Production / Stable` | Payment retry friction removal, trust anchors, checkout microcopy |
-| **SaaS & Landing Pages** | `Production / Stable` | Hero value propositions, action CTAs, feature cards |
-| **E-Commerce** | `Production / Stable` | Cart recovery, transactional alerts, product descriptions |
-| **Healthcare & Medical** | `Experimental` | Patient onboarding, appointment booking microcopy |
-| **Legal & Compliance** | `Experimental` | Terms of service framing, consent dialogs |
+| **GovTech & Official** | `Production` | Saudi & Gulf GovTech tone, empty states, official notices |
+| **FinTech & Payments** | `Production` | Payment friction removal, checkout retry, trust anchors |
+| **SaaS & Landing Pages** | `Production` | Hero value propositions, CTAs, feature cards |
+| **E-Commerce** | `Production` | Cart recovery, transactional alerts, product copy |
+| **Healthcare** | `Experimental` | Patient onboarding, appointment booking |
+| **Legal Binding Contracts** | `Unsupported` | *Not supported. Requires specialized legal counsel.* |
+| **Medical Diagnosis Copy** | `Unsupported` | *Not supported. Requires licensed medical evaluation.* |
+| **Automated Marketing Spam** | `Unsupported` | *Forbidden by framework ethical rules.* |
 
-## Core Features
-- **10-Stage Decision Graph Topology:** Graph execution with explicit feedback loops (`Evaluation <-> Repair <-> Reasoning`).
-- **Decoupled Memory Contexts:** Clear separation between `PlanningContext`, `ReasoningContext`, `KnowledgeContext`, and `EvaluationContext`.
-- **Extensible Plugin System:** Add custom domain packs in `plugins/` without modifying core logic.
-- **Categorized Rule Weights:** Machine-parseable weightings (`quality`, `style`, `optimization`) in `knowledge/relations/domain_weights/`.
-- **Anti-Examples Enforcement:** Explicit negative pattern filtering (`anti_examples`) in entity schemas.
-- **18 Metric Rubric:** Arabic-specific metrics including `SentenceRhythm`, `InformationDensity`, and `LexicalDiversity`.
-
-## Directory Structure
-```text
-arabic-intelligence/
-├── SKILL.md                  # Core instructions (< 100 lines)
-├── reasoning/                # Modular 10-stage reasoning definitions
-├── knowledge/
-│   ├── entities/             # YAML entity definitions with anti-examples
-│   └── relations/
-│       └── domain_weights/   # Domain-specific rule weights
-├── plugins/                  # Community extensibility packages
-├── benchmarks/               # Structured test cases & regression suite
-└── examples/                 # Full execution trace walkthroughs
-```
+## Ecosystem Links
+- [Skill Instructions](skills/arabic-intelligence/SKILL.md)
+- [Architecture Decision Records (ADRs)](docs/adr/)
+- [Plugin Development Guide](skills/arabic-intelligence/plugins/README.md)
+- [Benchmarks & Performance Trend](skills/arabic-intelligence/benchmarks/README.md)
+- [Good vs. Bad Copy Examples](skills/arabic-intelligence/examples/bad_vs_good_copy.md)
+- [Contributing Guide](CONTRIBUTING.md) | [Governance](GOVERNANCE.md) | [Roadmap](ROADMAP.md)

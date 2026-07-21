@@ -1,26 +1,23 @@
-# Arabic Intelligence Plugin System
+# Arabic Intelligence Plugin Specification
 
-The Plugin Architecture allows community contributors to extend domain knowledge without modifying core framework files.
+`api_version: 1`
 
-## Plugin Structure
+Plugins extend the ontology graph with domain-specific rules without altering the core framework logic.
 
-```text
-plugins/
-└── <plugin_name>/
-    ├── plugin.yaml           # Manifest defining plugin metadata & triggers
-    └── entities/             # Custom YAML entities extending core ontology
-```
-
-## Manifest Specification (`plugin.yaml`)
+## Manifest Schema (`plugin.yaml`)
 
 ```yaml
-name: "govtech-saudi"
-version: "1.0.0"
-author: "Community"
-description: "Saudi Arabia GovTech specific rules and entities."
+api_version: 1
+framework_version: ">=7.0.0"
+plugin_version: "1.0.0"
+name: "plugin-name"
+description: "Plugin purpose"
 triggers:
-  domain: ["Government", "GovTech"]
-  region: ["KSA"]
+  domain: ["TargetDomain"]
+  region: ["TargetRegion"]
+capabilities:
+  - "capability_1"
+dependencies: []
 entities:
-  - "entities/saudi_govtech.yaml"
+  - "entity_name"
 ```

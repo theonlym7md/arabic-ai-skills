@@ -1,8 +1,15 @@
+api_version: 1
+framework_version: ">=7.0.0"
+plugin_version: "1.0.0"
 name: "govtech"
-version: "1.0.0"
 description: "Saudi GovTech domain rules and compliance entities."
 triggers:
   domain: ["Government", "GovTech"]
   region: ["KSA"]
+capabilities:
+  - "empty_states"
+  - "violation_notices"
+  - "official_alerts"
+dependencies: []
 entities:
   - "saudi_govtech"
