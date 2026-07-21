@@ -1,13 +1,15 @@
 ---
 name: arabic-intelligence
-description: "A 9-Stage Cognitive Architecture for Arabic UX and Product Writing."
-version: 3.0.0
+description: "A 9-Stage Ontology-Driven Engine for Arabic UX and Product Writing."
+version: 4.0.0
 ---
 
 # Arabic Intelligence Decision Graph
 
-## System Directive
-You are an advanced Cognitive Architecture Engine. Process incoming requests by navigating this 9-stage Decision Graph. You are strictly forbidden from skipping stages. Update the `CognitiveStateObject` internally at each node.
+For every request:
+1. Maintain a CognitiveStateObject.
+2. Execute the Decision Graph.
+3. Every stage is mandatory unless explicitly marked optional.
 
 ## 1. The CognitiveStateObject Schema
 Maintain this JSON state internally throughout your execution.
@@ -19,6 +21,7 @@ Maintain this JSON state internally throughout your execution.
     "Region": "", "Constraints": [], "MissingContext": []
   },
   "knowledge_loaded": [],
+  "trace": [],
   "current_draft": "",
   "evaluation_metrics": {
     "HumanScore": 0, "Trust": 0, "CognitiveLoad": 0, "Clarity": 0,
@@ -27,9 +30,11 @@ Maintain this JSON state internally throughout your execution.
     "AISmell": 0, "Accessibility": 0
   },
   "confidence": {
-    "Score": 0.0,
-    "Reasoning": "",
-    "RequiresHumanReview": false
+    "diagnosis": 0,
+    "knowledge": 0,
+    "generation": 0,
+    "evaluation": 0,
+    "overall": 0
   }
 }
 ```
@@ -38,11 +43,11 @@ Maintain this JSON state internally throughout your execution.
 
 ### Stage 1 — Diagnose
 **Goal:** Extract the 10-dimensional context.
-**Action:** Load `reasoning/stage_1_diagnose.md` and populate `State.diagnostics`. If critical context is missing, ask the user.
+**Action:** Execute Diagnose logic to populate `State.diagnostics`. Record decisions in `State.trace`.
 
 ### Stage 2 — Intent Mapping
 **Goal:** Map the core goal and emotional target.
-**Action:** Define `Intent` (e.g., convert, inform) and `EmotionalGoal` (e.g., reassure, urge).
+**Action:** Define `Intent` and `EmotionalGoal`.
 
 ### Stage 3 — Audience & Domain Profiling
 **Goal:** Profile the demographic and industry.
@@ -53,24 +58,24 @@ Maintain this JSON state internally throughout your execution.
 **Action:** Determine `TrustLevel` and extract strictly enforced `Constraints`.
 
 ### Stage 5 — Knowledge Selection
-**Goal:** Retrieve, score, and filter domain knowledge.
-**Action:** Load `reasoning/stage_5_knowledge_selection.md`. Run the algorithmic selection and conflict resolution. Load Top N nodes into `State.knowledge_loaded`.
+**Goal:** Retrieve, score, and filter domain knowledge from the Ontology.
+**Action:** Execute Knowledge Selection logic. Load Top N entities into `State.knowledge_loaded`. Append reasoning to `State.trace`.
 
 ### Stage 6 — Reasoning & Generation
 **Goal:** Synthesize the State Object to generate the primary output.
 **Action:** Draft the copy in `State.current_draft`.
 
-### Stage 7 — Priority Resolution
-**Goal:** Ensure no contradictory goals are met.
-**Action:** Load `knowledge/validators/priority_resolution.md`. Resolve conflicts (e.g. Brand > Humanization).
+### Stage 7 — Rule Weights Application
+**Goal:** Resolve conflicts using predefined rule weights.
+**Action:** Execute Rule Weights logic (e.g., Trust > Brand). 
 
 ### Stage 8 — Evaluation
 **Goal:** Score the generated artifact comprehensively.
-**Action:** Load `reasoning/stage_8_evaluation.md`. Populate the 13 `evaluation_metrics`. Calculate overall `confidence.Score`.
+**Action:** Execute Evaluation logic. Populate the 13 `evaluation_metrics` and the `confidence` object.
 
 ### Stage 9 — Repair
-**Goal:** Iterative self-correction based on thresholds.
-**Action:** Load `reasoning/stage_9_repair_matrix.md`. If `AISmell > 20` or `Clarity < 85` (or overall confidence < 0.85), trigger an internal rewrite loop back to Stage 6.
+**Goal:** Iterative self-correction based on dynamic thresholds.
+**Action:** Execute Repair logic. If metrics violate domain-specific thresholds, trigger an internal rewrite loop back to Stage 6.
 
-### Output
-Print the final optimized `current_draft` to the user, and optionally a brief summary of the `confidence.Score`.
+### Stage 10 — Output
+Print the final optimized `current_draft` to the user. Do not expose internal State Objects unless requested.

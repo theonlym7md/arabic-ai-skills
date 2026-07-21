@@ -6,7 +6,7 @@ description: "Extracts 10 crucial dimensions from the user request."
 # `Stage 1 — Diagnose`
 
 ## Algorithm: 10-Dimensional Context Extraction
-Analyze the user prompt to extract the following dimensions. If confidence is < 0.75 for any dimension, infer from context or default to neutral.
+Analyze the user prompt to extract the following dimensions.
 
 1. **Domain:** The industry (e.g., GovTech, FinTech, E-commerce, EdTech).
 2. **Emotional Goal:** What the user should feel (e.g., Reassured, Urgent, Delighted, Respected).
@@ -19,5 +19,9 @@ Analyze the user prompt to extract the following dimensions. If confidence is < 
 9. **Constraints:** Hard rules (e.g., Max 10 words, No passive voice).
 10. **Missing Context:** Any critical information needed before generation.
 
+## Missing Context Resolution Rule
+- **IF CRITICAL:** (e.g. Missing what the button actually does). Action: **Ask the user.**
+- **ELSE:** (e.g. Missing specific tone preference). Action: **Continue with assumptions** based on the Domain.
+
 ## Output
-Populate `State.diagnostics` with these 10 values.
+Populate `State.diagnostics` and append reasoning to `State.trace`.
