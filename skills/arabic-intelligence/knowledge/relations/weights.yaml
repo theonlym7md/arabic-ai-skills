@@ -1,28 +1,39 @@
-# Rule Weights Configuration
-# Machine-parseable priority weightings for resolving conflicts in WorkingMemory.
+# Categorized Rule Weights Configuration
 
 weights:
-  Trust: 100
-  Localization: 95
-  Clarity: 95
-  Accessibility: 90
-  Brand: 85
-  SentenceRhythm: 80
-  InformationDensity: 80
-  Humanization: 75
-  Persuasiveness: 70
-  Creativity: 60
+  quality:
+    Trust: 100
+    Clarity: 95
+    Accessibility: 90
+    InformationDensity: 85
+
+  style:
+    Localization: 95
+    Brand: 85
+    Tone: 85
+    SentenceRhythm: 80
+
+  optimization:
+    Humanization: 75
+    Persuasiveness: 70
+    Creativity: 60
 
 domain_overrides:
   Government:
-    Trust: 100
-    Clarity: 100
-    Creativity: 20
+    quality:
+      Trust: 100
+      Clarity: 100
+    optimization:
+      Creativity: 10
   FinTech:
-    Trust: 100
-    Security: 100
-    Creativity: 40
+    quality:
+      Trust: 100
+      Clarity: 95
+    optimization:
+      Creativity: 30
   Startup:
-    Creativity: 85
-    Persuasiveness: 90
-    Trust: 75
+    style:
+      Brand: 90
+    optimization:
+      Creativity: 85
+      Persuasiveness: 90

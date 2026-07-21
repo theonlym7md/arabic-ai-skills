@@ -1,28 +1,30 @@
 ---
 name: stage_0_planner
-description: "Classifies task types and generates customized execution plans prior to context diagnosis."
+description: "Generates a structured execution plan including goals, risks, and strategy."
 ---
 
 # `Stage 0 — Task Planning`
 
-## Algorithm: Task Taxonomy Classification
+## Planning Pipeline
 
-1. Analyze prompt to classify `TaskType`:
-   - `Microcopy / UX`: Button text, tooltips, toast notifications, error messages.
-   - `Landing Page`: Hero sections, value propositions, feature grids, CTAs.
-   - `Brand Strategy`: Tone of voice guides, archetype definitions, brand identity.
-   - `Email / Communication`: Onboarding flows, transactional emails, newsletters.
-   - `Research / Audit`: Evaluating existing copy, auditing Arabic UX.
+Do not just classify the prompt. Build a concrete plan object inside `PlanningContext`:
 
-2. Generate `ExecutionPlan`:
-   - Define custom sub-steps tailored to the `TaskType`.
+1. **`goals`:** List explicit user goals (e.g., "Reduce payment friction", "Communicate violation error clearly").
+2. **`constraints`:** Technical and linguistic boundaries (e.g., "Max 8 words", "No passive voice").
+3. **`risks`:** Potential points of failure (e.g., "User panics due to fine wording", "Ambiguous action button").
+4. **`success_criteria`:** Verifiable outcomes (e.g., "HumanScore > 90", "AISmell < 5").
+5. **`required_knowledge`:** Needed entity nodes (e.g., `saudi_govtech`, `traffic_fine_terms`).
+6. **`execution_strategy`:** The operational path for the remaining stages.
 
-3. Populate `WorkingMemory.planner` and add a structured log to `WorkingMemory.trace`:
-   ```json
-   {
-     "stage": "Task Planning",
-     "action": "Classified TaskType as Landing Page",
-     "reason": "Prompt requested a complete landing page hero and features section.",
-     "confidence": 0.98
-   }
-   ```
+Record structured decision in `trace`:
+```json
+{
+  "stage": "Planning",
+  "decision": "Generated execution strategy for GovTech Traffic Violation Notice",
+  "why": "High risk of user alarm requires calm, authoritative, actionable wording.",
+  "knowledge_used": ["saudi_govtech"],
+  "alternatives_rejected": ["Marketing tone execution plan"],
+  "confidence": 0.98,
+  "duration_ms": 12
+}
+```

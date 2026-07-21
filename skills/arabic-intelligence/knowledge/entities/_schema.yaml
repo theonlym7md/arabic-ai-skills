@@ -1,6 +1,3 @@
-# Ontological Entity Schema
-# Standard format for all entities in knowledge/entities/
-
 $schema: "https://json-schema.org/draft/2020-12/schema"
 title: "OntologyEntity"
 type: "object"
@@ -21,14 +18,32 @@ properties:
     items:
       type: "string"
     description: "Prerequisite entities that must be loaded"
+  conflicts_with:
+    type: "array"
+    items:
+      type: "string"
+    description: "Entities that cannot co-exist with this node"
+  requires:
+    type: "array"
+    items:
+      type: "string"
+    description: "Mandatory companion entities"
+  optional:
+    type: "array"
+    items:
+      type: "string"
+    description: "Optional helpful entities"
+  fallback:
+    type: "string"
+    description: "Default fallback entity if this node fails"
+  priority_override:
+    type: "object"
+    description: "Domain-specific priority adjustments"
   aliases:
     type: "array"
     items:
       type: "string"
-    description: "Semantic search triggers and alternate names"
-  relationship:
-    type: "string"
-    description: "Relationship type (e.g. Domain_Archetype, Cognitive_Rule)"
+    description: "Semantic search triggers"
   directives:
     type: "array"
     items:

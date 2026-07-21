@@ -1,44 +1,32 @@
-<div align="center">
-  <h1>🌐 Arabic AI Skills</h1>
-  <p><b>مستودع مفتوح المصدر لمهارات وكلاء الذكاء الاصطناعي باللغة العربية</b></p>
+# Arabic Intelligence Framework
 
-  <p>
-    <a href="https://github.com/theonlym7md/arabic-ai-skills/actions"><img src="https://img.shields.io/github/actions/workflow/status/theonlym7md/arabic-ai-skills/ci.yml?branch=main" alt="CI Status" /></a>
-    <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a>
-  </p>
-</div>
+A modular reasoning framework for Arabic UX writing and AI agents.
 
----
+## Overview
+Arabic Intelligence provides a deterministic 10-stage decision loop for generating natural, culturally localized, and human-grade Arabic product copy, microcopy, and digital user experiences.
 
-## 📚 عن المشروع
+## Core Features
+- **10-Stage Decision Graph:** Sequential reasoning pipeline from planning to repair.
+- **Decoupled Memory Contexts:** Clear separation between Planning, Reasoning, Knowledge, and Evaluation states.
+- **Ontology Knowledge Graph:** Machine-parseable YAML entity schema supporting inheritance, dependencies, and conflict detection.
+- **Categorized Rule Weights:** Structured weightings (`quality`, `style`, `optimization`) for mathematical conflict resolution.
+- **18 Metric Rubric:** Comprehensive scoring system including Arabic-specific metrics (`SentenceRhythm`, `InformationDensity`, `LexicalDiversity`).
+- **Dynamic Repair Engine:** Automated threshold-based intervention for eliminating AI clichés.
 
-هذا المستودع يحتوي على مجموعة من المهارات (Skills) المصممة خصيصاً لوكلاء الذكاء الاصطناعي (AI Agents) لتأديتهم مهام محددة باللغة العربية بشكل احترافي وواقعي. تم تصميم المستودع بهيكلة Monorepo ليسهل إضافة وإدارة المهارات المتعددة.
-
-### المهارات المتاحة
-
-| المهارة | الوصف | التثبيت |
-| :--- | :--- | :--- |
-| **[Arabic Intelligence OS (Cognitive Architecture)](./skills/arabic-intelligence/README.md)** | أضخم نظام معرفي (Knowledge System) مبني على سيكولوجيا المستخدم، يحاكي عقل فريق كامل من كتاب الـ UX وعلماء اللغة لإنتاج نصوص واجهات لا تشوبها لغة الآلة، مع 4 محركات هوية (حكومي، إعلامي، تجارة، ضيافة). | `npx skills add theonlym7md/arabic-ai-skills/skills/arabic-intelligence` |
-
----
-
-## 🏗️ هيكلية المستودع
-
-يعتمد المشروع على هيكلة قياسية لتسهيل التطوير والاختبار:
-
+## Directory Structure
 ```text
-├── skills/                  # المجلد الأساسي للمهارات
-│   └── arabic-intelligence/ # معمارية النظام (Reasoning Engine, Memory, Knowledge Graph)
-├── tests/                   # اختبارات الجودة
-├── AGENTS.md                # قواعد عامة للذكاء الاصطناعي
-└── package.json             # إعدادات المشروع و Workspaces
+arabic-intelligence/
+├── SKILL.md                  # Lean core instructions (< 300 lines)
+├── reasoning/                # Modular reasoning stage definitions
+├── knowledge/
+│   ├── entities/             # YAML ontology entity definitions
+│   └── relations/            # Categorized rule weights (weights.yaml)
+├── benchmarks/               # Fixed test suite & golden references
+└── examples/                 # Full end-to-end execution traces
 ```
 
-## 🤝 سياسة المساهمة والحقوق (Contribution & Copyright)
-
-هذا المشروع **مفتوح المصدر (Open Source) للاستخدام العام**؛ يحق لأي شخص أو جهة استخدام المهارة وتثبيتها في وكلائهم أو مشاريعهم الخاصة مجاناً.
-
-**ولكن، يمنع التعديل على النواة الأساسية للنظام:**
-للحفاظ على الجودة العالية، الدقة السيكولوجية، والهيكلية المعمارية لـ "Arabic UX Masterclass"، فإن **صلاحية التعديل، الإضافة، أو الحذف في ملفات المهارة محصورة حصرياً بمؤسس المشروع**.
-*   لن يتم قبول أي طلبات سحب (Pull Requests) تقترح تغييرات على محركات الهوية (Brand Engines) أو محركات الكتابة (Writing Engines).
-*   إذا كان لديك اقتراح مهم، يمكنك فتح تذكرة (Issue) للمناقشة، وسيقرر المؤسس إضافتها من عدمه.
+## Quick Start
+To use this framework with any LLM or AI Agent:
+1. Initialize the 4 `Context` objects.
+2. Follow the 10 stages in `SKILL.md`.
+3. Query `knowledge/entities/` for domain-specific directives.
