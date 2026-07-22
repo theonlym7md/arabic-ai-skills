@@ -49,8 +49,13 @@ properties:
     items:
       type: "string"
     description: "Actionable positive instructions enforced by this entity"
-  anti_examples:
+  examples:
     type: "array"
     items:
       type: "string"
-    description: "Explicit negative patterns, AI clichés, and slop phrases forbidden by this entity"
+    description: "Positive gold-standard phrasing examples for this entity"
+  negative_examples:
+    type: "array"
+    items:
+      type: "string"
+    description: "Explicit negative patterns, AI clichés, and forbidden slop phrases for this entity"

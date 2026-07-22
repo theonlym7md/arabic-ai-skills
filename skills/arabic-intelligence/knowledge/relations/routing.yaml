@@ -1,0 +1,29 @@
+# Capability & Semantic Routing Matrix
+
+version: "1.0.0"
+
+domains:
+  - GovTech
+  - FinTech
+  - E-Commerce
+  - SaaS
+  - Media & Content
+  - Healthcare
+
+capabilities:
+  - Generate
+  - Rewrite
+  - Analyze
+  - Audit
+  - Translate
+
+triggers:
+  semantic_keywords:
+    - "مخالفات"
+    - "دفع"
+    - "سلة"
+    - "حالة فارغة"
+    - "رسالة خطأ"
+    - "زر"
+    - "صفحة هبوط"
+    - "هوية"

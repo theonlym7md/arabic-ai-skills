@@ -1,6 +1,6 @@
-// Enterprise unit test suite validating Arabic Intelligence Framework v1.0.0 architecture.
+// Enterprise unit test suite validating Arabic Intelligence Framework v1.0.0-STABLE architecture.
 
-describe('Arabic Intelligence Framework v1.0.0 Audit', () => {
+describe('Arabic Intelligence Framework v1.0.0-STABLE Audit', () => {
   const fs = require('fs');
   const path = require('path');
 
@@ -15,15 +15,16 @@ describe('Arabic Intelligence Framework v1.0.0 Audit', () => {
     expect(content).toContain('ReasoningContext');
     expect(content).toContain('KnowledgeContext');
     expect(content).toContain('EvaluationContext');
-    expect(content).toContain('Stage Contracts Reference');
+    expect(content).toContain('Formal Stage Contracts');
   });
 
-  it('should validate entity schema and anti-examples support', () => {
+  it('should validate entity schema and negative examples support', () => {
     const schemaPath = path.join(__dirname, '../skills/arabic-intelligence/knowledge/entities/_schema.yaml');
     expect(fs.existsSync(schemaPath)).toBe(true);
 
     const schemaContent = fs.readFileSync(schemaPath, 'utf8');
-    expect(schemaContent).toContain('anti_examples');
+    expect(schemaContent).toContain('negative_examples');
+    expect(schemaContent).toContain('examples');
     expect(schemaContent).toContain('conflicts_with');
     expect(schemaContent).toContain('inherits');
     expect(schemaContent).toContain('depends_on');

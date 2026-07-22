@@ -31,9 +31,7 @@ domain_overrides:
       Clarity: 95
     optimization:
       Creativity: 30
-  Startup:
+  GovTech_SubDomain:
+    inherit: Government
     style:
-      Brand: 90
-    optimization:
-      Creativity: 85
-      Persuasiveness: 90
+      Tone: 95

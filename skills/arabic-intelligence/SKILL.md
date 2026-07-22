@@ -1,6 +1,6 @@
 ---
 name: arabic-intelligence
-description: "A 10-stage structured reasoning framework for Arabic UX writing, product copy, digital microcopy, localized Arabic interfaces, and Arabic content strategy. Make sure to use this skill whenever the user asks to write, refine, translate, analyze, or generate Arabic copy, Arabic UI buttons, Arabic empty states, error messages, landing pages, SaaS messaging, GovTech/FinTech Arabic copy, or Arabic product interfaces, even if they don't explicitly mention 'arabic-intelligence'."
+description: "Arabic reasoning framework for UX writing, product communication and localization."
 version: 1.0.0
 ---
 
@@ -8,13 +8,21 @@ version: 1.0.0
 
 A structured reasoning framework for generating natural, culturally localized Arabic UX microcopy and digital product experiences.
 
-## Execution Rules & Stage Contracts
+## Execution Rules & Formal Stage Contracts
 
-Every stage in the 10-Stage Decision Graph adheres to an explicit Stage Contract:
-- **`Input`:** Required context objects.
-- **`Output`:** Modified context objects.
-- **`FailureCondition`:** Metrics or missing keys that break execution.
-- **`RetryPolicy`:** Permitted re-execution loops.
+Every stage in the 10-Stage Decision Graph adheres to a formal protocol interface contract:
+
+- **Stage 0 (Planning):** `Consumes: Prompt` | `Produces: PlanningContext` | `Mutates: None` | `SideEffects: None` | `Idempotent: true`
+- **Stage 1 (Diagnose):** `Consumes: PlanningContext` | `Produces: ReasoningContext.diagnostics` | `Mutates: ReasoningContext` | `SideEffects: Ask user if MissingKeys > 2` | `Idempotent: true`
+- **Stage 2 (Intent):** `Consumes: diagnostics` | `Produces: Intent & EmotionalGoal` | `Mutates: ReasoningContext` | `SideEffects: None` | `Idempotent: true`
+- **Stage 3 (Audience):** `Consumes: diagnostics` | `Produces: Audience & ReadingLevel` | `Mutates: ReasoningContext` | `SideEffects: None` | `Idempotent: true`
+- **Stage 4 (Risk):** `Consumes: diagnostics` | `Produces: TrustLevel & Hard Constraints` | `Mutates: ReasoningContext` | `SideEffects: None` | `Idempotent: true`
+- **Stage 5 (Knowledge):** `Consumes: diagnostics` | `Produces: KnowledgeContext` | `Mutates: KnowledgeContext` | `SideEffects: Reads knowledge/entities & plugins/` | `Idempotent: true`
+- **Stage 6 (Reasoning):** `Consumes: ReasoningContext, KnowledgeContext` | `Produces: ReasoningContext.current_draft` | `Mutates: ReasoningContext` | `SideEffects: None` | `Idempotent: false`
+- **Stage 7 (Weights):** `Consumes: ReasoningContext.current_draft` | `Produces: Conflict Resolutions` | `Mutates: ReasoningContext` | `SideEffects: Reads domain_weights/` | `Idempotent: true`
+- **Stage 8 (Evaluation):** `Consumes: ReasoningContext.current_draft` | `Produces: EvaluationContext` | `Mutates: EvaluationContext` | `SideEffects: None` | `Idempotent: true`
+- **Stage 9 (Repair):** `Consumes: EvaluationContext` | `Produces: Revised Draft` | `Mutates: ReasoningContext.current_draft` | `SideEffects: Rewinds to Stage 6 (Max 2 Loops)` | `Idempotent: false`
+- **Stage 10 (Output):** `Consumes: ReasoningContext.current_draft` | `Produces: Final User Copy` | `Mutates: None` | `SideEffects: Emits text` | `Idempotent: true`
 
 ## Decoupled Execution Contexts
 
@@ -73,10 +81,3 @@ Every stage in the 10-Stage Decision Graph adheres to an explicit Stage Contract
        ▼
 [Stage 10: Output]
 ```
-
-### Stage Contracts Reference
-- **Stage 0 (Planning):** `Input: Prompt` -> `Output: PlanningContext` | `Failure: Empty Intent`.
-- **Stage 1 (Diagnose):** `Input: PlanningContext` -> `Output: ReasoningContext.diagnostics` | `Failure: MissingContextKeys > 2`.
-- **Stage 5 (Knowledge):** `Input: diagnostics` -> `Output: KnowledgeContext` | `Failure: Entity Load Failure`.
-- **Stage 8 (Evaluation):** `Input: current_draft` -> `Output: EvaluationContext` | `Failure: Metric Below Threshold`.
-- **Stage 9 (Repair):** `Input: EvaluationContext` -> `Output: Revised Draft` | `Retry: Max 2 Loops`.

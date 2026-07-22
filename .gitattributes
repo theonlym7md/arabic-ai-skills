@@ -1,0 +1,6 @@
+# Ensure git export / zip clean archiving
+node_modules export-ignore
+.git export-ignore
+.vscode export-ignore
+*.log export-ignore
+coverage export-ignore
