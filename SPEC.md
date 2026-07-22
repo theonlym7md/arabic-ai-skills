@@ -1,6 +1,6 @@
 # Arabic Intelligence Protocol Specification (SPEC.md)
 
-`Specification Version: 1.1.0-STABLE`
+`Specification Version: 1.2.0-STABLE`
 
 This document defines the formal, zero-marketing technical protocol for the Arabic Intelligence Guided Reasoning Engine.
 

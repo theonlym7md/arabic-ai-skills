@@ -1,6 +1,6 @@
-// Enterprise unit test suite validating Arabic Intelligence Framework v1.0.0-STABLE architecture.
+// Enterprise unit test suite validating Arabic Intelligence Framework v1.2.0-STABLE architecture.
 
-describe('Arabic Intelligence Framework v1.0.0-STABLE Audit', () => {
+describe('Arabic Intelligence Framework v1.2.0-STABLE Audit', () => {
   const fs = require('fs');
   const path = require('path');
 

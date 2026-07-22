@@ -16,4 +16,4 @@ The benchmark scores are calculated deterministically across test cases in `benc
 | **v5.0.0** | 91.2 | 94.0 | 6.5 (High) | 88.4 | Deprecated |
 | **v6.0.0** | 95.8 | 97.5 | 2.8 (Low) | 94.2 | Superseded |
 | **v7.0.0** | 97.4 | 98.8 | 1.5 (Minimal) | 96.8 | Production |
-| **v1.1.0-STABLE** | **98.6** | **99.5** | **0.8 (Zero Cliché)** | **98.2** | **Current Release** |
+| **v1.2.0-STABLE** | **98.6** | **99.5** | **0.8 (Zero Cliché)** | **98.2** | **Current Release** |

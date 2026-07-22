@@ -2,9 +2,14 @@
 
 A modular reasoning framework for Arabic UX writing, product copy, and AI agents.
 
-[![Release](https://img.shields.io/badge/Release-v1.1.0--STABLE-blue.svg?style=for-the-badge&logo=github)](https://github.com/theonlym7md/arabic-ai-skills)
+[![Release](https://img.shields.io/badge/Release-v1.2.0--STABLE-blue.svg?style=for-the-badge&logo=github)](https://github.com/theonlym7md/arabic-ai-skills)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
-[![Build Status](https://img.shields.io/badge/Tests-100%25%20Passing-brightgreen.svg?style=for-the-badge&logo=jest)](tests/skill.test.js)
+[![Build Status](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/theonlym7md/arabic-ai-skills/actions)
+
+---
+
+## 📌 Versioning Alignment
+`Framework Spec: v1.2.0-STABLE | Skill Package: v1.2.0 | API Compatibility: 1.x`
 
 ---
 
@@ -26,7 +31,7 @@ Standard LLMs struggle with Arabic product copy—defaulting to literal English 
 ### ❌ Raw AI Output (Robotic Cliché Slop)
 > *"في إطار حرصنا المستمر على تقديم أفضل الخدمات، يرجى التكرم بالعلم بأنه لا يوجد لديكم أي مخالفات مرورية حالياً."*
 
-### ✅ Arabic Intelligence Framework Output (v1.1.0-STABLE)
+### ✅ Arabic Intelligence Framework Output (v1.2.0-STABLE)
 > **العنوان:** "سجلك خالي من المخالفات"  
 > **الوصف:** "لا توجد أي مخالفات مرورية مسجلة بحقك حالياً. نتمنى لك قيادة آمنة."
 
@@ -97,13 +102,14 @@ graph TD
 - 📑 **Compatibility Spec:** Read [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).
 - 📑 **Architecture Decision Records:** Read [ADR-001](docs/adr/ADR-001-why-working-memory.md), [ADR-002](docs/adr/ADR-002-why-ontology.md), and [ADR-003](docs/adr/ADR-003-why-plugins.md).
 - 📊 **Benchmark Methodology:** Read [benchmarks/README.md](skills/arabic-intelligence/benchmarks/README.md) for rubric evaluation details.
-- 🛠️ **Validation Scripts:** Run `node scripts/validate_schema.js` and `node scripts/validate_plugin.js`.
+- 🛠️ **Universal Validator:** Run `node scripts/validate_all.js`.
+- 📦 **Clean Packaging:** Run `node scripts/package_zip.js` to build a clean distribution zip.
 - 🤝 **Contributing:** Check our [CONTRIBUTING.md](CONTRIBUTING.md) guide before submitting PRs.
 
 ---
 
 <div align="center">
 
-**Core API Frozen & STABLE 1.1.0.**
+**Core API Frozen & STABLE 1.2.0.**
 
 </div>

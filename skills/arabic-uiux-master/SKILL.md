@@ -1,7 +1,7 @@
 ---
 name: arabic-uiux-master
 description: "Arabic reasoning framework for UX writing, product communication, and microcopy masterclass."
-version: 1.0.0
+version: 1.2.0
 ---
 
 # 🎨 Arabic UI/UX Masterclass & Microcopy Engine

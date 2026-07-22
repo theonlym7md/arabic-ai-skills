@@ -1,7 +1,7 @@
 ---
 name: arabic-intelligence
 description: "Arabic reasoning framework for UX writing, product communication and localization."
-version: 1.0.0
+version: 1.2.0
 ---
 
 # Arabic Intelligence Framework
