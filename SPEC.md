@@ -1,6 +1,6 @@
 # Arabic Intelligence Protocol Specification (SPEC.md)
 
-`Specification Version: 1.0.0-STABLE`
+`Specification Version: 1.1.0-STABLE`
 
 This document defines the formal, zero-marketing technical protocol for the Arabic Intelligence Guided Reasoning Engine.
 
@@ -35,11 +35,42 @@ The framework operates on 4 decoupled context objects passed down the decision g
 
 ---
 
-## 3. Plugin API Specification
+## 3. Protocol Error Codes
+
+Runtimes implementing this specification MUST emit standard error codes on failure:
+
+| Error Code | Description | Resolution Trigger |
+| :--- | :--- | :--- |
+| `ERR_MISSING_CONTEXT_CRITICAL` | `MissingContextKeys` count exceeds 2 threshold | Halt & prompt user for clarification |
+| `ERR_PLUGIN_INCOMPATIBLE` | Plugin `framework_version` does not satisfy runtime | Skip plugin load & log fallback warning |
+| `ERR_ENTITY_CONFLICT` | Two entity directives directly contradict | Resolve via `weights.yaml` priority score |
+| `ERR_REPAIR_LIMIT_EXCEEDED` | Stage 9 repair loop reached maximum 2 iterations | Fallback to highest confidence candidate draft |
+| `ERR_METRIC_FAIL` | Evaluation metric falls below dynamic domain threshold | Trigger Stage 9 dynamic repair intervention |
+
+---
+
+## 4. Plugin API & Deprecation Specification
 
 Plugins MUST declare `plugin.yaml` containing:
 - `api_version: 1`
 - `framework_version: ">=1.0.0"`
 - `min_framework_version: "1.0.0"`
 - `max_framework_version: "2.0.0"`
+- `deprecated_after: ""` (optional deprecation date)
+- `replacement: ""` (optional replacement module)
 - `name`, `version`, `triggers`, `capabilities`, `entities`
+
+---
+
+## 5. Multi-Language Runtime SDK Specification
+
+Runtimes (Node.js, Python, Go) consuming this specification MUST implement the state machine interface:
+```typescript
+interface ArabicIntelligenceRuntime {
+  executePlanning(prompt: string): PlanningContext;
+  executeDiagnose(plan: PlanningContext): ReasoningContext;
+  executeKnowledge(diag: ReasoningContext): KnowledgeContext;
+  executeEvaluation(draft: string): EvaluationContext;
+  executeRepair(evalCtx: EvaluationContext): string;
+}
+```

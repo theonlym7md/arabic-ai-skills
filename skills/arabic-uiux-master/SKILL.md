@@ -1,31 +1,61 @@
 ---
 name: arabic-uiux-master
-description: "The ultimate Arabic UI/UX writing, microcopy, and RTL design masterclass skill. Contains anti-cliché filters, sector microcopy lexicons (GovTech, FinTech, E-Commerce, SaaS, Media), and cognitive reasoning rules for AI agents. Triggers on any Arabic UI text, button copywriting, error messages, empty states, or Arabic design requests."
+description: "Arabic reasoning framework for UX writing, product communication, and microcopy masterclass."
 version: 1.0.0
 ---
 
-# 🎨 المرجع العالمي الشامل لكتابة الواجهات وتجربة المستخدم العربية (Arabic UI/UX Masterclass)
+# 🎨 Arabic UI/UX Masterclass & Microcopy Engine
 
-هذا المستند هو المرجع الذهبي المطلق لنماذج الذكاء الاصطناعي ووكلاء الكود لإنتاج نصوص واجهات عربية (UX Microcopy) بشرية، مباشرة، عالية الفخامة، وخالية تماماً من ركاكة ولغة الآلة.
+This skill package implements the Arabic Intelligence Guided Reasoning Specification to generate natural, localized Arabic UX microcopy, product interfaces, and digital content.
+
+## Execution Rules & Formal Stage Contracts
+
+Every stage in the 10-Stage Decision Graph adheres to a formal protocol interface contract:
+
+- **Stage 0 (Planning):** `Consumes: Prompt` | `Produces: PlanningContext` | `Mutates: None` | `SideEffects: None` | `Idempotent: true`
+- **Stage 1 (Diagnose):** `Consumes: PlanningContext` | `Produces: ReasoningContext.diagnostics` | `Mutates: ReasoningContext` | `SideEffects: Ask user if MissingKeys > 2` | `Idempotent: true`
+- **Stage 5 (Knowledge):** `Consumes: diagnostics` | `Produces: KnowledgeContext` | `Mutates: KnowledgeContext` | `SideEffects: Reads knowledge/entities & plugins/` | `Idempotent: true`
+- **Stage 8 (Evaluation):** `Consumes: ReasoningContext.current_draft` | `Produces: EvaluationContext` | `Mutates: EvaluationContext` | `SideEffects: None` | `Idempotent: true`
+- **Stage 9 (Repair):** `Consumes: EvaluationContext` | `Produces: Revised Draft` | `Mutates: ReasoningContext.current_draft` | `SideEffects: Rewinds to Stage 6 (Max 2 Loops)` | `Idempotent: false`
+
+## Decoupled Execution Contexts
+
+```json
+{
+  "PlanningContext": {
+    "TaskType": "", "goals": [], "constraints": [], "assumptions": [],
+    "risks": [], "success_criteria": [], "required_knowledge": [], "execution_strategy": ""
+  },
+  "ReasoningContext": {
+    "diagnostics": {
+      "Domain": "", "Audience": "", "Intent": "", "EmotionalGoal": "",
+      "ProductType": "", "TrustLevel": "", "ReadingLevel": "",
+      "Region": "", "Constraints": [], "MissingContextKeys": []
+    },
+    "current_draft": ""
+  },
+  "KnowledgeContext": {
+    "entities_loaded": [
+      { "entity": "", "confidence": 0.0, "priority": 0, "reason": "", "dependencies": [] }
+    ]
+  },
+  "EvaluationContext": {
+    "metrics": {
+      "HumanScore": 0, "Trust": 0, "CognitiveLoad": 0, "Clarity": 0,
+      "Tone": 0, "Brand": 0, "ReadingFlow": 0, "Terminology": 0,
+      "Persuasiveness": 0, "Naturalness": 0, "Localization": 0,
+      "AISmell": 0, "Accessibility": 0,
+      "SentenceRhythm": 0, "InformationDensity": 0,
+      "LexicalDiversity": 0, "Actionability": 0, "EmotionalPrecision": 0
+    },
+    "confidence": { "planner": 0.0, "diagnosis": 0.0, "knowledge": 0.0, "generation": 0.0, "evaluation": 0.0, "overall": 0.0 }
+  }
+}
+```
 
 ---
 
-## 1. 🧠 محرك التشخيص الإدراكي (Context Diagnosis Engine)
-
-قبل كتابة أي كلمة عربية في الواجهة، يجب على الذكاء الاصطناعي استخراج أبعاد السياق التالية:
-
-| البعد الإدراكي | الخيارات المتاحة | التأثير المباشر على النص |
-| :--- | :--- | :--- |
-| **القطاع (Domain)** | GovTech, FinTech, SaaS, E-Commerce, Media | تحديد القاموس المستهدف ونبرة الوقار أو الود |
-| **الجمهور (Audience)** | مواطنون، Gen-Z، تجار B2B، خبراء مالية | اختيار مستوى الفصحى (رسمية، بيضاء، ميسرة) |
-| **الهدف العاطفي** | طمأنة، تحفيز، إزالة التردد، تنبيه حذر | اختيار الكلمات التي تقلل العبء الإدراكي |
-| **نوع العنصر (UI Component)** | زر CTA، حالة فارغة، رسالة خطأ، Hero Section | تحديد طول النص وإيقاع الجملة |
-
----
-
-## 2. 🚫 قائمة محظورات الذكاء الاصطناعي (AI Slop Blacklist)
-
-**يُحظر حظراً مطلقاً** استخدام العبارات الإدارية الركيكة والجمل الانتقالية المصطنعة التي تكشف بصمة الآلة (`AISmell`). يُستبدل النص فوراً بالصياغة البشرية المباشرة:
+## 🚫 قائمة محظورات الذكاء الاصطناعي (AI Slop Blacklist)
 
 ```diff
 - ❌ "في إطار حرصنا المستمر على تقديم أفضل الخدمات..."
@@ -39,78 +69,32 @@ version: 1.0.0
 
 - ❌ "يرجى التكرم بالانتظار لحين معالجة البيانات..."
 + ✅ "جاري جلب البيانات..."
-
-- ❌ "بناءً على ما تقدم نود إفادتكم بضرورة..."
-+ ✅ "يرجى استكمال البيانات التالية:"
-
-- ❌ "في هذا الصدد ونظراً للظروف..."
-+ ✅ "بسبب توقف الخدمة المؤقت..."
 ```
 
 ---
 
-## 3. 📚 قاموس المصطلحات التفاعلية للنصوص الميكروية (Sector Microcopy Lexicon)
+## 📚 قاموس المصطلحات التفاعلية والنصوص الميكروية (Sector Microcopy Lexicon)
 
 ### أ) القطاع الحكومي (GovTech)
-الهدف: الوقار المؤسسي، الثقة المطلقة، والوضوح التام دون تعقيد لغوي.
-
-| العنصر (UI Element) | الصياغة الخاطئة (AI Slop) | الصياغة البشرية المعتمدة (GovTech Standard) |
-| :--- | :--- | :--- |
-| **حالة المخالفات الفارغة** | *"في إطار حرصنا لا توجد مخالفات..."* | **"سجلك خالي من المخالفات"** |
-| **زر إتمام الطلب** | *"اضغط هنا لإتمام إجراءات التقديم"* | **"أتمم الطلب"** |
-| **تأكيد الهوية الوطنية** | *"يرجى التكرم بإدخال رقم الهوية"* | **"أدخل رقم الهوية الوطنية"** |
-| **حالة الانتظار** | *"الرجاء الانتظار جاري المعالجة"* | **"جاري مراجعة الطلب..."** |
-| **رسالة التنبيه** | *"نود إفادتكم بوجود تحديث جديد"* | **"يتطلب حسابك تحديث البيانات"** |
+- **حالة المخالفات الفارغة:** "سجلك خالي من المخالفات"
+- **زر إتمام الطلب:** "أتمم الطلب"
+- **تأكيد الهوية الوطنية:** "أدخل رقم الهوية الوطنية"
+- **حالة الانتظار:** "جاري مراجعة الطلب..."
 
 ### ب) التقنية المالية والتجارة (FinTech & Payments)
-الهدف: إزالة ألم الدفع (Friction Removal)، بناء الثقة، والشفافية.
+- **فشل الدفع (Payment Error):** "تعذر استكمال عملية الدفع — يرجى التأكد من توفر الرصيد أو استخدام بطاقة أخرى."
+- **زر الدفع الفوري (CTA):** "ادفع الآن — 150 ر.س"
+- **التقسيط والدفع اللاحق:** "قسمها على 4 دفعات بدون فوائد"
 
-| العنصر (UI Element) | الصياغة الخاطئة (AI Slop) | الصياغة البشرية المعتمدة (FinTech Standard) |
-| :--- | :--- | :--- |
-| **فشل الدفع (Payment Error)** | *"حدث خطأ غير متوقع يرجى التواصل مع الدعم"* | **"تعذر استكمال عملية الدفع"** <br>*"تأكد من رصيد البطاقة أو استخدم بطاقة أخرى."* |
-| **زر الدفع الفوري (CTA)** | *"اضغط هنا لإجراء عملية الخصم"* | **"ادفع الآن — 150 ر.س"** |
-| **التقسيط والدفع اللاحق** | *"استدين الآن وادفع لاحقاً"* | **"قسمها على 4 دفعات بدون فوائد"** |
-| **تأكيد الأمان** | *"نظامنا محمي بأعلى درجات التشفير"* | **"دفع آمن ومشفّر 100%"** |
-
-### ج) منصات التجارة الإلكترونية والـ SaaS
-الهدف: التحفيز، سلاسة التجربة، ورفع معدل التحويل (Conversion Rate).
-
-| العنصر (UI Element) | الصياغة الخاطئة (AI Slop) | الصياغة البشرية المعتمدة (SaaS Standard) |
-| :--- | :--- | :--- |
-| **زر البدء (Hero CTA)** | *"سجل معنا الآن لتستمتع بالخدمات"* | **"ابدأ تجربتك المجانية"** |
-| **السلة الفارغة** | *"سلتك فارغة لا يوجد أي منتجات"* | **"سلتك تنتظر خياراتك المفضلة"** |
-| **الاشتراك السنوي** | *"اشترك سنوياً واحصل على خصم"* | **"وفر 20% عند الاختيار السنوي"** |
-
-### د) الإعلام وصناعة المحتوى (Media & Content)
-الهدف: التفاعلية، الشبابية، كسر النمطية (العامية البيضاء الفصيحة).
-
-| العنصر (UI Element) | الصياغة الخاطئة (AI Slop) | الصياغة البشرية المعتمدة (Media Standard) |
-| :--- | :--- | :--- |
-| **زر الاستماع للبودكاست** | *"اضغط هنا للاستماع إلى الحلقة"* | **"استمع للحلقة (45 دقيقة)"** |
-| **قائمة البث المباشر** | *"شاهد البث الحي والمباشر الان"* | **"يبث الآن مباشرة"** |
-| **متابعة الكاتب** | *"قم بعمل متابعة لهذا الكاتب"* | **"تابع مقالات الكاتب"** |
+### ج) التجارة الإلكترونية والـ SaaS
+- **زر البدء (Hero CTA):** "ابدأ تجربتك المجانية"
+- **السلة الفارغة:** "سلتك تنتظر خياراتك المفضلة"
+- **الاشتراك السنوي:** "وفر 20% عند الاختيار السنوي"
 
 ---
 
-## 4. 📐 قواعد التصميم البصري والـ RTL والـ Typography
+## 📐 قواعد التصميم البصري والـ RTL والـ Typography
 
-### أ) اتجاه الواجهة (RTL Alignment Rules)
-1. **محاذاة النص:** المحاذاة الافتراضية للنصوص الطويلة والعناوين تكون لليمين (`text-align: right`).
-2. **الأيقونات والتنقل:** أيقونات الاتجاه (مثل الأسهم `->`) يجب أن تنعكس تلقائياً في العربية لتبدأ من اليمين إلى اليسار.
-3. **الأرقام:** يُفضل استخدام الأرقام العربية العالمية (`1, 2, 3`) في الواجهات التقنية والمالية لسهولة القراءة.
-
-### ب) اختيار الخطوط العربية (Typography Hierarchy)
-- **الخطوط الموصى بها للواجهات:** `Inter` (مع دعم العربية)، `Cairo` (للواجهات الحديثة)، `Tajawal` (للمنصات الرسمية)، `Outfit`.
-- **طول السطر المثالي:** لا يتجاوز 60-75 حرفاً في السطر لضمان راحة العين وعدم تشتت القارئ.
-
----
-
-## 5. 🎯 مقاييس التقييم الذاتي 18 (The Evaluation Rubric)
-
-يقيّم الذكاء الاصطناعي مخرجاته آلياً بناءً على المقاييس التالية:
-
-1. `HumanScore` (> 95): الطبيعية والبشرية في الطرح.
-2. `AISmell` (< 5): خلو النص تماماً من الكليشيهات والعبارات المصطنعة.
-3. `CognitiveLoad` (> 90): الإيجاز وسهولة الفهم المباشر.
-4. `Clarity` (> 95): عدم وجود أي غموض في الإجراء المطلوب.
-5. `Trust` (> 95): طمأنة المستخدم وبناء الثقة في الخدمات الحساسة.
+1. **محاذاة النص:** المحاذاة الافتراضية للنصوص والعناوين تكون لليمين (`text-align: right`).
+2. **الأيقونات والتنقل:** تعكيس أيقونات الاتجاه تلقائياً في الواجهات العربية.
+3. **الخطوط المعتمدة:** `Inter`, `Cairo`, `Tajawal`, `Outfit`.

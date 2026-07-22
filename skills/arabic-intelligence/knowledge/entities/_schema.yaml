@@ -5,6 +5,15 @@ properties:
   entity:
     type: "string"
     description: "Unique identifier of the entity"
+  confidence:
+    type: "number"
+    description: "Metadata confidence rating of the entity (0.0 to 1.0)"
+  source:
+    type: "string"
+    description: "Authority source of the entity guidance (e.g. Sdaia / DGA Standard)"
+  last_reviewed:
+    type: "string"
+    description: "ISO date string of last review"
   priority:
     type: "integer"
     description: "Base priority score (1-100)"

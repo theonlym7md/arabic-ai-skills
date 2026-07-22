@@ -1,4 +1,7 @@
 entity: "saudi_govtech"
+confidence: 1.0
+source: "Saudi DGA / Sdaia Microcopy Lexicon Standard"
+last_reviewed: "2026-07-22"
 priority: 100
 inherits:
   - "institutional_authority"
