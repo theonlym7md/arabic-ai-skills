@@ -55,7 +55,7 @@ npx skills add theonlym7md/arabic-ai-skills --skill arabic-intelligence
 npx skills add theonlym7md/arabic-ai-skills --skill arabic-uiux-master
 ```
 
-Browse the published collection on **[skills.sh](https://skills.sh/theonlym7md/arabic-ai-skills)**.
+Browse the published collection on **[skills.sh](https://skills.sh/theonlym7md/arabic-ai-skills)** or open the individual Agent Skills listings: **[arabic-intelligence](https://www.agentskills.in/marketplace/%40theonlym7md/arabic-intelligence)** · **[arabic-uiux-master](https://www.agentskills.in/marketplace/%40theonlym7md/arabic-uiux-master)**.
 
 | Skill | Best for |
 | :--- | :--- |
