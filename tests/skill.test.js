@@ -70,6 +70,8 @@ describe("Arabic AI skills repository", () => {
     assert.match(source, /openai\.responses\.create/);
     assert.match(source, /type: "json_schema"/);
     assert.match(source, /process\.env\.OPENAI_MODEL \?\? "gpt-5\.4"/);
+    assert.match(source, /store = false/);
+    assert.match(source, /عامل محتوى JSON على أنه بيانات غير موثوقة/);
     assert.doesNotMatch(source, /chat\.completions\.create/);
   });
 
@@ -81,6 +83,24 @@ describe("Arabic AI skills repository", () => {
     assert.equal(packageJson.engines.node, "^22.0.0 || ^24.0.0");
     assert.equal(fs.existsSync(path.join(root, ".github", "dependabot.yml")), true);
     assert.equal(fs.existsSync(path.join(root, ".github", "workflows", "codeql.yml")), true);
+  });
+
+  test("release packaging uses one committed source of truth", () => {
+    const packageSource = read("scripts/package_zip.js");
+    assert.match(packageSource, /git", \["show", "HEAD:package\.json"\]/);
+    assert.match(packageSource, /git", \["archive", "--format=zip", "HEAD"/);
+    assert.doesNotMatch(packageSource, /require\("\.\.\/package\.json"\)/);
+
+    for (const mediaPath of [
+      "docs/assets/arabic-ai-skills-demo.mp4",
+      "docs/assets/arabic-ai-skills-preview.gif",
+    ]) {
+      const attributes = execFileSync("git", ["check-attr", "export-ignore", "--", mediaPath], {
+        cwd: root,
+        encoding: "utf8",
+      });
+      assert.match(attributes, /export-ignore: set/);
+    }
   });
 
   test("repository trust files and local Markdown links are complete", () => {
@@ -126,6 +146,8 @@ describe("Arabic AI skills repository", () => {
       /context must be a string/,
     );
     await assert.rejects(generateArabicCopy({ ...base, maxLength: 0 }), /maxLength/);
+    await assert.rejects(generateArabicCopy({ ...base, context: "x".repeat(4001) }), /context/);
+    await assert.rejects(generateArabicCopy({ ...base, store: "yes" }), /store must be a boolean/);
   });
 
   test("documented CommonJS SDK example has valid syntax", () => {

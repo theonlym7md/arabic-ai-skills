@@ -1,40 +1,26 @@
-# GitHub Actions CI Pipeline Specification
+# GitHub Actions CI Pipeline
 
-`Specification Version: 1.2.0-STABLE`
+The canonical workflow is [`.github/workflows/ci.yml`](../.github/workflows/ci.yml). This document describes its guarantees without duplicating action revisions that Dependabot may update.
 
-This document defines the Continuous Integration pipeline setup for the Arabic Intelligence Framework.
+## Pull-request and push checks
 
-## Workflow Definition (`.github/workflows/ci.yml`)
+CI runs on pushes and pull requests targeting `main`. It uses read-only repository permissions and cancels superseded runs for the same branch or pull request.
 
-```yaml
-name: CI
+The verification matrix covers Node.js 22 and 24 LTS. Each job:
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+1. Checks out the repository with a commit-pinned action.
+2. Installs the selected Node.js runtime with a commit-pinned action.
+3. Runs `npm ci` from the committed lockfile.
+4. Runs `npm run check` for validators, type checking, tests, and linting.
 
-jobs:
-  verify:
-    name: Node.js ${{ matrix.node-version }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [22, 24]
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: npm
-      - run: npm ci
-      - run: npm run check
-```
+Code scanning is defined separately in [`.github/workflows/codeql.yml`](../.github/workflows/codeql.yml) and covers JavaScript/TypeScript and Python.
 
-## Running Local Verification
+## Local verification
+
 ```bash
-node scripts/validate_all.js
+npm ci
 npm run check
+npm audit
 ```
+
+After committing release changes, run `npm run package:zip`. The command packages committed `HEAD` and derives the ZIP version from that same commit. Export rules in [`.gitattributes`](../.gitattributes) exclude large demo media and repository-only files from the distribution ZIP.

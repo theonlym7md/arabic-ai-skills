@@ -5,7 +5,7 @@ and Arabic copy review across Codex, Claude Code, Cursor, and other AI agents.
 
 مهارات مفتوحة المصدر لكتابة واجهات عربية طبيعية، ومراجعة تجربة RTL، وتوطين نصوص المنتجات.
 
-[![Release](https://img.shields.io/badge/Release-v1.2.2-blue.svg?style=for-the-badge&logo=github)](https://github.com/theonlym7md/arabic-ai-skills/releases/tag/v1.2.2)
+[![Release](https://img.shields.io/badge/Release-v1.2.3-blue.svg?style=for-the-badge&logo=github)](https://github.com/theonlym7md/arabic-ai-skills/releases/tag/v1.2.3)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 [![CI](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/codeql.yml/badge.svg)](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/codeql.yml)
@@ -14,7 +14,7 @@ and Arabic copy review across Codex, Claude Code, Cursor, and other AI agents.
 ---
 
 ## 📌 Versioning Alignment
-`Framework Spec: v1.2.0-STABLE | Skill Package: v1.2.2 | API Compatibility: 1.x`
+`Framework Spec: v1.2.0-STABLE | Skill Package: v1.2.3 | API Compatibility: 1.x`
 
 ---
 
@@ -22,7 +22,7 @@ and Arabic copy review across Codex, Claude Code, Cursor, and other AI agents.
 Arabic Intelligence is a guided 11-stage workflow (stages 0–10) for generating natural, culturally localized Arabic UX microcopy, product copy, and interface messaging.
 
 ## 💡 Why does it exist?
-Standard LLMs struggle with Arabic product copy—defaulting to literal English translations, robotic administrative clichés (*"في إطار حرصنا المستمر"*, *"يرجى التكرم بالعلم"*), and high cognitive load. Arabic Intelligence eliminates AI slop via ontological rule graphs, anti-example cliché bans, and an 18-metric rubric.
+Standard LLMs can struggle with Arabic product copy—defaulting to literal English translations, robotic administrative clichés (*"في إطار حرصنا المستمر"*, *"يرجى التكرم بالعلم"*), and high cognitive load. Arabic Intelligence reduces these patterns through structured context, domain guidance, anti-examples, and an 18-metric review rubric.
 
 ## 👤 Who is it for?
 - **AI Agent Engineers & Prompt Designers:** Adding Arabic product copywriting capabilities to agents.
@@ -97,6 +97,7 @@ main().catch(console.error);
 ```
 
 The SDK reads `OPENAI_API_KEY` from the environment by default. Set `OPENAI_MODEL` or pass `model` to choose a model explicitly.
+Responses are not stored by default by this SDK; pass `store: true` only when later retrieval is required. For reproducible production behavior, set `model` to a dated model snapshot supported by your account.
 The same example is available as [`examples/sdk.cjs`](examples/sdk.cjs).
 
 ---

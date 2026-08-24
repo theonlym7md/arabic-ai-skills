@@ -1,7 +1,7 @@
 {
   "name": "arabic-uiux-master",
-  "version": "1.2.2",
-  "description": "The ultimate Arabic UI/UX writing, microcopy, and RTL design masterclass skill for AI agents.",
+  "version": "1.2.3",
+  "description": "Arabic UI/UX writing, microcopy, and practical RTL design guidance for AI agents.",
   "main": "SKILL.md",
   "private": true,
   "keywords": [

@@ -11,6 +11,7 @@ Compatibility is capability-based. This repository does not claim identical qual
 - Structured JSON output support for the optional Node.js SDK
 
 The included Node.js SDK uses the OpenAI Responses API and strict JSON Schema output. See the [official Responses API reference](https://developers.openai.com/api/reference/typescript/resources/responses/methods/create).
+It validates and bounds product-context inputs before making a request and sets `store: false` by default. Set a dated model snapshot explicitly when output stability across deployments matters.
 
 Other models and runners may use the Markdown skills directly, but should be evaluated with the fixtures in `skills/arabic-intelligence/benchmarks/cases/` before production use.
 

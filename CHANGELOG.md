@@ -2,6 +2,19 @@
 
 All notable changes are documented here. This project follows Semantic Versioning.
 
+## [1.2.3] - 2026-08-24
+
+### Security
+
+- Treated supplied product copy and interface artifacts as untrusted data in both skills and the optional SDK.
+- Added bounded SDK input validation and disabled OpenAI response storage by default.
+
+### Changed
+
+- Replaced the duplicated CI workflow example with durable documentation linked to the canonical workflow.
+- Clarified SDK privacy and model-snapshot guidance and tightened unverified marketing language.
+- Made distribution ZIP names and contents derive from the same committed revision.
+
 ## [1.2.2] - 2026-08-24
 
 ### Fixed
@@ -29,6 +42,7 @@ All notable changes are documented here. This project follows Semantic Versionin
 - Published `arabic-intelligence` and `arabic-uiux-master` with deterministic validators.
 - Added skills.sh metadata, benchmarks, documentation, and the before/after demo video.
 
+[1.2.3]: https://github.com/theonlym7md/arabic-ai-skills/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/theonlym7md/arabic-ai-skills/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/theonlym7md/arabic-ai-skills/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/theonlym7md/arabic-ai-skills/tree/v1.2.0

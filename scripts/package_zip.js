@@ -5,14 +5,20 @@ const { execFileSync } = require("node:child_process");
 
 const rootDir = path.join(__dirname, "..");
 const distDir = path.join(rootDir, "dist");
-const { version } = require("../package.json");
+const committedPackage = JSON.parse(
+  execFileSync("git", ["show", "HEAD:package.json"], {
+    cwd: rootDir,
+    encoding: "utf8",
+  }),
+);
+const { version } = committedPackage;
 const zipPath = path.join(distDir, `arabic-ai-skills-v${version}.zip`);
 
 if (!fs.existsSync(distDir)) {
   fs.mkdirSync(distDir, { recursive: true });
 }
 
-console.log("Generating pristine distribution archive (excluding .git, node_modules)...");
+console.log(`Generating pristine distribution archive from committed HEAD (v${version})...`);
 
 try {
   // Use git archive for 100% clean distribution without .git internals
