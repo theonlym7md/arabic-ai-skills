@@ -5,7 +5,7 @@ and Arabic copy review across Codex, Claude Code, Cursor, and other AI agents.
 
 مهارات مفتوحة المصدر لكتابة واجهات عربية طبيعية، ومراجعة تجربة RTL، وتوطين نصوص المنتجات.
 
-[![Release](https://img.shields.io/badge/Release-v1.2.2-blue.svg?style=for-the-badge&logo=github)](https://github.com/theonlym7md/arabic-ai-skills/tree/v1.2.2)
+[![Release](https://img.shields.io/badge/Release-v1.2.2-blue.svg?style=for-the-badge&logo=github)](https://github.com/theonlym7md/arabic-ai-skills/releases/tag/v1.2.2)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 [![CI](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/codeql.yml/badge.svg)](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/codeql.yml)
