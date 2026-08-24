@@ -1,25 +1,75 @@
-// Script to validate plugin manifests
-const fs = require('fs');
-const path = require('path');
+const fs = require("node:fs");
+const path = require("node:path");
+const YAML = require("yaml");
 
-const pluginsDir = path.join(__dirname, '../skills/arabic-intelligence/plugins');
-const plugins = fs.readdirSync(pluginsDir).filter(f => fs.statSync(path.join(pluginsDir, f)).isDirectory());
+const pluginsDir = path.join(__dirname, "../skills/arabic-intelligence/plugins");
+const entitiesDir = path.join(__dirname, "../skills/arabic-intelligence/knowledge/entities");
+const plugins = fs
+  .readdirSync(pluginsDir)
+  .filter((entry) => fs.statSync(path.join(pluginsDir, entry)).isDirectory());
 
-console.log(`Validating ${plugins.length} plugin manifests...`);
-
-let passes = 0;
-for (const plugin of plugins) {
-  const manifestPath = path.join(pluginsDir, plugin, 'plugin.yaml');
-  if (fs.existsSync(manifestPath)) {
-    const content = fs.readFileSync(manifestPath, 'utf8');
-    if (content.includes('api_version:') && content.includes('min_framework_version:')) {
-      console.log(`✓ Plugin '${plugin}' passed validation.`);
-      passes++;
-    } else {
-      console.error(`✗ Plugin '${plugin}' manifest invalid.`);
-    }
-  }
+if (plugins.length === 0) {
+  throw new Error("No plugin directories were found.");
 }
 
-console.log(`Plugin Validation Complete: ${passes}/${plugins.length} passed.`);
-process.exit(passes === plugins.length ? 0 : 1);
+const requiredFields = [
+  "api_version",
+  "min_framework_version",
+  "max_framework_version",
+  "plugin_version",
+  "name",
+  "description",
+  "triggers",
+  "capabilities",
+  "entities",
+];
+let failed = false;
+
+for (const plugin of plugins) {
+  const manifestPath = path.join(pluginsDir, plugin, "plugin.yaml");
+
+  if (!fs.existsSync(manifestPath)) {
+    failed = true;
+    console.error(`${plugin}: missing plugin.yaml`);
+    continue;
+  }
+
+  let manifest;
+  try {
+    manifest = YAML.parse(fs.readFileSync(manifestPath, "utf8"));
+  } catch (error) {
+    failed = true;
+    console.error(`${plugin}: invalid YAML (${error.message})`);
+    continue;
+  }
+
+  const missing = requiredFields.filter((field) => manifest[field] === undefined);
+  if (missing.length > 0) {
+    failed = true;
+    console.error(`${plugin}: missing ${missing.join(", ")}`);
+    continue;
+  }
+
+  if (!Array.isArray(manifest.capabilities) || manifest.capabilities.length === 0) {
+    failed = true;
+    console.error(`${plugin}: capabilities must be a non-empty array`);
+    continue;
+  }
+
+  const missingEntities = manifest.entities.filter(
+    (entity) => !fs.existsSync(path.join(entitiesDir, `${entity}.yaml`)),
+  );
+  if (missingEntities.length > 0) {
+    failed = true;
+    console.error(`${plugin}: unknown entities ${missingEntities.join(", ")}`);
+    continue;
+  }
+
+  console.log(`${plugin}: valid`);
+}
+
+if (failed) {
+  process.exit(1);
+}
+
+console.log(`${plugins.length} plugin manifest(s) validated.`);

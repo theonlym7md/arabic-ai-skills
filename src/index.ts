@@ -1,12 +1,17 @@
-import fs from 'fs';
-import path from 'path';
-import OpenAI from 'openai';
+import fs from "node:fs";
+import path from "node:path";
+import OpenAI from "openai";
 
 export interface GenerateArabicCopyParams {
   /**
-   * Your OpenAI API Key.
+   * Your OpenAI API key. When omitted, the SDK reads OPENAI_API_KEY.
    */
-  apiKey: string;
+  apiKey?: string;
+
+  /**
+   * Model used by the Responses API. Defaults to OPENAI_MODEL, then gpt-5.4.
+   */
+  model?: string;
 
   /**
    * The type of website or platform (e.g. "Ecommerce", "Government", "Creative Studio").
@@ -48,12 +53,69 @@ export interface ArabicCopyResult {
   options: GeneratedOption[];
 }
 
+const resultSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    options: {
+      type: "array",
+      minItems: 1,
+      maxItems: 3,
+      items: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          text: { type: "string", minLength: 1 },
+          style: { type: "string", minLength: 1 },
+        },
+        required: ["text", "style"],
+      },
+    },
+  },
+  required: ["options"],
+} as const;
+
+function requireText(value: string, field: string): string {
+  const normalized = value.trim();
+  if (!normalized) {
+    throw new TypeError(`${field} must be a non-empty string.`);
+  }
+  return normalized;
+}
+
+function validateResult(value: unknown, maxLength: number): ArabicCopyResult {
+  if (!value || typeof value !== "object" || !Array.isArray((value as ArabicCopyResult).options)) {
+    throw new Error("The model returned an invalid ArabicCopyResult.");
+  }
+
+  const options = (value as ArabicCopyResult).options;
+  if (options.length < 1 || options.length > 3) {
+    throw new Error("The model must return between one and three options.");
+  }
+
+  for (const option of options) {
+    if (!option || typeof option.text !== "string" || typeof option.style !== "string") {
+      throw new Error("Each generated option must contain text and style strings.");
+    }
+
+    const wordCount = option.text.trim().split(/\s+/u).filter(Boolean).length;
+    if (wordCount > maxLength) {
+      throw new Error(`A generated option exceeded the ${maxLength}-word limit.`);
+    }
+  }
+
+  return { options };
+}
+
 /**
  * Generates humanized Arabic UX Microcopy based on the given parameters.
  */
-export async function generateArabicCopy(params: GenerateArabicCopyParams): Promise<ArabicCopyResult> {
+export async function generateArabicCopy(
+  params: GenerateArabicCopyParams,
+): Promise<ArabicCopyResult> {
   const {
     apiKey,
+    model = process.env.OPENAI_MODEL ?? "gpt-5.4",
     projectNiche,
     targetAudience,
     toneOfVoice,
@@ -62,48 +124,63 @@ export async function generateArabicCopy(params: GenerateArabicCopyParams): Prom
     maxLength = 10,
   } = params;
 
-  const openai = new OpenAI({ apiKey });
+  if (!Number.isInteger(maxLength) || maxLength < 1 || maxLength > 100) {
+    throw new RangeError("maxLength must be an integer between 1 and 100.");
+  }
+
+  const normalizedModel = requireText(model, "model");
+  const normalizedProjectNiche = requireText(projectNiche, "projectNiche");
+  const normalizedTargetAudience = requireText(targetAudience, "targetAudience");
+  const normalizedToneOfVoice = requireText(toneOfVoice, "toneOfVoice");
+  const normalizedTextType = requireText(textType, "textType");
+  const normalizedContext = requireText(context, "context");
+
+  const openai = new OpenAI(apiKey ? { apiKey } : undefined);
 
   // Load the core system prompt
-  let systemPrompt = '';
+  let systemPrompt = "";
   try {
-    const promptPath = path.join(__dirname, '../skills/arabic-intelligence/SKILL.md');
-    systemPrompt = fs.readFileSync(promptPath, 'utf-8');
+    const promptPath = path.join(__dirname, "../skills/arabic-intelligence/SKILL.md");
+    systemPrompt = fs.readFileSync(promptPath, "utf-8");
   } catch (error) {
-    throw new Error('Failed to load SKILL.md. Make sure it is located in the skills directory.');
+    throw new Error("Failed to load skills/arabic-intelligence/SKILL.md.", { cause: error });
   }
 
   const userMessage = `
 الرجاء صياغة نص واجهة مستخدم (UX Microcopy) بناءً على المعطيات التالية:
-- مجال المشروع (Project Niche): ${projectNiche}
-- الجمهور المستهدف (Target Audience): ${targetAudience}
-- نبرة الصوت (Tone of Voice): ${toneOfVoice}
-- نوع النص (Text Type): ${textType}
-- السياق/المعنى المطلوب (Context): ${context}
+- مجال المشروع: ${normalizedProjectNiche}
+- الجمهور المستهدف: ${normalizedTargetAudience}
+- نبرة الصوت: ${normalizedToneOfVoice}
+- نوع النص: ${normalizedTextType}
+- السياق والمعنى المطلوب: ${normalizedContext}
 - الحد الأقصى للكلمات (Max Length): ${maxLength} كلمات
 
-أعد النتيجة كـ JSON يحتوي على مصفوفة options كما هو موضح في القواعد.
+اكتب من خيار واحد إلى ثلاثة خيارات. اجعل كل خيار مستقلاً ومناسباً للسياق، ولا تتجاوز الحد الأقصى للكلمات.
 `;
 
   try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o', // Can be customized
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userMessage },
-      ],
-      response_format: { type: 'json_object' },
-      temperature: 0.7,
+    const response = await openai.responses.create({
+      model: normalizedModel,
+      instructions: systemPrompt,
+      input: userMessage,
+      text: {
+        format: {
+          type: "json_schema",
+          name: "arabic_copy_result",
+          strict: true,
+          schema: resultSchema,
+        },
+      },
     });
 
-    const content = response.choices[0].message.content;
+    const content = response.output_text;
     if (!content) {
-      throw new Error('No content returned from OpenAI');
+      throw new Error("The OpenAI API returned no output text.");
     }
 
-    const parsed = JSON.parse(content) as ArabicCopyResult;
-    return parsed;
+    return validateResult(JSON.parse(content), maxLength);
   } catch (error) {
-    throw new Error(`Failed to generate Arabic copy: ${error}`);
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to generate Arabic copy: ${message}`, { cause: error });
   }
 }

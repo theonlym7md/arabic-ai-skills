@@ -1,83 +1,103 @@
 ---
 name: arabic-intelligence
-description: "Arabic reasoning framework for UX writing, product communication and localization."
+description: "Create, rewrite, localize, or audit Arabic product copy and UX microcopy using a structured context, risk, terminology, drafting, and quality-review workflow. Use whenever a user asks for Arabic buttons, labels, forms, errors, empty states, onboarding, notifications, landing-page copy, product localization, tone adaptation, or an Arabic copy audit—even when they do not mention UX writing explicitly. Do not use for literary translation, long-form journalism, legal advice, or medical diagnosis."
 version: 1.2.0
 ---
 
-# Arabic Intelligence Framework
+# Arabic Intelligence
 
-A structured reasoning framework for generating natural, culturally localized Arabic UX microcopy and digital product experiences.
+أنشئ نصوص منتجات عربية طبيعية ومحددة بالسياق. لا تعرض مراحل التفكير أو درجات التقييم للمستخدم إلا إذا طلب تقرير تدقيق.
 
-## Execution Rules & Formal Stage Contracts
+## عقد التنفيذ
 
-Every stage in the 10-Stage Decision Graph adheres to a formal protocol interface contract:
+اتبع هذا المسار:
 
-- **Stage 0 (Planning):** `Consumes: Prompt` | `Produces: PlanningContext` | `Mutates: None` | `SideEffects: None` | `Idempotent: true`
-- **Stage 1 (Diagnose):** `Consumes: PlanningContext` | `Produces: ReasoningContext.diagnostics` | `Mutates: ReasoningContext` | `SideEffects: Ask user if MissingKeys > 2` | `Idempotent: true`
-- **Stage 2 (Intent):** `Consumes: diagnostics` | `Produces: Intent & EmotionalGoal` | `Mutates: ReasoningContext` | `SideEffects: None` | `Idempotent: true`
-- **Stage 3 (Audience):** `Consumes: diagnostics` | `Produces: Audience & ReadingLevel` | `Mutates: ReasoningContext` | `SideEffects: None` | `Idempotent: true`
-- **Stage 4 (Risk):** `Consumes: diagnostics` | `Produces: TrustLevel & Hard Constraints` | `Mutates: ReasoningContext` | `SideEffects: None` | `Idempotent: true`
-- **Stage 5 (Knowledge):** `Consumes: diagnostics` | `Produces: KnowledgeContext` | `Mutates: KnowledgeContext` | `SideEffects: Reads knowledge/entities & plugins/` | `Idempotent: true`
-- **Stage 6 (Reasoning):** `Consumes: ReasoningContext, KnowledgeContext` | `Produces: ReasoningContext.current_draft` | `Mutates: ReasoningContext` | `SideEffects: None` | `Idempotent: false`
-- **Stage 7 (Weights):** `Consumes: ReasoningContext.current_draft` | `Produces: Conflict Resolutions` | `Mutates: ReasoningContext` | `SideEffects: Reads domain_weights/` | `Idempotent: true`
-- **Stage 8 (Evaluation):** `Consumes: ReasoningContext.current_draft` | `Produces: EvaluationContext` | `Mutates: EvaluationContext` | `SideEffects: None` | `Idempotent: true`
-- **Stage 9 (Repair):** `Consumes: EvaluationContext` | `Produces: Revised Draft` | `Mutates: ReasoningContext.current_draft` | `SideEffects: Rewinds to Stage 6 (Max 2 Loops)` | `Idempotent: false`
-- **Stage 10 (Output):** `Consumes: ReasoningContext.current_draft` | `Produces: Final User Copy` | `Mutates: None` | `SideEffects: Emits text` | `Idempotent: true`
+1. افهم المهمة والسياق المتاح.
+2. اطلب المعلومات الناقصة فقط عندما يغيّر غيابها النتيجة جذريًا.
+3. حدّد مستوى المخاطر والنبرة والمنطقة والمصطلحات.
+4. حمّل أقل قدر لازم من ملفات المعرفة.
+5. اكتب المسودة، ثم قيّمها وأصلحها بحد أقصى جولتين.
+6. سلّم النص النهائي بصيغة تناسب طلب المستخدم.
 
-## Decoupled Execution Contexts
+لا تخترع سياسة أو متطلبًا نظاميًا. عندما يتعلق النص بقرار قانوني أو طبي أو مالي عالي المخاطر، اطلب المصدر المعتمد أو صغ النص باعتباره مسودة تحتاج مراجعة مختص.
 
-```json
-{
-  "PlanningContext": {
-    "TaskType": "", "goals": [], "constraints": [], "assumptions": [],
-    "risks": [], "success_criteria": [], "required_knowledge": [], "execution_strategy": ""
-  },
-  "ReasoningContext": {
-    "diagnostics": {
-      "Domain": "", "Audience": "", "Intent": "", "EmotionalGoal": "",
-      "ProductType": "", "TrustLevel": "", "ReadingLevel": "",
-      "Region": "", "Constraints": [], "MissingContextKeys": []
-    },
-    "current_draft": ""
-  },
-  "KnowledgeContext": {
-    "entities_loaded": [
-      { "entity": "", "confidence": 0.0, "priority": 0, "reason": "", "dependencies": [] }
-    ]
-  },
-  "EvaluationContext": {
-    "metrics": {
-      "HumanScore": 0, "Trust": 0, "CognitiveLoad": 0, "Clarity": 0,
-      "Tone": 0, "Brand": 0, "ReadingFlow": 0, "Terminology": 0,
-      "Persuasiveness": 0, "Naturalness": 0, "Localization": 0,
-      "AISmell": 0, "Accessibility": 0,
-      "SentenceRhythm": 0, "InformationDensity": 0,
-      "LexicalDiversity": 0, "Actionability": 0, "EmotionalPrecision": 0
-    },
-    "confidence": {
-      "planner": 0.0, "diagnosis": 0.0, "knowledge": 0.0, "generation": 0.0, "evaluation": 0.0, "overall": 0.0
-    }
-  },
-  "trace": [
-    {
-      "stage": "", "decision": "", "why": "", "knowledge_used": [], "alternatives_rejected": [],
-      "confidence": 0.0, "token_estimate": 0, "latency_ms": 0, "cache_hit": false, "cache_miss": true
-    }
-  ]
-}
-```
+## بوابة السياق
 
-## The 10-Stage Decision Graph Topology
+استخرج ما أمكن من طلب المستخدم:
 
-```text
-[Stage 0: Planning] -> [Stage 1: Diagnose] -> [Stage 2: Intent] -> [Stage 3: Audience] 
-                                                                             │
-[Stage 7: Weights] <- [Stage 6: Reasoning] <-> [Stage 5: Knowledge] <- [Stage 4: Risk]
-       │                    │
-       ▼                    ▼
-[Stage 8: Evaluation] ──(Metrics Fail?)──> [Stage 9: Repair]
-       │                                         │
- (Metrics Pass)                            (Loop back to Stage 6)
-       ▼
-[Stage 10: Output]
-```
+- نوع المنتج أو الخدمة
+- موضع النص في الرحلة
+- الإجراء المطلوب من المستخدم
+- الجمهور والمنطقة أو اللهجة
+- نبرة العلامة
+- حدود الطول أو المساحة
+- القيود النظامية أو المصطلحات المعتمدة
+- الحالة التي سبقت ظهور النص وما يمكن للمستخدم فعله بعدها
+
+إذا نقصت معلومة أو اثنتان، استخدم افتراضًا آمنًا واذكره باقتضاب عند الحاجة. إذا نقصت ثلاث معلومات حاسمة أو أكثر وكانت البدائل ستنتج نصوصًا مختلفة جوهريًا، اسأل سؤالًا واحدًا يجمع أهم الفجوات.
+
+للتشخيص المعقد، اقرأ [reasoning/stage_0_planner.md](reasoning/stage_0_planner.md) ثم [reasoning/stage_1_diagnose.md](reasoning/stage_1_diagnose.md).
+
+## اختيار المعرفة
+
+ابدأ بـ [knowledge/relations/routing.yaml](knowledge/relations/routing.yaml) لتحديد المجال والقدرة. بعد ذلك:
+
+- حمّل كيان المجال المطابق فقط من `knowledge/entities/`.
+- حمّل وزن المجال المطابق من `knowledge/relations/domain_weights/` عندما يكون موجودًا.
+- حمّل إضافة المجال من `plugins/` عندما تطابق المنطقة والمجال.
+- استخدم [reasoning/stage_5_knowledge_selection.md](reasoning/stage_5_knowledge_selection.md) إذا تزاحمت عدة كيانات.
+
+لا تعامل أمثلة المعرفة كقوالب ثابتة. استنتج منها المبدأ ثم اكتب نصًا مناسبًا للحالة الحالية.
+
+## قواعد الكتابة العربية
+
+- ابدأ بالمعلومة أو الإجراء الذي يحتاجه المستخدم.
+- استخدم المبني للمعلوم والفعل المباشر: «أكمل الطلب» بدل «يتم إكمال الطلب».
+- احذف مقدمات العلاقات العامة والعبارات الإدارية التي لا تضيف معنى.
+- لا تترجم بنية الجملة الإنجليزية حرفيًا.
+- فرّق بين النص الرسمي والنص المتكلف؛ الوقار لا يتطلب جملًا طويلة.
+- استخدم مصطلحًا واحدًا للمفهوم نفسه داخل الرحلة.
+- اجعل رسالة الخطأ تشرح ما حدث وما الخطوة التالية، من دون لوم المستخدم.
+- لا تستخدم «تم بنجاح» وحدها؛ سمِّ الحدث: «اكتمل الدفع» أو «حُفظت التغييرات».
+- استخدم «جارٍ» بصيغتها الصحيحة، أو فضّل فعلًا مباشرًا مثل «نراجع طلبك الآن».
+- تجنّب التشكيل الكامل. أضف علامة محدودة فقط عندما تمنع التباسًا حقيقيًا.
+- لا تستخدم اللهجة إلا إذا طلبها المستخدم أو أثبتها سياق العلامة.
+
+## أنماط المكوّنات
+
+### رسالة الخطأ
+
+رتّبها هكذا: المشكلة → أثرها → الإجراء المتاح. لا تعرض رمز الخطأ إلا إذا كان مفيدًا للدعم.
+
+### الحالة الفارغة
+
+وضّح ما الذي لا يوجد، ولماذا قد يهم، ثم أضف الإجراء التالي إن وُجد. لا تحتفل بحالة قد تكون مقلقة للمستخدم.
+
+### زر الإجراء
+
+استخدم فعلًا يصف النتيجة المتوقعة مثل «أرسل الطلب» أو «راجع البيانات». تجنّب «متابعة» عندما يمكن تسمية الخطوة.
+
+### الإشعار أو التأكيد
+
+سمِّ الحدث المكتمل، ثم أضف ما سيحدث لاحقًا إذا احتاج المستخدم إلى معرفته.
+
+### النص التسويقي
+
+اربط الفائدة بحالة استخدام قابلة للفهم. لا تستخدم صفات تفخيمية بلا دليل مثل «ثوري» أو «الأفضل».
+
+## التقييم والإصلاح
+
+استخدم [reasoning/stage_8_evaluation.md](reasoning/stage_8_evaluation.md) للمهام الكبيرة أو تقارير التدقيق. أعطِ الأولوية للوضوح والثقة والطبيعية وسهولة اتخاذ الإجراء. في النصوص الحكومية والمالية والصحية، قدّم الدقة والثقة على الإبداع.
+
+إذا أخفقت المسودة، طبّق التدخل المناسب من [reasoning/stage_9_repair_matrix.md](reasoning/stage_9_repair_matrix.md). أعد الكتابة مرتين كحد أقصى؛ إذا بقي التعارض بسبب نقص سياسة أو مصطلح معتمد، صرّح بالحاجة إلى المصدر بدل اختراعه.
+
+## صيغة التسليم
+
+طابق صيغة المستخدم. عند غياب صيغة محددة:
+
+- لمكوّن واحد: اعرض النص النهائي ثم ملاحظة قصيرة فقط إذا كان هناك افتراض مهم.
+- لعدة مكوّنات: استخدم جدولًا بأعمدة «المكوّن»، «النص»، «ملاحظة الاستخدام».
+- لطلب خيارات: اعرض ثلاثة خيارات كحد أقصى وميّز النبرة أو الاستخدام، لا تغييرات مترادفة طفيفة.
+- لتدقيق نص: اعرض «المشكلة»، «الأثر»، «الصياغة المقترحة» مع ترتيب النتائج حسب الأهمية.
+
+لا تُخرج `PlanningContext` أو `ReasoningContext` أو أثر القرار الداخلي في الرد النهائي.

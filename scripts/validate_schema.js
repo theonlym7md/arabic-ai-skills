@@ -1,23 +1,46 @@
-// Script to validate entity YAML files against _schema.yaml
-const fs = require('fs');
-const path = require('path');
+const fs = require("node:fs");
+const path = require("node:path");
+const Ajv2020 = require("ajv/dist/2020");
+const YAML = require("yaml");
 
-const entitiesDir = path.join(__dirname, '../skills/arabic-intelligence/knowledge/entities');
-const files = fs.readdirSync(entitiesDir).filter(f => f.endsWith('.yaml') && !f.startsWith('_'));
+const entitiesDir = path.join(__dirname, "../skills/arabic-intelligence/knowledge/entities");
+const schemaPath = path.join(entitiesDir, "_schema.yaml");
+const files = fs
+  .readdirSync(entitiesDir)
+  .filter((file) => file.endsWith(".yaml") && !file.startsWith("_"));
 
-console.log(`Validating ${files.length} entity YAML schemas...`);
-
-let passes = 0;
-for (const file of files) {
-  const filePath = path.join(entitiesDir, file);
-  const content = fs.readFileSync(filePath, 'utf8');
-  if (content.includes('entity:') && content.includes('directives:')) {
-    console.log(`✓ ${file} passed schema check.`);
-    passes++;
-  } else {
-    console.error(`✗ ${file} failed schema check! Missing required fields.`);
-  }
+if (files.length === 0) {
+  throw new Error("No entity YAML files were found.");
 }
 
-console.log(`Schema Validation Complete: ${passes}/${files.length} passed.`);
-process.exit(passes === files.length ? 0 : 1);
+const schema = YAML.parse(fs.readFileSync(schemaPath, "utf8"));
+const validate = new Ajv2020({ allErrors: true, strict: false }).compile(schema);
+let failed = false;
+
+for (const file of files) {
+  const filePath = path.join(entitiesDir, file);
+  let entity;
+
+  try {
+    entity = YAML.parse(fs.readFileSync(filePath, "utf8"));
+  } catch (error) {
+    failed = true;
+    console.error(`${file}: invalid YAML (${error.message})`);
+    continue;
+  }
+
+  if (!validate(entity)) {
+    failed = true;
+    const details = validate.errors.map((error) => `${error.instancePath || "/"} ${error.message}`);
+    console.error(`${file}: ${details.join("; ")}`);
+    continue;
+  }
+
+  console.log(`${file}: valid`);
+}
+
+if (failed) {
+  process.exit(1);
+}
+
+console.log(`${files.length} entity schema(s) validated.`);

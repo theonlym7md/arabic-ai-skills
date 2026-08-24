@@ -7,7 +7,7 @@ This document defines the Continuous Integration pipeline setup for the Arabic I
 ## Workflow Definition (`.github/workflows/ci.yml`)
 
 ```yaml
-name: CI Pipeline
+name: CI
 
 on:
   push:
@@ -16,7 +16,7 @@ on:
     branches: [ main ]
 
 jobs:
-  test-and-validate:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,12 +24,13 @@ jobs:
         with:
           node-version: '20'
       - run: npm ci
-      - run: node scripts/validate_all.js
-      - run: npx jest --ci
+      - run: npm run check
+      - run: npm run build
 ```
 
 ## Running Local Verification
 ```bash
 node scripts/validate_all.js
-npx jest
+npm run check
+npm run build
 ```

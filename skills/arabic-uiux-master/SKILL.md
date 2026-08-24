@@ -1,100 +1,94 @@
 ---
 name: arabic-uiux-master
-description: "Arabic reasoning framework for UX writing, product communication, and microcopy masterclass."
+description: "Design, rewrite, and audit Arabic interface copy together with RTL content guidance. Use for Arabic UI screens, buttons, forms, errors, empty states, onboarding, checkout, dashboards, responsive layouts, typography, bidirectional content, or UX-writing systems. Trigger whenever a request combines Arabic content with interface or RTL design decisions. Do not use for code-only RTL bugs, literary writing, or general translation with no product-interface context."
 version: 1.2.0
 ---
 
-# 🎨 Arabic UI/UX Masterclass & Microcopy Engine
+# Arabic UI/UX Master
 
-This skill package implements the Arabic Intelligence Guided Reasoning Specification to generate natural, localized Arabic UX microcopy, product interfaces, and digital content.
+أنشئ تجربة عربية تبدو مصممة للعربية من البداية، لا واجهة إنجليزية معكوسة ومترجمة.
 
-## Execution Rules & Formal Stage Contracts
+## 1. اجمع الحد الأدنى من السياق
 
-Every stage in the 10-Stage Decision Graph adheres to a formal protocol interface contract:
+استخرج من الطلب: نوع الشاشة، هدف المستخدم، الجمهور والمنطقة، نبرة العلامة، الحالة الحالية، الإجراء التالي، وحدود المساحة.
 
-- **Stage 0 (Planning):** `Consumes: Prompt` | `Produces: PlanningContext` | `Mutates: None` | `SideEffects: None` | `Idempotent: true`
-- **Stage 1 (Diagnose):** `Consumes: PlanningContext` | `Produces: ReasoningContext.diagnostics` | `Mutates: ReasoningContext` | `SideEffects: Ask user if MissingKeys > 2` | `Idempotent: true`
-- **Stage 5 (Knowledge):** `Consumes: diagnostics` | `Produces: KnowledgeContext` | `Mutates: KnowledgeContext` | `SideEffects: Reads knowledge/entities & plugins/` | `Idempotent: true`
-- **Stage 8 (Evaluation):** `Consumes: ReasoningContext.current_draft` | `Produces: EvaluationContext` | `Mutates: EvaluationContext` | `SideEffects: None` | `Idempotent: true`
-- **Stage 9 (Repair):** `Consumes: EvaluationContext` | `Produces: Revised Draft` | `Mutates: ReasoningContext.current_draft` | `SideEffects: Rewinds to Stage 6 (Max 2 Loops)` | `Idempotent: false`
+استخدم افتراضات آمنة للفجوات الصغيرة. عندما تنقص ثلاث معلومات حاسمة أو أكثر، اسأل سؤالًا واحدًا يجمعها قبل إنتاج نظام نصوص كامل. لا تؤخر تعديلًا صغيرًا يمكن فهمه من السياق.
 
-## Decoupled Execution Contexts
+## 2. صمّم رحلة النص
 
-```json
-{
-  "PlanningContext": {
-    "TaskType": "", "goals": [], "constraints": [], "assumptions": [],
-    "risks": [], "success_criteria": [], "required_knowledge": [], "execution_strategy": ""
-  },
-  "ReasoningContext": {
-    "diagnostics": {
-      "Domain": "", "Audience": "", "Intent": "", "EmotionalGoal": "",
-      "ProductType": "", "TrustLevel": "", "ReadingLevel": "",
-      "Region": "", "Constraints": [], "MissingContextKeys": []
-    },
-    "current_draft": ""
-  },
-  "KnowledgeContext": {
-    "entities_loaded": [
-      { "entity": "", "confidence": 0.0, "priority": 0, "reason": "", "dependencies": [] }
-    ]
-  },
-  "EvaluationContext": {
-    "metrics": {
-      "HumanScore": 0, "Trust": 0, "CognitiveLoad": 0, "Clarity": 0,
-      "Tone": 0, "Brand": 0, "ReadingFlow": 0, "Terminology": 0,
-      "Persuasiveness": 0, "Naturalness": 0, "Localization": 0,
-      "AISmell": 0, "Accessibility": 0,
-      "SentenceRhythm": 0, "InformationDensity": 0,
-      "LexicalDiversity": 0, "Actionability": 0, "EmotionalPrecision": 0
-    },
-    "confidence": { "planner": 0.0, "diagnosis": 0.0, "knowledge": 0.0, "generation": 0.0, "evaluation": 0.0, "overall": 0.0 }
-  }
-}
-```
+حدّد لكل مكوّن:
 
----
+- ماذا يعرف المستخدم الآن؟
+- ماذا يحتاج أن يفهم؟
+- ما الإجراء الذي يستطيع اتخاذه؟
+- ما الذي سيحدث بعد الإجراء؟
 
-## 🚫 قائمة محظورات الذكاء الاصطناعي (AI Slop Blacklist)
+اكتب العنوان والوصف والإجراء كوحدة واحدة. لا تجعل الأزرار تكرر العنوان أو تعتمد على «متابعة» و«موافق» إذا أمكن تسمية النتيجة.
 
-```diff
-- ❌ "في إطار حرصنا المستمر على تقديم أفضل الخدمات..."
-+ ✅ "سجلك خالي من المخالفات" (مباشر، فعال)
+## 3. قواعد الصياغة
 
-- ❌ "يرجى التكرم بالعلم بأنه قد تم إتمام العملية بنجاح..."
-+ ✅ "تم الدفع بنجاح" (كلمتان تؤديان المعنى)
+- ابدأ بالمعنى الأهم.
+- استخدم جملًا قصيرة ومبنية للمعلوم.
+- سمِّ الحدث المكتمل: «اكتمل الدفع» أو «حُفظت التغييرات».
+- اشرح الخطأ والخطوة التالية من دون لوم.
+- تجنّب «في إطار حرصنا»، «يرجى التكرم»، «يسعدنا ويشرفنا»، والوعود غير القابلة للإثبات.
+- استخدم «جارٍ» بصيغتها الصحيحة، أو اكتب فعلًا مباشرًا: «نراجع طلبك الآن».
+- لا تخلط الفصحى واللهجة داخل الرحلة نفسها من دون سبب واضح.
+- حافظ على مصطلح واحد لكل مفهوم: لا تتناوب بين «حساب» و«ملف شخصي» إذا كانا الشيء نفسه.
 
-- ❌ "يسعدنا ويشرفنا خدمتكم في هذه البوابة الإلكترونية..."
-+ ✅ "مرحباً بك في المنصة"
+## 4. أنماط جاهزة للتكييف
 
-- ❌ "يرجى التكرم بالانتظار لحين معالجة البيانات..."
-+ ✅ "جاري جلب البيانات..."
-```
+استخدم هذه البنى، لا النصوص حرفيًا:
 
----
+- **حالة فارغة:** ما الذي لا يوجد + الإجراء الممكن.
+- **خطأ قابل للإصلاح:** ما الذي تعذر + السبب المعروف + الإجراء.
+- **تأكيد:** ما الذي اكتمل + الخطوة التالية عند الحاجة.
+- **طلب إذن:** الفائدة + البيانات المستخدمة + خيار القبول أو الرفض.
+- **تحميل:** العملية الحالية + تقدير زمني فقط إذا كان موثوقًا.
+- **حذف:** الشيء الذي سيُحذف + أثر الحذف + زر صريح.
 
-## 📚 قاموس المصطلحات التفاعلية والنصوص الميكروية (Sector Microcopy Lexicon)
+## 5. إرشادات RTL
 
-### أ) القطاع الحكومي (GovTech)
-- **حالة المخالفات الفارغة:** "سجلك خالي من المخالفات"
-- **زر إتمام الطلب:** "أتمم الطلب"
-- **تأكيد الهوية الوطنية:** "أدخل رقم الهوية الوطنية"
-- **حالة الانتظار:** "جاري مراجعة الطلب..."
+- اضبط اتجاه الحاوية العربية على `dir="rtl"`، ولا تعتمد على المحاذاة وحدها.
+- استخدم خصائص CSS المنطقية مثل `margin-inline-start` و`padding-inline-end`.
+- اعكس أسهم الرجوع والتقدم ومسارات التنقل، لكن لا تعكس أيقونات عالمية غير اتجاهية مثل التشغيل أو البحث.
+- اعزل الأرقام والرموز والبريد الإلكتروني وأكواد التحقق عند اختلاط الاتجاهين.
+- حافظ على ترتيب الأرقام كما يتوقعه المجال؛ لا تحوّلها تلقائيًا من دون متطلب.
+- اختر خطًا يدعم العربية فعليًا، مثل IBM Plex Sans Arabic أو Noto Sans Arabic أو Noto Kufi Arabic أو Cairo أو Tajawal. استخدم خطًا لاتينيًا منفصلًا عند الحاجة.
+- اختبر التفاف النص عند تكبيره 200%، لأن العربية قد تحتاج عرضًا أكبر من المقابل الإنجليزي.
+- لا تجعل اللون وحده ينقل الخطأ أو النجاح، واكتب تسمية مفهومة لقارئ الشاشة.
 
-### ب) التقنية المالية والتجارة (FinTech & Payments)
-- **فشل الدفع (Payment Error):** "تعذر استكمال عملية الدفع — يرجى التأكد من توفر الرصيد أو استخدام بطاقة أخرى."
-- **زر الدفع الفوري (CTA):** "ادفع الآن — 150 ر.س"
-- **التقسيط والدفع اللاحق:** "قسمها على 4 دفعات بدون فوائد"
+## 6. حساسية المجال
 
-### ج) التجارة الإلكترونية والـ SaaS
-- **زر البدء (Hero CTA):** "ابدأ تجربتك المجانية"
-- **السلة الفارغة:** "سلتك تنتظر خياراتك المفضلة"
-- **الاشتراك السنوي:** "وفر 20% عند الاختيار السنوي"
+- **حكومي:** الدقة، الوقار، والخطوة الإجرائية أهم من الدفء التسويقي.
+- **مالي:** اعرض المبلغ والعملة والأثر قبل التأكيد، ولا تُخفِ الرسوم.
+- **صحي:** استخدم لغة مطمئنة من دون تشخيص أو ضمان.
+- **تجارة إلكترونية:** وضّح السعر والتوفر وسياسة الإرجاع عند نقطة القرار.
+- **SaaS:** اربط الميزة بالمهمة التي سينجزها المستخدم.
 
----
+اطلب المصطلح أو السياسة المعتمدة عندما يكون القرار قانونيًا أو ماليًا أو طبيًا عالي المخاطر. لا تخترع امتثالًا.
 
-## 📐 قواعد التصميم البصري والـ RTL والـ Typography
+## 7. فحص الجودة
 
-1. **محاذاة النص:** المحاذاة الافتراضية للنصوص والعناوين تكون لليمين (`text-align: right`).
-2. **الأيقونات والتنقل:** تعكيس أيقونات الاتجاه تلقائياً في الواجهات العربية.
-3. **الخطوط المعتمدة:** `Inter`, `Cairo`, `Tajawal`, `Outfit`.
+راجع قبل التسليم:
+
+- هل يفهم المستخدم ما حدث وما يستطيع فعله؟
+- هل الجملة طبيعية عند قراءتها بصوت عالٍ؟
+- هل المصطلحات متسقة؟
+- هل النبرة مناسبة للمخاطر؟
+- هل يعمل النص مع RTL والمحتوى ثنائي الاتجاه؟
+- هل يوجد حشو أو تفخيم أو ترجمة حرفية؟
+
+أعد الكتابة بحد أقصى جولتين.
+
+## صيغة التسليم
+
+عند غياب طلب محدد، استخدم جدولًا:
+
+| المكوّن | النص العربي | ملاحظة UX/RTL |
+| --- | --- | --- |
+| العنوان | … | … |
+| الوصف | … | … |
+| الإجراء الأساسي | … | … |
+
+اعرض بدائل فقط عندما تمثل نبرات أو قرارات تجربة مختلفة بوضوح. لا تعرض التفكير الداخلي أو قائمة الفحص في الناتج النهائي.

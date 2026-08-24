@@ -4,7 +4,7 @@ A modular reasoning framework for Arabic UX writing, product copy, and AI agents
 
 [![Release](https://img.shields.io/badge/Release-v1.2.0--STABLE-blue.svg?style=for-the-badge&logo=github)](https://github.com/theonlym7md/arabic-ai-skills)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
-[![Build Status](https://img.shields.io/badge/Tests-100%25%20Passing-brightgreen.svg?style=for-the-badge&logo=jest)](tests/skill.test.js)
+[![CI](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/ci.yml)
 
 ---
 
@@ -14,7 +14,7 @@ A modular reasoning framework for Arabic UX writing, product copy, and AI agents
 ---
 
 ## ❓ What is this?
-Arabic Intelligence is a guided reasoning framework that provides a 10-stage decision graph for generating natural, human-grade, and culturally localized Arabic UX microcopy, product copy, and interface messaging.
+Arabic Intelligence is a guided 11-stage workflow (stages 0–10) for generating natural, culturally localized Arabic UX microcopy, product copy, and interface messaging.
 
 ## 💡 Why does it exist?
 Standard LLMs struggle with Arabic product copy—defaulting to literal English translations, robotic administrative clichés (*"في إطار حرصنا المستمر"*, *"يرجى التكرم بالعلم"*), and high cognitive load. Arabic Intelligence eliminates AI slop via ontological rule graphs, anti-example cliché bans, and an 18-metric rubric.
@@ -32,25 +32,30 @@ Standard LLMs struggle with Arabic product copy—defaulting to literal English 
 > *"في إطار حرصنا المستمر على تقديم أفضل الخدمات، يرجى التكرم بالعلم بأنه لا يوجد لديكم أي مخالفات مرورية حالياً."*
 
 ### ✅ Arabic Intelligence Framework Output (v1.2.0-STABLE)
-> **العنوان:** "سجلك خالي من المخالفات"  
+> **العنوان:** "لا توجد مخالفات مسجّلة عليك"
 > **الوصف:** "لا توجد أي مخالفات مرورية مسجلة بحقك حالياً. نتمنى لك قيادة آمنة."
 
 ---
 
 ## 🚀 Quick Install
 
-Add the skill directly to your Claude Code, Cursor, Antigravity, or Agent CLI:
+Choose the focused writing framework or the combined UI/RTL skill:
 
 ```bash
+npx skills add https://github.com/theonlym7md/arabic-ai-skills --skill arabic-intelligence
 npx skills add https://github.com/theonlym7md/arabic-ai-skills --skill arabic-uiux-master
 ```
+
+| Skill | Best for |
+| :--- | :--- |
+| [`arabic-intelligence`](skills/arabic-intelligence/README.md) | Arabic product copy, localization, terminology, and copy audits |
+| [`arabic-uiux-master`](skills/arabic-uiux-master/README.md) | Arabic interface copy combined with RTL, typography, and accessibility guidance |
 
 Or programmatically via Node.js SDK:
 ```typescript
 import { generateArabicCopy } from 'arabic_skill';
 
 const result = await generateArabicCopy({
-  apiKey: process.env.OPENAI_API_KEY!,
   projectNiche: 'GovTech',
   targetAudience: 'Saudi Citizens',
   toneOfVoice: 'Official & Clear',
@@ -58,6 +63,8 @@ const result = await generateArabicCopy({
   context: 'Traffic violation page with zero fines'
 });
 ```
+
+The SDK reads `OPENAI_API_KEY` from the environment by default. Set `OPENAI_MODEL` or pass `model` to choose a model explicitly.
 
 ---
 

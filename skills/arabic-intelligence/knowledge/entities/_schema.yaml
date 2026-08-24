@@ -1,21 +1,38 @@
 $schema: "https://json-schema.org/draft/2020-12/schema"
 title: "OntologyEntity"
 type: "object"
+additionalProperties: false
+required:
+  - entity
+  - confidence
+  - source
+  - last_reviewed
+  - priority
+  - aliases
+  - relationship
+  - directives
+  - examples
+  - negative_examples
 properties:
   entity:
     type: "string"
     description: "Unique identifier of the entity"
   confidence:
     type: "number"
+    minimum: 0
+    maximum: 1
     description: "Metadata confidence rating of the entity (0.0 to 1.0)"
   source:
     type: "string"
     description: "Authority source of the entity guidance (e.g. Sdaia / DGA Standard)"
   last_reviewed:
     type: "string"
+    pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
     description: "ISO date string of last review"
   priority:
     type: "integer"
+    minimum: 1
+    maximum: 100
     description: "Base priority score (1-100)"
   inherits:
     type: "array"
@@ -50,21 +67,29 @@ properties:
     description: "Domain-specific priority adjustments"
   aliases:
     type: "array"
+    minItems: 1
+    uniqueItems: true
     items:
       type: "string"
     description: "Semantic search triggers"
+  relationship:
+    type: "string"
+    description: "The entity's role in the knowledge graph"
   directives:
     type: "array"
+    minItems: 1
     items:
       type: "string"
     description: "Actionable positive instructions enforced by this entity"
   examples:
     type: "array"
+    minItems: 1
     items:
       type: "string"
     description: "Positive gold-standard phrasing examples for this entity"
   negative_examples:
     type: "array"
+    minItems: 1
     items:
       type: "string"
     description: "Explicit negative patterns, AI clichés, and forbidden slop phrases for this entity"

@@ -1,26 +1,21 @@
-// Universal Master System Validator for Schemas, Plugins, and Benchmarks
-const { execSync } = require('child_process');
-const path = require('path');
+// Runs every deterministic repository validator and fails on the first error.
+const { execFileSync } = require("node:child_process");
+const path = require("node:path");
 
-console.log('==================================================');
-console.log('Running Universal Master System Validator (v1.2.0)...');
-console.log('==================================================\n');
+const validators = [
+  ["Entity schemas", "validate_schema.js"],
+  ["Plugin manifests", "validate_plugin.js"],
+  ["Benchmark fixtures", "validate_benchmarks.js"],
+];
 
 try {
-  console.log('[1/3] Validating Entity Schemas...');
-  execSync('node ' + path.join(__dirname, 'validate_schema.js'), { stdio: 'inherit' });
+  for (const [index, [label, file]] of validators.entries()) {
+    console.log(`[${index + 1}/${validators.length}] ${label}`);
+    execFileSync(process.execPath, [path.join(__dirname, file)], { stdio: "inherit" });
+  }
 
-  console.log('\n[2/3] Validating Plugin Manifests...');
-  execSync('node ' + path.join(__dirname, 'validate_plugin.js'), { stdio: 'inherit' });
-
-  console.log('\n[3/3] Validating Benchmark Cases...');
-  execSync('node ' + path.join(__dirname, 'validate_benchmarks.js'), { stdio: 'inherit' });
-
-  console.log('\n==================================================');
-  console.log('ALL SYSTEM VALIDATIONS PASSED 100% SUCCESSFUL!');
-  console.log('==================================================\n');
-  process.exit(0);
+  console.log(`All ${validators.length} validators passed.`);
 } catch (err) {
-  console.error('\n✗ System Validation Failed:', err.message);
+  console.error("Validation failed:", err instanceof Error ? err.message : String(err));
   process.exit(1);
 }

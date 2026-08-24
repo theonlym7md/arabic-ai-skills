@@ -1,17 +1,18 @@
 // Script to generate pristine lightweight ZIP distribution archive excluding .git & node_modules
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+const fs = require("node:fs");
+const path = require("node:path");
+const { execSync } = require("node:child_process");
 
-const rootDir = path.join(__dirname, '..');
-const distDir = path.join(rootDir, 'dist');
-const zipPath = path.join(distDir, 'arabic-ai-skills-v1.2.0.zip');
+const rootDir = path.join(__dirname, "..");
+const distDir = path.join(rootDir, "dist");
+const { version } = require("../package.json");
+const zipPath = path.join(distDir, `arabic-ai-skills-v${version}.zip`);
 
 if (!fs.existsSync(distDir)) {
   fs.mkdirSync(distDir, { recursive: true });
 }
 
-console.log('Generating pristine distribution archive (excluding .git, node_modules)...');
+console.log("Generating pristine distribution archive (excluding .git, node_modules)...");
 
 try {
   // Use git archive for 100% clean distribution without .git internals
@@ -21,6 +22,6 @@ try {
   console.log(`  Path: ${zipPath}`);
   console.log(`  Size: ${(stats.size / 1024).toFixed(2)} KB`);
 } catch (err) {
-  console.error('✗ Failed to package clean archive:', err.message);
+  console.error("✗ Failed to package clean archive:", err.message);
   process.exit(1);
 }

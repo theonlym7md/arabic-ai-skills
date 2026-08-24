@@ -1,42 +1,86 @@
-// Enterprise unit test suite validating Arabic Intelligence Framework v1.2.0-STABLE architecture.
+const assert = require("node:assert/strict");
+const { execFileSync } = require("node:child_process");
+const fs = require("node:fs");
+const path = require("node:path");
+const { describe, test } = require("node:test");
 
-describe('Arabic Intelligence Framework v1.2.0-STABLE Audit', () => {
-  const fs = require('fs');
-  const path = require('path');
+const root = path.join(__dirname, "..");
+const skillsRoot = path.join(root, "skills");
 
-  it('should validate SKILL.md structure, decoupled memory contexts, and stage contracts', () => {
-    const skillPath = path.join(__dirname, '../skills/arabic-intelligence/SKILL.md');
-    
-    expect(fs.existsSync(skillPath)).toBe(true);
+function read(relativePath) {
+  return fs.readFileSync(path.join(root, relativePath), "utf8");
+}
 
-    const content = fs.readFileSync(skillPath, 'utf8');
-    expect(content).toContain('Arabic Intelligence Framework');
-    expect(content).toContain('PlanningContext');
-    expect(content).toContain('ReasoningContext');
-    expect(content).toContain('KnowledgeContext');
-    expect(content).toContain('EvaluationContext');
-    expect(content).toContain('Formal Stage Contracts');
+function parseFrontmatter(content) {
+  const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  if (!match) {
+    throw new Error("Missing YAML frontmatter");
+  }
+
+  return Object.fromEntries(
+    match[1]
+      .split(/\r?\n/)
+      .map((line) => line.match(/^([a-z_]+):\s*["']?(.*?)["']?$/))
+      .filter(Boolean)
+      .map((parts) => [parts[1], parts[2]]),
+  );
+}
+
+describe("Arabic AI skills repository", () => {
+  for (const skillName of ["arabic-intelligence", "arabic-uiux-master"]) {
+    test(`${skillName} has complete and aligned skill metadata`, () => {
+      const skillDir = path.join(skillsRoot, skillName);
+      const skillContent = fs.readFileSync(path.join(skillDir, "SKILL.md"), "utf8");
+      const readmePath = path.join(skillDir, "README.md");
+      const packageJson = JSON.parse(fs.readFileSync(path.join(skillDir, "package.json"), "utf8"));
+      const frontmatter = parseFrontmatter(skillContent);
+
+      assert.equal(fs.existsSync(readmePath), true);
+      assert.equal(frontmatter.name, skillName);
+      assert.equal(packageJson.name, skillName);
+      assert.equal(packageJson.version, frontmatter.version);
+      assert.ok(frontmatter.description.length > 120);
+      assert.match(frontmatter.description, /Use (whenever|for)/);
+    });
+  }
+
+  test("all deterministic validators pass", () => {
+    assert.doesNotThrow(() =>
+      execFileSync(process.execPath, [path.join(root, "scripts", "validate_all.js")], {
+        cwd: root,
+        stdio: "pipe",
+      }),
+    );
   });
 
-  it('should validate entity schema and negative examples support', () => {
-    const schemaPath = path.join(__dirname, '../skills/arabic-intelligence/knowledge/entities/_schema.yaml');
-    expect(fs.existsSync(schemaPath)).toBe(true);
+  test("positive examples avoid known grammar regressions", () => {
+    const positiveFiles = [
+      "README.md",
+      "skills/arabic-intelligence/benchmarks/cases/govtech_empty_state/golden_output.md",
+      "skills/arabic-intelligence/examples/govtech_violation_empty_state.md",
+      "skills/arabic-intelligence/knowledge/entities/saudi_govtech.yaml",
+      "skills/arabic-uiux-master/SKILL.md",
+    ];
 
-    const schemaContent = fs.readFileSync(schemaPath, 'utf8');
-    expect(schemaContent).toContain('negative_examples');
-    expect(schemaContent).toContain('examples');
-    expect(schemaContent).toContain('conflicts_with');
-    expect(schemaContent).toContain('inherits');
-    expect(schemaContent).toContain('depends_on');
+    for (const file of positiveFiles) {
+      const content = read(file);
+      assert.doesNotMatch(content, /سجلك خالي من المخالفات/);
+      assert.doesNotMatch(content, /جاري (مراجعة|جلب|معالجة)/);
+    }
   });
 
-  it('should validate domain weights structure', () => {
-    const weightsPath = path.join(__dirname, '../skills/arabic-intelligence/knowledge/relations/domain_weights/government.yaml');
-    expect(fs.existsSync(weightsPath)).toBe(true);
+  test("the SDK uses configurable Responses API structured output", () => {
+    const source = read("src/index.ts");
+    assert.match(source, /openai\.responses\.create/);
+    assert.match(source, /type: "json_schema"/);
+    assert.match(source, /process\.env\.OPENAI_MODEL \?\? "gpt-5\.4"/);
+    assert.doesNotMatch(source, /chat\.completions\.create/);
+  });
 
-    const weightsContent = fs.readFileSync(weightsPath, 'utf8');
-    expect(weightsContent).toContain('quality');
-    expect(weightsContent).toContain('style');
-    expect(weightsContent).toContain('optimization');
+  test("CI inputs are committed and npm ci is reproducible", () => {
+    const packageJson = JSON.parse(read("package.json"));
+    assert.equal(fs.existsSync(path.join(root, "package-lock.json")), true);
+    assert.equal(fs.existsSync(path.join(root, ".github", "workflows", "ci.yml")), true);
+    assert.ok(packageJson.scripts.check);
   });
 });

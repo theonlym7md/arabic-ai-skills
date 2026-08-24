@@ -8,8 +8,15 @@
     "skills/*"
   ],
   "scripts": {
-    "test": "jest",
-    "format": "biome format --write ."
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test tests/*.test.js",
+    "validate": "node scripts/validate_all.js",
+    "benchmark": "node scripts/run_benchmark.js",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "check": "npm run validate && npm run typecheck && npm test && npm run lint",
+    "package:zip": "node scripts/package_zip.js"
   },
   "keywords": [
     "ai",
@@ -23,12 +30,14 @@
   "author": "UX Microcopy Architect",
   "license": "MIT",
   "type": "commonjs",
+  "dependencies": {
+    "openai": "^6.48.0"
+  },
   "devDependencies": {
     "@biomejs/biome": "^2.5.4",
-    "@types/jest": "^30.0.0",
     "@types/node": "^20.0.0",
-    "jest": "^30.4.2",
-    "openai": "^6.48.0",
-    "typescript": "^5.0.0"
+    "ajv": "^8.17.1",
+    "typescript": "^5.0.0",
+    "yaml": "^2.8.1"
   }
 }

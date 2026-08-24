@@ -2,7 +2,7 @@
 
 `Specification Version: 1.2.0-STABLE`
 
-This document defines the formal, zero-marketing technical protocol for the Arabic Intelligence Guided Reasoning Engine.
+This document defines the formal technical protocol for the Arabic Intelligence 11-stage workflow (stages 0–10).
 
 ---
 
@@ -58,7 +58,7 @@ Plugins MUST declare `plugin.yaml` containing:
 - `max_framework_version: "2.0.0"`
 - `deprecated_after: ""` (optional deprecation date)
 - `replacement: ""` (optional replacement module)
-- `name`, `version`, `triggers`, `capabilities`, `entities`
+- `name`, `plugin_version`, `triggers`, `capabilities`, `entities`
 
 ---
 

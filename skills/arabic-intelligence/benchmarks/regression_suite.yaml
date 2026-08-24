@@ -8,8 +8,5 @@ threshold_rules:
   fail_on_ai_smell_increase: 3.0
   fail_on_trust_drop: 1.0
 
-version_history_baselines:
-  v1.2.0:
-    mean_human_score: 98.6
-    mean_ai_smell: 0.8
-    mean_trust: 99.5
+measurement_status: "not_recorded"
+measurement_note: "Add reproducible run artifacts before publishing aggregate quality scores."

@@ -1,30 +1,14 @@
-// Automated Benchmark Evaluation Runner & Report Generator
-const fs = require('fs');
-const path = require('path');
+const fs = require("node:fs");
+const path = require("node:path");
+const { execFileSync } = require("node:child_process");
 
-console.log('Running Arabic Intelligence Benchmark Test Runner...');
+const validator = path.join(__dirname, "validate_benchmarks.js");
+execFileSync(process.execPath, [validator], { stdio: "inherit" });
 
-const casesDir = path.join(__dirname, '../skills/arabic-intelligence/benchmarks/cases');
-let totalCases = 0;
-let passedCases = 0;
+const casesDir = path.join(__dirname, "../skills/arabic-intelligence/benchmarks/cases");
+const caseFolders = fs
+  .readdirSync(casesDir)
+  .filter((entry) => fs.statSync(path.join(casesDir, entry)).isDirectory());
 
-if (fs.existsSync(casesDir)) {
-  const caseFolders = fs.readdirSync(casesDir);
-  console.log(`Discovered ${caseFolders.length} test cases in benchmarks/cases/:`);
-
-  caseFolders.forEach(c => {
-    const expectedPath = path.join(casesDir, c, 'expected.yaml');
-    if (fs.existsSync(expectedPath)) {
-      totalCases++;
-      passedCases++;
-      console.log(`  ✓ Case '${c}': Passed rubric baseline [HumanScore: >90, AISmell: <5]`);
-    }
-  });
-}
-
-console.log(`\n==============================================`);
-console.log(`Benchmark Run Report (v1.1.0-STABLE)`);
-console.log(`Total Cases Evaluated: ${totalCases}`);
-console.log(`Pass Rate: 100% (${passedCases}/${totalCases})`);
-console.log(`Overall Metric Average: 98.2%`);
-console.log(`==============================================\n`);
+console.log(`Verified ${caseFolders.length} benchmark fixture(s): ${caseFolders.join(", ")}`);
+console.log("This command validates fixtures only; it does not claim model quality scores.");
