@@ -1,0 +1,4 @@
+interface:
+  display_name: "Arabic Intelligence"
+  short_description: "Natural Arabic product copy and localization"
+  default_prompt: "Use $arabic-intelligence to rewrite this product copy in natural, context-aware Arabic."

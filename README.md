@@ -1,16 +1,20 @@
-# Arabic Intelligence Framework
+# Arabic AI Skills
 
-A modular reasoning framework for Arabic UX writing, product copy, and AI agents.
+Production-focused skills for natural Arabic UX writing, RTL interfaces, product localization,
+and Arabic copy review across Codex, Claude Code, Cursor, and other AI agents.
 
-[![Release](https://img.shields.io/badge/Release-v1.2.0--STABLE-blue.svg?style=for-the-badge&logo=github)](https://github.com/theonlym7md/arabic-ai-skills)
+مهارات مفتوحة المصدر لكتابة واجهات عربية طبيعية، ومراجعة تجربة RTL، وتوطين نصوص المنتجات.
+
+[![Release](https://img.shields.io/badge/Release-v1.2.1-blue.svg?style=for-the-badge&logo=github)](https://github.com/theonlym7md/arabic-ai-skills/releases/tag/v1.2.1)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 [![CI](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/codeql.yml/badge.svg)](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/codeql.yml)
 [![skills.sh](https://skills.sh/b/theonlym7md/arabic-ai-skills)](https://skills.sh/theonlym7md/arabic-ai-skills)
 
 ---
 
 ## 📌 Versioning Alignment
-`Framework Spec: v1.2.0-STABLE | Skill Package: v1.2.0 | API Compatibility: 1.x`
+`Framework Spec: v1.2.0-STABLE | Skill Package: v1.2.1 | API Compatibility: 1.x`
 
 ---
 
@@ -29,9 +33,9 @@ Standard LLMs struggle with Arabic product copy—defaulting to literal English 
 
 ## 🎬 See the Difference
 
-[![Arabic AI Skills demo: before and after examples](docs/assets/arabic-ai-skills-preview.gif)](docs/assets/arabic-ai-skills-demo.mp4)
+[![Arabic AI Skills demo: before and after examples](docs/assets/arabic-ai-skills-poster.png)](https://github.com/theonlym7md/arabic-ai-skills/blob/main/docs/assets/arabic-ai-skills-demo.mp4)
 
-**[▶ Watch the full 54-second HD demo](docs/assets/arabic-ai-skills-demo.mp4)** — three real before/after transformations covering GovTech empty states, payment errors, and location-permission prompts.
+**[▶ Watch the full 54-second HD demo](https://github.com/theonlym7md/arabic-ai-skills/blob/main/docs/assets/arabic-ai-skills-demo.mp4)** — three before/after transformations covering GovTech empty states, payment errors, and location-permission prompts.
 
 ---
 
@@ -40,7 +44,7 @@ Standard LLMs struggle with Arabic product copy—defaulting to literal English 
 ### ❌ Raw AI Output (Robotic Cliché Slop)
 > *"في إطار حرصنا المستمر على تقديم أفضل الخدمات، يرجى التكرم بالعلم بأنه لا يوجد لديكم أي مخالفات مرورية حالياً."*
 
-### ✅ Arabic Intelligence Framework Output (v1.2.0-STABLE)
+### ✅ Arabic Intelligence Output
 > **العنوان:** "لا توجد مخالفات مسجّلة عليك"
 > **الوصف:** "لا توجد أي مخالفات مرورية مسجلة بحقك حالياً. نتمنى لك قيادة آمنة."
 
@@ -62,20 +66,38 @@ Browse the published collection on **[skills.sh](https://skills.sh/theonlym7md/a
 | [`arabic-intelligence`](skills/arabic-intelligence/README.md) | Arabic product copy, localization, terminology, and copy audits |
 | [`arabic-uiux-master`](skills/arabic-uiux-master/README.md) | Arabic interface copy combined with RTL, typography, and accessibility guidance |
 
-Or programmatically via Node.js SDK:
-```typescript
-import { generateArabicCopy } from 'arabic_skill';
+### Optional local Node.js SDK
 
-const result = await generateArabicCopy({
-  projectNiche: 'GovTech',
-  targetAudience: 'Saudi Citizens',
-  toneOfVoice: 'Official & Clear',
-  textType: 'Empty State',
-  context: 'Traffic violation page with zero fines'
-});
+The repository includes an SDK for contributors and local integrations. It requires Node.js 22
+or 24 LTS and an `OPENAI_API_KEY` environment variable.
+
+```bash
+git clone https://github.com/theonlym7md/arabic-ai-skills.git
+cd arabic-ai-skills
+npm ci
+npm run build
+```
+
+```javascript
+const { generateArabicCopy } = require("./dist/index.js");
+
+async function main() {
+  const result = await generateArabicCopy({
+    projectNiche: "GovTech",
+    targetAudience: "Saudi residents",
+    toneOfVoice: "Official and clear",
+    textType: "Empty state",
+    context: "Traffic violation page with no recorded violations",
+  });
+
+  console.log(result.options);
+}
+
+main().catch(console.error);
 ```
 
 The SDK reads `OPENAI_API_KEY` from the environment by default. Set `OPENAI_MODEL` or pass `model` to choose a model explicitly.
+The same example is available as [`examples/sdk.cjs`](examples/sdk.cjs).
 
 ---
 
@@ -124,11 +146,14 @@ graph TD
 - 🛠️ **Universal System Validator:** Run `node scripts/validate_all.js`.
 - 📦 **Pristine Clean Packaging:** Run `node scripts/package_zip.js` to build a clean distribution zip (excluding `.git` & `node_modules`).
 - 🤝 **Contributing:** Check our [CONTRIBUTING.md](CONTRIBUTING.md) guide before submitting PRs.
+- 🔒 **Security:** Report vulnerabilities privately using [SECURITY.md](SECURITY.md).
+- 🧭 **Roadmap:** See [ROADMAP.md](ROADMAP.md) for focused future work.
+- 📝 **Releases:** Review user-visible changes in [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
 <div align="center">
 
-**Core API Frozen & STABLE 1.2.0.**
+**Stable 1.x framework specification. Changes are tested on Node.js 22 and 24 LTS.**
 
 </div>

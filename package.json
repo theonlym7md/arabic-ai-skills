@@ -1,15 +1,27 @@
 {
-  "name": "arabic_skill",
-  "version": "1.2.0",
+  "name": "arabic-ai-skills",
+  "version": "1.2.1",
   "description": "Arabic Intelligence Framework - A structured reasoning framework for Arabic UX writing, product copy, and AI agents.",
   "main": "dist/index.js",
   "private": true,
+  "engines": {
+    "node": "^22.0.0 || ^24.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theonlym7md/arabic-ai-skills.git"
+  },
+  "homepage": "https://skills.sh/theonlym7md/arabic-ai-skills",
+  "bugs": {
+    "url": "https://github.com/theonlym7md/arabic-ai-skills/issues"
+  },
   "workspaces": [
     "skills/*"
   ],
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
+    "pretest": "npm run build",
     "test": "node --test tests/*.test.js",
     "validate": "node scripts/validate_all.js",
     "benchmark": "node scripts/run_benchmark.js",
@@ -25,17 +37,21 @@
     "ux",
     "copywriting",
     "microcopy",
-    "prompt-engineering"
+    "prompt-engineering",
+    "agent-skills",
+    "rtl",
+    "localization",
+    "codex"
   ],
   "author": "UX Microcopy Architect",
   "license": "MIT",
   "type": "commonjs",
   "dependencies": {
-    "openai": "^6.48.0"
+    "openai": "^7.5.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.4",
-    "@types/node": "^20.0.0",
+    "@biomejs/biome": "^2.5.10",
+    "@types/node": "^22.20.1",
     "ajv": "^8.17.1",
     "typescript": "^5.0.0",
     "yaml": "^2.8.1"

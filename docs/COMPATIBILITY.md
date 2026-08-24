@@ -4,6 +4,7 @@ Compatibility is capability-based. This repository does not claim identical qual
 
 ## Runtime requirements
 
+- Node.js 22 or 24 LTS for the optional repository SDK
 - UTF-8 Markdown skill instructions
 - Relative file reads for progressive-disclosure resources
 - YAML parsing when ontology or plugin files are loaded programmatically
@@ -14,5 +15,5 @@ The included Node.js SDK uses the OpenAI Responses API and strict JSON Schema ou
 Other models and runners may use the Markdown skills directly, but should be evaluated with the fixtures in `skills/arabic-intelligence/benchmarks/cases/` before production use.
 
 ## Supported Skill CLIs
-- `npx skills add https://github.com/theonlym7md/arabic-ai-skills --skill arabic-uiux-master`
-- `npx skills add https://github.com/theonlym7md/arabic-ai-skills --skill arabic-intelligence`
+- `npx skills add theonlym7md/arabic-ai-skills --skill arabic-uiux-master`
+- `npx skills add theonlym7md/arabic-ai-skills --skill arabic-intelligence`

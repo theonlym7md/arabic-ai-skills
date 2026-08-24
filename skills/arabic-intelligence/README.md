@@ -13,7 +13,7 @@
 ## التثبيت
 
 ```bash
-npx skills add https://github.com/theonlym7md/arabic-ai-skills --skill arabic-intelligence
+npx skills add theonlym7md/arabic-ai-skills --skill arabic-intelligence
 ```
 
 ابدأ من [SKILL.md](SKILL.md). تُحمّل ملفات `reasoning/` و`knowledge/` و`plugins/` عند الحاجة فقط.

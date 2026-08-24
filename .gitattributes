@@ -4,3 +4,5 @@ node_modules export-ignore
 .vscode export-ignore
 *.log export-ignore
 coverage export-ignore
+docs/assets/*.gif export-ignore
+docs/assets/*.mp4 export-ignore

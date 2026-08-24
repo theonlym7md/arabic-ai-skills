@@ -3,6 +3,7 @@ const { execFileSync } = require("node:child_process");
 const fs = require("node:fs");
 const path = require("node:path");
 const { describe, test } = require("node:test");
+const YAML = require("yaml");
 
 const root = path.join(__dirname, "..");
 const skillsRoot = path.join(root, "skills");
@@ -17,13 +18,7 @@ function parseFrontmatter(content) {
     throw new Error("Missing YAML frontmatter");
   }
 
-  return Object.fromEntries(
-    match[1]
-      .split(/\r?\n/)
-      .map((line) => line.match(/^([a-z_]+):\s*["']?(.*?)["']?$/))
-      .filter(Boolean)
-      .map((parts) => [parts[1], parts[2]]),
-  );
+  return YAML.parse(match[1]);
 }
 
 describe("Arabic AI skills repository", () => {
@@ -38,7 +33,8 @@ describe("Arabic AI skills repository", () => {
       assert.equal(fs.existsSync(readmePath), true);
       assert.equal(frontmatter.name, skillName);
       assert.equal(packageJson.name, skillName);
-      assert.equal(packageJson.version, frontmatter.version);
+      assert.equal(packageJson.version, frontmatter.metadata.version);
+      assert.equal(frontmatter.version, undefined);
       assert.ok(frontmatter.description.length > 120);
       assert.match(frontmatter.description, /Use (whenever|for)/);
     });
@@ -82,5 +78,62 @@ describe("Arabic AI skills repository", () => {
     assert.equal(fs.existsSync(path.join(root, "package-lock.json")), true);
     assert.equal(fs.existsSync(path.join(root, ".github", "workflows", "ci.yml")), true);
     assert.ok(packageJson.scripts.check);
+    assert.equal(packageJson.engines.node, "^22.0.0 || ^24.0.0");
+    assert.equal(fs.existsSync(path.join(root, ".github", "dependabot.yml")), true);
+    assert.equal(fs.existsSync(path.join(root, ".github", "workflows", "codeql.yml")), true);
+  });
+
+  test("repository trust files and local Markdown links are complete", () => {
+    for (const file of ["LICENSE", "SECURITY.md", "CHANGELOG.md"]) {
+      assert.equal(fs.existsSync(path.join(root, file)), true, `${file} is missing`);
+    }
+
+    const markdownFiles = execFileSync("git", ["ls-files", "*.md"], {
+      cwd: root,
+      encoding: "utf8",
+    })
+      .split(/\r?\n/)
+      .filter(Boolean);
+
+    for (const markdownFile of markdownFiles) {
+      const content = read(markdownFile);
+      for (const match of content.matchAll(/\]\(([^)]+)\)/g)) {
+        const target = match[1].split("#", 1)[0];
+        if (!target || /^(?:https?:|mailto:)/i.test(target)) {
+          continue;
+        }
+
+        const resolved = path.resolve(root, path.dirname(markdownFile), decodeURIComponent(target));
+        assert.equal(fs.existsSync(resolved), true, `${markdownFile} links to missing ${target}`);
+      }
+    }
+  });
+
+  test("SDK rejects invalid input before making a network request", async () => {
+    const { generateArabicCopy } = require(path.join(root, "dist", "index.js"));
+    const base = {
+      apiKey: "test-key",
+      projectNiche: "GovTech",
+      targetAudience: "Saudi residents",
+      toneOfVoice: "Clear",
+      textType: "Empty state",
+      context: "No traffic violations",
+    };
+
+    await assert.rejects(generateArabicCopy({ ...base, context: " " }), /context/);
+    await assert.rejects(
+      generateArabicCopy({ ...base, context: null }),
+      /context must be a string/,
+    );
+    await assert.rejects(generateArabicCopy({ ...base, maxLength: 0 }), /maxLength/);
+  });
+
+  test("documented CommonJS SDK example has valid syntax", () => {
+    assert.doesNotThrow(() =>
+      execFileSync(process.execPath, ["--check", path.join(root, "examples", "sdk.cjs")], {
+        cwd: root,
+        stdio: "pipe",
+      }),
+    );
   });
 });

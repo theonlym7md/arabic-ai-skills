@@ -75,7 +75,11 @@ const resultSchema = {
   required: ["options"],
 } as const;
 
-function requireText(value: string, field: string): string {
+function requireText(value: unknown, field: string): string {
+  if (typeof value !== "string") {
+    throw new TypeError(`${field} must be a string.`);
+  }
+
   const normalized = value.trim();
   if (!normalized) {
     throw new TypeError(`${field} must be a non-empty string.`);
@@ -93,18 +97,26 @@ function validateResult(value: unknown, maxLength: number): ArabicCopyResult {
     throw new Error("The model must return between one and three options.");
   }
 
-  for (const option of options) {
+  const normalizedOptions = options.map((option) => {
     if (!option || typeof option.text !== "string" || typeof option.style !== "string") {
       throw new Error("Each generated option must contain text and style strings.");
     }
 
-    const wordCount = option.text.trim().split(/\s+/u).filter(Boolean).length;
+    const text = option.text.trim();
+    const style = option.style.trim();
+    if (!text || !style) {
+      throw new Error("Generated option text and style must not be empty.");
+    }
+
+    const wordCount = text.split(/\s+/u).filter(Boolean).length;
     if (wordCount > maxLength) {
       throw new Error(`A generated option exceeded the ${maxLength}-word limit.`);
     }
-  }
 
-  return { options };
+    return { text, style };
+  });
+
+  return { options: normalizedOptions };
 }
 
 /**

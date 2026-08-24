@@ -1,0 +1,39 @@
+name: Bug report
+description: Report a reproducible problem in a skill, validator, SDK, or document.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "Do not include API keys, private product copy, or customer data."
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - arabic-intelligence
+        - arabic-uiux-master
+        - Node.js SDK
+        - Validators or CI
+        - Documentation
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Include the expected result and the actual result.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      placeholder: "1. Install...\n2. Run...\n3. Observe..."
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Agent, CLI, or Node.js version
+      placeholder: "Codex, Claude Code, Cursor, Node.js 24..."

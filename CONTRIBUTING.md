@@ -8,5 +8,19 @@ We welcome contributions from Arabic linguists, UX writers, product designers, a
 3. **Submit Benchmarks:** Add test cases in `benchmarks/cases/`.
 
 ## Submitting a PR
-- Ensure all YAML files pass schema validation.
-- Run benchmark tests to verify no regression against `benchmarks/regression_suite.yaml`.
+- Create a focused branch and explain the user-facing outcome.
+- Add or update a synthetic benchmark fixture when changing Arabic output behavior.
+- Never commit API keys, customer copy, personal data, or regulated content.
+- Run `npm ci` and `npm run check` before opening the PR.
+- Update `CHANGELOG.md` for user-visible changes.
+
+## Adding or updating a skill
+
+- Keep skills under `skills/<skill-name>/` with a `SKILL.md` and `README.md`.
+- Use standards-compatible YAML frontmatter with `name`, `description`, and optional `metadata`.
+- Keep detailed domain material in focused supporting files and link it from `SKILL.md`.
+- Add the skill to the root README table and deterministic repository tests.
+
+## Security reports
+
+Do not open public issues for vulnerabilities. Follow [SECURITY.md](SECURITY.md).

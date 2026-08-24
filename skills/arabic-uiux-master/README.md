@@ -13,7 +13,7 @@
 ## التثبيت
 
 ```bash
-npx skills add https://github.com/theonlym7md/arabic-ai-skills --skill arabic-uiux-master
+npx skills add theonlym7md/arabic-ai-skills --skill arabic-uiux-master
 ```
 
 راجع [SKILL.md](SKILL.md) لعقد التنفيذ وصيغة التسليم.

@@ -1,0 +1,29 @@
+name: Feature request
+description: Propose a focused improvement or a new Arabic product domain.
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What product-writing or RTL problem should this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed outcome
+      description: Describe the observable behavior, not only an implementation idea.
+    validations:
+      required: true
+  - type: input
+    id: region
+    attributes:
+      label: Region or dialect, if relevant
+      placeholder: "Saudi Arabia, Gulf, Egypt, Levant..."
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Examples or evidence
+      description: Use synthetic examples only; do not include private product copy.

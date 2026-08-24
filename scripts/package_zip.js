@@ -1,7 +1,7 @@
 // Script to generate pristine lightweight ZIP distribution archive excluding .git & node_modules
 const fs = require("node:fs");
 const path = require("node:path");
-const { execSync } = require("node:child_process");
+const { execFileSync } = require("node:child_process");
 
 const rootDir = path.join(__dirname, "..");
 const distDir = path.join(rootDir, "dist");
@@ -16,7 +16,7 @@ console.log("Generating pristine distribution archive (excluding .git, node_modu
 
 try {
   // Use git archive for 100% clean distribution without .git internals
-  execSync(`git archive --format=zip HEAD -o "${zipPath}"`, { cwd: rootDir });
+  execFileSync("git", ["archive", "--format=zip", "HEAD", "-o", zipPath], { cwd: rootDir });
   const stats = fs.statSync(zipPath);
   console.log(`✓ Clean Archive Generated Successfully!`);
   console.log(`  Path: ${zipPath}`);
