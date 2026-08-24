@@ -10,10 +10,6 @@
 - تدقيق نصوص عربية موجودة وتحسينها
 - مواءمة النبرة مع المجال والمنطقة
 
-## التثبيت
+## الاستخدام
 
-```bash
-npx skills add theonlym7md/arabic-ai-skills --skill arabic-intelligence
-```
-
-ابدأ من [SKILL.md](SKILL.md). تُحمّل ملفات `reasoning/` و`knowledge/` و`plugins/` عند الحاجة فقط.
+بعد تثبيت المهارة من صفحة المشروع، ابدأ من [SKILL.md](SKILL.md). تُحمّل ملفات `reasoning/` و`knowledge/` و`plugins/` عند الحاجة فقط.

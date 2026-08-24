@@ -2,6 +2,12 @@
 
 All notable changes are documented here. This project follows Semantic Versioning.
 
+## [1.2.2] - 2026-08-24
+
+### Fixed
+
+- Removed redundant self-install commands from packaged skill documentation so security scanners do not mistake the repository source for an untrusted runtime download.
+
 ## [1.2.1] - 2026-08-24
 
 ### Fixed
@@ -23,5 +29,6 @@ All notable changes are documented here. This project follows Semantic Versionin
 - Published `arabic-intelligence` and `arabic-uiux-master` with deterministic validators.
 - Added skills.sh metadata, benchmarks, documentation, and the before/after demo video.
 
+[1.2.2]: https://github.com/theonlym7md/arabic-ai-skills/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/theonlym7md/arabic-ai-skills/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/theonlym7md/arabic-ai-skills/tree/v1.2.0
