@@ -5,3 +5,7 @@ dist/
 *.log
 coverage/
 .vscode/
+.video-tools/
+.video-review/
+__pycache__/
+*.py[cod]

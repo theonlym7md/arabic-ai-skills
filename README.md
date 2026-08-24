@@ -5,6 +5,7 @@ A modular reasoning framework for Arabic UX writing, product copy, and AI agents
 [![Release](https://img.shields.io/badge/Release-v1.2.0--STABLE-blue.svg?style=for-the-badge&logo=github)](https://github.com/theonlym7md/arabic-ai-skills)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 [![CI](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/ci.yml)
+[![skills.sh](https://skills.sh/b/theonlym7md/arabic-ai-skills)](https://skills.sh/theonlym7md/arabic-ai-skills)
 
 ---
 
@@ -26,6 +27,14 @@ Standard LLMs struggle with Arabic product copy—defaulting to literal English 
 
 ---
 
+## 🎬 See the Difference
+
+[![Arabic AI Skills demo: before and after examples](docs/assets/arabic-ai-skills-preview.gif)](docs/assets/arabic-ai-skills-demo.mp4)
+
+**[▶ Watch the full 54-second HD demo](docs/assets/arabic-ai-skills-demo.mp4)** — three real before/after transformations covering GovTech empty states, payment errors, and location-permission prompts.
+
+---
+
 ## ⚡ Quick Example
 
 ### ❌ Raw AI Output (Robotic Cliché Slop)
@@ -42,9 +51,11 @@ Standard LLMs struggle with Arabic product copy—defaulting to literal English 
 Choose the focused writing framework or the combined UI/RTL skill:
 
 ```bash
-npx skills add https://github.com/theonlym7md/arabic-ai-skills --skill arabic-intelligence
-npx skills add https://github.com/theonlym7md/arabic-ai-skills --skill arabic-uiux-master
+npx skills add theonlym7md/arabic-ai-skills --skill arabic-intelligence
+npx skills add theonlym7md/arabic-ai-skills --skill arabic-uiux-master
 ```
+
+Browse the published collection on **[skills.sh](https://skills.sh/theonlym7md/arabic-ai-skills)**.
 
 | Skill | Best for |
 | :--- | :--- |

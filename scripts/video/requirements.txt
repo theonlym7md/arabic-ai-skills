@@ -1,0 +1,5 @@
+Pillow==12.3.0
+numpy==2.3.5
+arabic-reshaper==3.0.0
+python-bidi==0.6.6
+imageio-ffmpeg==0.6.0

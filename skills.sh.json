@@ -1,0 +1,11 @@
+{
+  "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
+  "notGrouped": "bottom",
+  "groupings": [
+    {
+      "title": "Arabic Product Experience",
+      "description": "Arabic product writing, localization, RTL, and interface-quality workflows.",
+      "skills": ["arabic-intelligence", "arabic-uiux-master"]
+    }
+  ]
+}
