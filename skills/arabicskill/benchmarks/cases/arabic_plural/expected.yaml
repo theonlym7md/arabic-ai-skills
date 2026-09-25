@@ -1,0 +1,8 @@
+case_id: "arabic_plural"
+domain: "Localization"
+target_metrics:
+  Clarity: 95
+forbidden_phrases: []
+review_criteria:
+  - "Preserves the count variable and valid balanced ICU syntax."
+  - "Includes zero, one, two, few, many, other; manually exercise 0, 1, 2, 3, 11, 100 and 1.5."

@@ -2,6 +2,22 @@
 
 All notable changes are documented here. This project follows Semantic Versioning.
 
+## [2.0.0] - 2026-09-25
+
+### Breaking
+
+- Renamed the primary skill from `arabic-intelligence` to `arabicskill` and moved its folder. The public brand is now ArabicSkill. See [migration instructions](docs/MIGRATION.md).
+
+### Improved
+
+- Added localization rules for placeholders, ICU plural categories, regional neutrality, and bidirectional identifiers.
+- Added explicit safety gates for uncertain payments, deletion effects, and permission/privacy claims.
+- Expanded synthetic review fixtures from one to nine; these are not measured model-quality results.
+- Replaced invented confidence/latency guidance and unimplemented runtime claims with evidence-based review criteria and an accurate SDK contract.
+- Added mocked SDK request/response tests, rejecting incomplete or extra-field responses, bundling safety resources, and bounding timeout/retries.
+- Removed missing knowledge dependencies, fixed contributor paths, and made repository checks usable from a source archive without Git metadata.
+- Updated project onboarding and documented remaining evaluation milestones.
+
 ## [1.2.3] - 2026-08-24
 
 ### Security

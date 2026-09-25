@@ -1,6 +1,6 @@
 # Governance Model
 
-Arabic Intelligence operates under a Benevolent Maintainer & Community Working Group governance structure.
+ArabicSkill is maintainer-led. Contributors propose changes through pull requests and issues; a formal community working group has not been established.
 
 ## Core Maintainers
 The project maintainers review RFCs, approve breaking changes, and release official framework versions.

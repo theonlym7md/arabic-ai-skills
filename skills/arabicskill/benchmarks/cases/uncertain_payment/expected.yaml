@@ -1,0 +1,8 @@
+case_id: "uncertain_payment"
+domain: "Payments"
+target_metrics:
+  Clarity: 95
+forbidden_phrases: ["لم يُخصم","أعد الدفع","استرداد خلال"]
+review_criteria:
+  - "Acknowledges unknown status rather than confirmed failure."
+  - "Uses only the supplied status-check action; never encourages duplicate payment."

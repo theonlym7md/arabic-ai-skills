@@ -270,7 +270,7 @@ def install_scene(layer: Image.Image, local_time: float) -> None:
     shape_text(draw, "تجربة عربية واضحة، طبيعية، وقابلة للتنفيذ.", (1180, 152), font(24), (*MUTED, 255))
 
     cards = [
-        (75, "arabic-intelligence", "كتابة المنتج والتوطين والتدقيق", CYAN),
+        (75, "arabicskill", "كتابة المنتج والتوطين والتدقيق", CYAN),
         (665, "arabic-uiux-master", "النص العربي مع RTL وإتاحة الاستخدام", GOLD),
     ]
     for index, (x, name, description, accent) in enumerate(cards):

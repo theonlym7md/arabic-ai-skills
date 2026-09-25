@@ -3,9 +3,9 @@
   "notGrouped": "bottom",
   "groupings": [
     {
-      "title": "Arabic Product Experience",
+      "title": "ArabicSkill",
       "description": "Arabic product writing, localization, RTL, and interface-quality workflows.",
-      "skills": ["arabic-intelligence", "arabic-uiux-master"]
+      "skills": ["arabicskill", "arabic-uiux-master"]
     }
   ]
 }

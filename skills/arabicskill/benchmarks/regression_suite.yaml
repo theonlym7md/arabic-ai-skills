@@ -1,0 +1,12 @@
+# Regression Testing Specification
+
+suite_name: "ArabicSkill Regression Suite"
+version: "1.2.0"
+
+threshold_rules:
+  fail_on_human_score_drop: 2.0
+  fail_on_ai_smell_increase: 3.0
+  fail_on_trust_drop: 1.0
+
+measurement_status: "not_recorded"
+measurement_note: "Add reproducible run artifacts before publishing aggregate quality scores."

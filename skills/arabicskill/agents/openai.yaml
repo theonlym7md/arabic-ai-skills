@@ -1,0 +1,4 @@
+interface:
+  display_name: "ArabicSkill"
+  short_description: "Natural Arabic product copy and localization"
+  default_prompt: "Use $arabicskill to rewrite this product copy in natural, context-aware Arabic."

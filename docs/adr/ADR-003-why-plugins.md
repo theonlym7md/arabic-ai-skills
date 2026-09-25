@@ -1,5 +1,7 @@
 # ADR-003: Modular Plugin Extensibility Architecture
 
+Historical design proposal. Domain packs are declarative guidance, not executable plugins or evidence of production readiness. See [the current execution contract](../../SPEC.md).
+
 ## Context
 Core framework modifications to support new domains (e.g. Healthcare, Legal) risk breaking existing production domains like GovTech and FinTech.
 

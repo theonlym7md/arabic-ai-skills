@@ -2,7 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const YAML = require("yaml");
 
-const casesDir = path.join(__dirname, "../skills/arabic-intelligence/benchmarks/cases");
+const casesDir = path.join(__dirname, "../skills/arabicskill/benchmarks/cases");
 const requiredFiles = ["prompt.md", "golden_output.md", "expected.yaml"];
 
 if (!fs.existsSync(casesDir)) {

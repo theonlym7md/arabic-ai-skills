@@ -1,76 +1,50 @@
-# Arabic Intelligence Protocol Specification (SPEC.md)
+# ArabicSkill execution contract
 
-`Specification Version: 1.2.0-STABLE`
+Version 2.0.0.
 
-This document defines the formal technical protocol for the Arabic Intelligence 11-stage workflow (stages 0–10).
+## Agent skill
 
----
+The Markdown skill guides context gathering, domain selection, drafting, review,
+and at most two repair passes. These are instructions interpreted by the host
+agent, not a deterministic runtime state machine. Supporting files are read only
+when relevant and available. A single missing safety-critical fact can require
+clarification; a count of missing fields is not a safety gate.
 
-## 1. Execution Context Schemas
+Context objects described in earlier architecture notes are conceptual design
+aids. They are not exported TypeScript classes, telemetry, measured confidence,
+or implemented cross-language interfaces.
 
-The framework operates on 4 decoupled context objects passed down the decision graph:
+## Included Node.js SDK
 
-1. **`PlanningContext`:** Contains goals, constraints, assumptions, risks, success criteria, required knowledge, and execution strategy.
-2. **`ReasoningContext`:** Holds 10-dimensional diagnostics (`Domain`, `Audience`, `Intent`, `EmotionalGoal`, `ProductType`, `TrustLevel`, `ReadingLevel`, `Region`, `Constraints`, `MissingContextKeys`) and `current_draft`.
-3. **`KnowledgeContext`:** Contains array of `entities_loaded` with priority and confidence metadata.
-4. **`EvaluationContext`:** Holds 18 quantitative rubric metrics (0 - 100) and multi-stage confidence scores.
+`generateArabicCopy(params)` is a one-request copy-generation helper using the
+OpenAI Responses API. Required inputs: projectNiche, targetAudience, toneOfVoice,
+textType, context. Optional inputs: apiKey, model, store, maxLength (1–100 words).
 
----
+It loads the core skill and bundled localization/sensitive-state rules, requests
+1–3 structured text/style options, and validates the returned shape and length.
+It has no file-reading tools, interactive clarification, plugin dispatch,
+18-metric scoring, automatic repair, or guaranteed factuality.
+If material facts are missing, its instructions require conservative copy that
+acknowledges uncertainty; the calling application must decide whether to display it.
 
-## 2. Stage Protocol Contracts
+Words are whitespace-delimited tokens, not character count or rendered width.
+Use the agent skill for ICU files or multi-component UI systems; the SDK is
+intentionally limited to short independent strings.
 
-| Stage | Consumes | Produces | Mutates | Side Effects | Idempotent |
-| :--- | :--- | :--- | :--- | :--- | :---: |
-| **0. Planning** | Prompt | `PlanningContext` | None | None | `true` |
-| **1. Diagnose** | `PlanningContext` | `diagnostics` | `ReasoningContext` | Prompts user if MissingKeys > 2 | `true` |
-| **2. Intent** | `diagnostics` | `Intent`, `EmotionalGoal` | `ReasoningContext` | None | `true` |
-| **3. Audience** | `diagnostics` | `Audience`, `ReadingLevel` | `ReasoningContext` | None | `true` |
-| **4. Risk** | `diagnostics` | `TrustLevel`, `Constraints` | `ReasoningContext` | None | `true` |
-| **5. Knowledge** | `diagnostics` | `KnowledgeContext` | `KnowledgeContext` | Queries `knowledge/entities/` & `plugins/` | `true` |
-| **6. Reasoning** | Contexts | `current_draft` | `ReasoningContext` | None | `false` |
-| **7. Weights** | `current_draft` | Conflict Resolutions | `ReasoningContext` | Reads `domain_weights/` | `true` |
-| **8. Evaluation** | `current_draft` | `EvaluationContext` | `EvaluationContext` | None | `true` |
-| **9. Repair** | `EvaluationContext` | Revised Draft | `current_draft` | Rewinds to Stage 6 (Max 2) | `false` |
-| **10. Output** | `current_draft` | Final User Copy | None | Emits Output | `true` |
+Requests default to `store: false`, a 30-second timeout per attempt, and one retry.
+Provider/network errors, refusals, incomplete responses, malformed data and
+overlong text reject the promise. Input errors are rejected before a request.
+Product context is sent to the configured model provider; callers remain
+responsible for privacy, costs, secrets, and human review.
 
----
+## Domain resources
 
-## 3. Protocol Error Codes
+YAML entities and plugin manifests are declarative writing guidance. Current
+validators check their structure and references; no executable plugin loader
+is provided. Regional examples are not legal or regulatory sources.
 
-Runtimes implementing this specification MUST emit standard error codes on failure:
+## Quality claims
 
-| Error Code | Description | Resolution Trigger |
-| :--- | :--- | :--- |
-| `ERR_MISSING_CONTEXT_CRITICAL` | `MissingContextKeys` count exceeds 2 threshold | Halt & prompt user for clarification |
-| `ERR_PLUGIN_INCOMPATIBLE` | Plugin `framework_version` does not satisfy runtime | Skip plugin load & log fallback warning |
-| `ERR_ENTITY_CONFLICT` | Two entity directives directly contradict | Resolve via `weights.yaml` priority score |
-| `ERR_REPAIR_LIMIT_EXCEEDED` | Stage 9 repair loop reached maximum 2 iterations | Fallback to highest confidence candidate draft |
-| `ERR_METRIC_FAIL` | Evaluation metric falls below dynamic domain threshold | Trigger Stage 9 dynamic repair intervention |
-
----
-
-## 4. Plugin API & Deprecation Specification
-
-Plugins MUST declare `plugin.yaml` containing:
-- `api_version: 1`
-- `framework_version: ">=1.0.0"`
-- `min_framework_version: "1.0.0"`
-- `max_framework_version: "2.0.0"`
-- `deprecated_after: ""` (optional deprecation date)
-- `replacement: ""` (optional replacement module)
-- `name`, `plugin_version`, `triggers`, `capabilities`, `entities`
-
----
-
-## 5. Multi-Language Runtime SDK Specification
-
-Runtimes (Node.js, Python, Go) consuming this specification MUST implement the state machine interface:
-```typescript
-interface ArabicIntelligenceRuntime {
-  executePlanning(prompt: string): PlanningContext;
-  executeDiagnose(plan: PlanningContext): ReasoningContext;
-  executeKnowledge(diag: ReasoningContext): KnowledgeContext;
-  executeEvaluation(draft: string): EvaluationContext;
-  executeRepair(evalCtx: EvaluationContext): string;
-}
-```
+Fixture validation is not a model evaluation. Publish model identifiers, complete
+sanitized prompts and outputs, a rubric version, date, and independent ratings
+before reporting an improvement. Subjective scores are not statistical confidence.

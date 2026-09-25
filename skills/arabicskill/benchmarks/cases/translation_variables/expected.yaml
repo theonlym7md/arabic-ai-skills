@@ -1,0 +1,8 @@
+case_id: "translation_variables"
+domain: "Localization"
+target_metrics:
+  Clarity: 95
+forbidden_phrases: []
+review_criteria:
+  - "Parses as JSON with exactly the original keys."
+  - "Preserves {name}, {{amount}}, SAR, the URL and HTML markup."

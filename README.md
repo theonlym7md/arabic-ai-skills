@@ -1,160 +1,84 @@
-# Arabic AI Skills
+# ArabicSkill
+مهارة مفتوحة المصدر لكتابة نصوص منتجات عربية طبيعية، وتوطين الواجهات بأمان.
 
-Production-focused skills for natural Arabic UX writing, RTL interfaces, product localization,
-and Arabic copy review across Codex, Claude Code, Cursor, and other AI agents.
+Arabic product writing, localization, and RTL guidance for AI agents.
 
-مهارات مفتوحة المصدر لكتابة واجهات عربية طبيعية، ومراجعة تجربة RTL، وتوطين نصوص المنتجات.
-
-[![Release](https://img.shields.io/badge/Release-v1.2.3-blue.svg?style=for-the-badge&logo=github)](https://github.com/theonlym7md/arabic-ai-skills/releases/tag/v1.2.3)
-[![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 [![CI](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/codeql.yml/badge.svg)](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/codeql.yml)
-[![skills.sh](https://skills.sh/b/theonlym7md/arabic-ai-skills)](https://skills.sh/theonlym7md/arabic-ai-skills)
+[MIT license](LICENSE) · [English guide](docs/GETTING_STARTED.en.md) · [Migration to 2.0](docs/MIGRATION.md)
 
----
-
-## 📌 Versioning Alignment
-`Framework Spec: v1.2.0-STABLE | Skill Package: v1.2.3 | API Compatibility: 1.x`
-
----
-
-## ❓ What is this?
-Arabic Intelligence is a guided 11-stage workflow (stages 0–10) for generating natural, culturally localized Arabic UX microcopy, product copy, and interface messaging.
-
-## 💡 Why does it exist?
-Standard LLMs can struggle with Arabic product copy—defaulting to literal English translations, robotic administrative clichés (*"في إطار حرصنا المستمر"*, *"يرجى التكرم بالعلم"*), and high cognitive load. Arabic Intelligence reduces these patterns through structured context, domain guidance, anti-examples, and an 18-metric review rubric.
-
-## 👤 Who is it for?
-- **AI Agent Engineers & Prompt Designers:** Adding Arabic product copywriting capabilities to agents.
-- **Product Managers & UX Writers:** Standardizing localized Arabic UX copy across platforms.
-- **GovTech, FinTech & E-Commerce Teams:** Enforcing authentic regional phrasing (Saudi & Gulf).
-
----
-
-## 🎬 See the Difference
-
-[![Arabic AI Skills demo: before and after examples](docs/assets/arabic-ai-skills-poster.png)](https://github.com/theonlym7md/arabic-ai-skills/blob/main/docs/assets/arabic-ai-skills-demo.mp4)
-
-**[▶ Watch the full 54-second HD demo](https://github.com/theonlym7md/arabic-ai-skills/blob/main/docs/assets/arabic-ai-skills-demo.mp4)** — three before/after transformations covering GovTech empty states, payment errors, and location-permission prompts.
-
----
-
-## ⚡ Quick Example
-
-### ❌ Raw AI Output (Robotic Cliché Slop)
-> *"في إطار حرصنا المستمر على تقديم أفضل الخدمات، يرجى التكرم بالعلم بأنه لا يوجد لديكم أي مخالفات مرورية حالياً."*
-
-### ✅ Arabic Intelligence Output
-> **العنوان:** "لا توجد مخالفات مسجّلة عليك"
-> **الوصف:** "لا توجد أي مخالفات مرورية مسجلة بحقك حالياً. نتمنى لك قيادة آمنة."
-
----
-
-## 🚀 Quick Install
-
-Choose the focused writing framework or the combined UI/RTL skill:
+## ابدأ هنا
 
 ```bash
-npx skills add theonlym7md/arabic-ai-skills --skill arabic-intelligence
+npx skills add theonlym7md/arabic-ai-skills --skill arabicskill
+```
+
+ثم اطلب من وكيلك:
+
+> استخدم $arabicskill لتحسين رسالة خطأ دفع. انتهت مهلة الاتصال، ولا نعرف هل خُصم المبلغ. أريد عنوانًا ووصفًا وزرًا للتحقق من الحالة، بفصحى واضحة.
+
+مثال تحريري توضيحي، وليس نتيجة مقارنة تجريبية:
+
+| قبل | بعد |
+| --- | --- |
+| فشل الدفع. حاول مجددًا. | **لم نتأكد من حالة الدفع بعد.** تحقّق من حالة العملية قبل الدفع مرة أخرى. **الزر: تحقّق من الحالة** |
+
+النص المقترح يفترض وجود إجراء للتحقق من الحالة. لا تختلق المهارة حالة خصم أو سياسة استرداد.
+
+## اختر المهارة
+
+| المهارة | الاستخدام |
+| --- | --- |
+| [arabicskill](skills/arabicskill/README.md) | كتابة وتدقيق وتوطين نصوص المنتج؛ المتغيرات والجمع وحالات الخطأ الحساسة |
+| [arabic-uiux-master](skills/arabic-uiux-master/README.md) | نصوص شاشة كاملة مع إرشادات RTL والمحتوى ثنائي الاتجاه والوصول |
+
+لتثبيت المهارة المرافقة:
+
+```bash
 npx skills add theonlym7md/arabic-ai-skills --skill arabic-uiux-master
 ```
 
-Browse the published collection on **[skills.sh](https://skills.sh/theonlym7md/arabic-ai-skills)** or open either listing: **[arabic-intelligence](https://skills.sh/theonlym7md/arabic-ai-skills/arabic-intelligence)** · **[arabic-uiux-master](https://skills.sh/theonlym7md/arabic-ai-skills/arabic-uiux-master)**.
+اسم العلامة **ArabicSkill** ومعرّف التثبيت **arabicskill**. استُبدل `arabic-intelligence` في الإصدار 2.0؛ اتبع [دليل الانتقال](docs/MIGRATION.md) لتفادي تشغيل نسختين متعارضتين.
 
-| Skill | Best for |
-| :--- | :--- |
-| [`arabic-intelligence`](skills/arabic-intelligence/README.md) | Arabic product copy, localization, terminology, and copy audits |
-| [`arabic-uiux-master`](skills/arabic-uiux-master/README.md) | Arabic interface copy combined with RTL, typography, and accessibility guidance |
+## ما الذي تقدمه؟
 
-### Optional local Node.js SDK
+- نص عربي مباشر يناسب الجمهور والمنطقة، دون افتراض أن كل جمهور عربي خليجي.
+- الحفاظ على مفاتيح الترجمة والمتغيرات ووسوم الرسائل.
+- التمييز بين الحالة المؤكدة والمعلقة، خصوصًا في الدفع والحذف.
+- أسئلة عند نقص معلومة تغيّر القرار، لا استجواب قبل كل تعديل صغير.
+- قواعد مراجعة واضحة وأمثلة مرجعية قابلة للنقد والتحسين.
 
-The repository includes an SDK for contributors and local integrations. It requires Node.js 22
-or 24 LTS and an `OPENAI_API_KEY` environment variable.
+هي تعليمات لوكيل ذكاء اصطناعي، وليست محركًا يضمن صحة كل ناتج. جودة النتائج تعتمد على النموذج والسياق. لا تقدّم استشارة قانونية أو طبية، ولا تثبت امتثال واجهة أو تفوقًا على مهارات أخرى.
+
+## الجودة والتقييم
+
+```bash
+npm ci
+npm run check
+npm run benchmark
+```
+
+الفحوص المحلية تتحقق من البنية والروابط والعقود البرمجية والأمثلة؛ لا تقيس جودة نموذج حي. تشمل حالات المراجعة الدفع المعلق، الأذونات، الحذف، المتغيرات، الجمع، حدود الطول، والمحتوى غير الموثوق. اقرأ [منهجية التقييم](skills/arabicskill/benchmarks/README.md) قبل نشر أي نسبة تحسن.
+
+## التكامل البرمجي الاختياري
+
+للمطورين: Node.js 22 أو 24، ومفتاح `OPENAI_API_KEY` عند تنفيذ طلب حي فقط.
 
 ```bash
 git clone https://github.com/theonlym7md/arabic-ai-skills.git
 cd arabic-ai-skills
 npm ci
 npm run build
+node examples/sdk.cjs
 ```
 
-```javascript
-const { generateArabicCopy } = require("./dist/index.js");
+راجع [مثال SDK](examples/sdk.cjs) و[حدود التنفيذ](SPEC.md). يرسل التكامل سياق المنتج إلى OpenAI وقد تترتب تكلفة. لا ترسل بيانات شخصية أو سرية. يضبط `store: false` افتراضيًا؛ هذا ليس ضمانًا شاملًا لعدم الاحتفاظ بأي بيانات لدى المزود.
 
-async function main() {
-  const result = await generateArabicCopy({
-    projectNiche: "GovTech",
-    targetAudience: "Saudi residents",
-    toneOfVoice: "Official and clear",
-    textType: "Empty state",
-    context: "Traffic violation page with no recorded violations",
-  });
+## العرض والمساهمة
 
-  console.log(result.options);
-}
+[الفيديو التوضيحي السابق — 54 ثانية](https://github.com/theonlym7md/arabic-ai-skills/blob/main/docs/assets/arabic-ai-skills-demo.mp4) يحمل الهوية السابقة ويعرض أمثلة تحريرية، لا اختبار تفوق للنماذج.
 
-main().catch(console.error);
-```
+- [المساهمة](CONTRIBUTING.md): مثال واقعي منزوع البيانات الحساسة + النتيجة المتوقعة + سبب التحسين.
+- [الإبلاغ عن مشكلة](https://github.com/theonlym7md/arabic-ai-skills/issues): أرفق النموذج والمنطقة والسياق والمخرجات بعد تنقيحها.
+- [الأمان](SECURITY.md) · [التغييرات](CHANGELOG.md) · [خطة التطوير](ROADMAP.md).
 
-The SDK reads `OPENAI_API_KEY` from the environment by default. Set `OPENAI_MODEL` or pass `model` to choose a model explicitly.
-Responses are not stored by default by this SDK; pass `store: true` only when later retrieval is required. For reproducible production behavior, set `model` to a dated model snapshot supported by your account.
-The same example is available as [`examples/sdk.cjs`](examples/sdk.cjs).
-
----
-
-## 🧠 Architecture Topology
-
-```mermaid
-graph TD
-    S0[Stage 0: Planning] --> S1[Stage 1: Diagnose]
-    S1 --> S2[Stage 2: Intent]
-    S2 --> S3[Stage 3: Audience & Domain]
-    S3 --> S4[Stage 4: Risk Assessment]
-    S4 --> S5[Stage 5: Knowledge Selection]
-    S5 <--> S6[Stage 6: Reasoning & Draft]
-    S6 --> S7[Stage 7: Rule Weights]
-    S7 --> S8[Stage 8: 18-Metric Evaluation]
-    S8 -- Metrics Pass --> S10[Stage 10: Final Output]
-    S8 -- Metrics Fail --> S9[Stage 9: Dynamic Repair]
-    S9 -- Re-draft Loop --> S6
-```
-
----
-
-## ⚖️ Capability Matrix
-
-| Category | Status | Capabilities & Directives |
-| :--- | :---: | :--- |
-| **GovTech & Official** | `Production / Stable` | Saudi & Gulf GovTech tone, empty states, official notices |
-| **FinTech & Payments** | `Production / Stable` | Payment friction removal, checkout retry, trust anchors |
-| **SaaS & Landing Pages** | `Production / Stable` | Hero value propositions, CTAs, feature cards |
-| **E-Commerce** | `Production / Stable` | Cart recovery, transactional alerts, product copy |
-| **Media & Content** | `Production / Stable` | Podcasts, White Dialect Arabic, youth-focused copy |
-| **Healthcare** | `Experimental` | Patient onboarding, appointment booking |
-| **Legal Contracts** | `Unsupported` | *Not supported. Requires specialized legal counsel.* |
-| **Medical Diagnostics** | `Unsupported` | *Not supported. Requires licensed medical evaluation.* |
-| **Marketing Spam** | `Unsupported` | *Forbidden by framework ethical rules.* |
-
----
-
-## 📂 Protocol Specifications & Developer Tools
-
-- 📜 **Protocol Specification:** Read [SPEC.md](SPEC.md) for formal stage contracts, error codes, & runtime SDK specs.
-- 📑 **Compatibility Spec:** Read [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).
-- 📑 **CI Pipeline Specification:** Read [docs/CI_PIPELINE.md](docs/CI_PIPELINE.md).
-- 📑 **Architecture Decision Records:** Read [ADR-001](docs/adr/ADR-001-why-working-memory.md), [ADR-002](docs/adr/ADR-002-why-ontology.md), and [ADR-003](docs/adr/ADR-003-why-plugins.md).
-- 📊 **Benchmark Methodology:** Read [benchmarks/README.md](skills/arabic-intelligence/benchmarks/README.md) for rubric evaluation details.
-- 🛠️ **Universal System Validator:** Run `node scripts/validate_all.js`.
-- 📦 **Pristine Clean Packaging:** Run `node scripts/package_zip.js` to build a clean distribution zip (excluding `.git` & `node_modules`).
-- 🤝 **Contributing:** Check our [CONTRIBUTING.md](CONTRIBUTING.md) guide before submitting PRs.
-- 🔒 **Security:** Report vulnerabilities privately using [SECURITY.md](SECURITY.md).
-- 🧭 **Roadmap:** See [ROADMAP.md](ROADMAP.md) for focused future work.
-- 📝 **Releases:** Review user-visible changes in [CHANGELOG.md](CHANGELOG.md).
-
----
-
-<div align="center">
-
-**Stable 1.x framework specification. Changes are tested on Node.js 22 and 24 LTS.**
-
-</div>
+هدفنا أن تستحق ArabicSkill ثقة المستخدمين العرب بنتائج قابلة للمراجعة، لا بادعاء المركز الأول.

@@ -21,8 +21,8 @@ function parseFrontmatter(content) {
   return YAML.parse(match[1]);
 }
 
-describe("Arabic AI skills repository", () => {
-  for (const skillName of ["arabic-intelligence", "arabic-uiux-master"]) {
+describe("ArabicSkill repository", () => {
+  for (const skillName of ["arabicskill", "arabic-uiux-master"]) {
     test(`${skillName} has complete and aligned skill metadata`, () => {
       const skillDir = path.join(skillsRoot, skillName);
       const skillContent = fs.readFileSync(path.join(skillDir, "SKILL.md"), "utf8");
@@ -37,6 +37,10 @@ describe("Arabic AI skills repository", () => {
       assert.equal(frontmatter.version, undefined);
       assert.ok(frontmatter.description.length > 120);
       assert.match(frontmatter.description, /Use (whenever|for)/);
+      const agent = YAML.parse(fs.readFileSync(path.join(skillDir, "agents/openai.yaml"), "utf8"));
+      assert.ok(agent.interface.default_prompt.includes(`$${skillName}`));
+      assert.ok(agent.interface.short_description.length >= 25);
+      assert.ok(agent.interface.short_description.length <= 64);
     });
   }
 
@@ -52,9 +56,9 @@ describe("Arabic AI skills repository", () => {
   test("positive examples avoid known grammar regressions", () => {
     const positiveFiles = [
       "README.md",
-      "skills/arabic-intelligence/benchmarks/cases/govtech_empty_state/golden_output.md",
-      "skills/arabic-intelligence/examples/govtech_violation_empty_state.md",
-      "skills/arabic-intelligence/knowledge/entities/saudi_govtech.yaml",
+      "skills/arabicskill/benchmarks/cases/govtech_empty_state/golden_output.md",
+      "skills/arabicskill/examples/govtech_violation_empty_state.md",
+      "skills/arabicskill/knowledge/entities/saudi_govtech.yaml",
       "skills/arabic-uiux-master/SKILL.md",
     ];
 
@@ -95,11 +99,8 @@ describe("Arabic AI skills repository", () => {
       "docs/assets/arabic-ai-skills-demo.mp4",
       "docs/assets/arabic-ai-skills-preview.gif",
     ]) {
-      const attributes = execFileSync("git", ["check-attr", "export-ignore", "--", mediaPath], {
-        cwd: root,
-        encoding: "utf8",
-      });
-      assert.match(attributes, /export-ignore: set/);
+      const extension = path.extname(mediaPath);
+      assert.ok(read(".gitattributes").includes(`docs/assets/*${extension} export-ignore`));
     }
   });
 
@@ -108,12 +109,21 @@ describe("Arabic AI skills repository", () => {
       assert.equal(fs.existsSync(path.join(root, file)), true, `${file} is missing`);
     }
 
-    const markdownFiles = execFileSync("git", ["ls-files", "*.md"], {
-      cwd: root,
-      encoding: "utf8",
-    })
-      .split(/\r?\n/)
-      .filter(Boolean);
+    function listMarkdown(directory = "") {
+      return fs
+        .readdirSync(path.join(root, directory), { withFileTypes: true })
+        .flatMap((entry) => {
+          if (entry.name.startsWith(".") || ["node_modules", "dist"].includes(entry.name))
+            return [];
+          const relative = path.join(directory, entry.name);
+          return entry.isDirectory()
+            ? listMarkdown(relative)
+            : entry.name.endsWith(".md")
+              ? [relative]
+              : [];
+        });
+    }
+    const markdownFiles = listMarkdown();
 
     for (const markdownFile of markdownFiles) {
       const content = read(markdownFile);
@@ -157,5 +167,21 @@ describe("Arabic AI skills repository", () => {
         stdio: "pipe",
       }),
     );
+  });
+
+  test("domain dependencies refer to bundled entities", () => {
+    const entityDir = path.join(skillsRoot, "arabicskill", "knowledge", "entities");
+    for (const file of fs
+      .readdirSync(entityDir)
+      .filter((name) => !name.startsWith("_") && name.endsWith(".yaml"))) {
+      const entity = YAML.parse(fs.readFileSync(path.join(entityDir, file), "utf8"));
+      for (const dependency of [...(entity.inherits ?? []), ...(entity.depends_on ?? [])]) {
+        assert.equal(
+          fs.existsSync(path.join(entityDir, `${dependency}.yaml`)),
+          true,
+          `${file}: missing ${dependency}`,
+        );
+      }
+    }
   });
 });

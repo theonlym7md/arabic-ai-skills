@@ -1,7 +1,7 @@
 {
-  "name": "arabic-ai-skills",
-  "version": "1.2.3",
-  "description": "Arabic Intelligence Framework - A structured reasoning framework for Arabic UX writing, product copy, and AI agents.",
+  "name": "arabicskill",
+  "version": "2.0.0",
+  "description": "ArabicSkill: Arabic product writing, safe localization, and RTL guidance for AI agents.",
   "main": "dist/index.js",
   "private": true,
   "engines": {
@@ -47,13 +47,13 @@
   "license": "MIT",
   "type": "commonjs",
   "dependencies": {
-    "openai": "^7.5.0"
+    "openai": "^7.18.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.10",
-    "@types/node": "^22.20.1",
+    "@biomejs/biome": "^2.5.14",
+    "@types/node": "^22.20.3",
     "ajv": "^8.17.1",
     "typescript": "^7.0.2",
-    "yaml": "^2.8.1"
+    "yaml": "^2.9.1"
   }
 }

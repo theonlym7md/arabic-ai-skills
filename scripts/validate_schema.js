@@ -3,7 +3,7 @@ const path = require("node:path");
 const Ajv2020 = require("ajv/dist/2020");
 const YAML = require("yaml");
 
-const entitiesDir = path.join(__dirname, "../skills/arabic-intelligence/knowledge/entities");
+const entitiesDir = path.join(__dirname, "../skills/arabicskill/knowledge/entities");
 const schemaPath = path.join(entitiesDir, "_schema.yaml");
 const files = fs
   .readdirSync(entitiesDir)

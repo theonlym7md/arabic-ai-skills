@@ -1,3 +1,7 @@
+# Keep text checkouts and source archives reproducible across platforms.
+# Automatic text detection leaves binary assets unchanged.
+* text=auto eol=lf
+
 # Ensure git export / zip clean archiving
 node_modules export-ignore
 .git export-ignore

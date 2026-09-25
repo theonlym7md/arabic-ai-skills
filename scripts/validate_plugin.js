@@ -2,8 +2,8 @@ const fs = require("node:fs");
 const path = require("node:path");
 const YAML = require("yaml");
 
-const pluginsDir = path.join(__dirname, "../skills/arabic-intelligence/plugins");
-const entitiesDir = path.join(__dirname, "../skills/arabic-intelligence/knowledge/entities");
+const pluginsDir = path.join(__dirname, "../skills/arabicskill/plugins");
+const entitiesDir = path.join(__dirname, "../skills/arabicskill/knowledge/entities");
 const plugins = fs
   .readdirSync(pluginsDir)
   .filter((entry) => fs.statSync(path.join(pluginsDir, entry)).isDirectory());

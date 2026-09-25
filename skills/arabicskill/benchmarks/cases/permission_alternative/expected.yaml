@@ -1,0 +1,8 @@
+case_id: "permission_alternative"
+domain: "Location"
+target_metrics:
+  Clarity: 95
+forbidden_phrases: ["لن نخزن","آمن تمامًا"]
+review_criteria:
+  - "States the provided purpose and manual alternative."
+  - "Makes no storage or privacy guarantee."

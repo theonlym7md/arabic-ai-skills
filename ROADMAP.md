@@ -1,18 +1,20 @@
-# Framework Roadmap
+# ArabicSkill roadmap
 
-## Phase 1 (v1.0) — Architecture Core [Completed]
-- Decoupled context state objects.
-- Ontological entity schema with anti-examples.
-- 18-metric Arabic UX rubric.
-- Plugin architecture & domain weights.
+## Delivered in 2.0
 
-## Phase 2 (v1.1 - v1.2) — Open Source Ecosystem [Completed]
-- Community governance, RFC process, ADR documentation.
-- Automated regression suite benchmarking.
+- Canonical ArabicSkill identity and `arabicskill` skill identifier.
+- Localization safeguards for placeholders, plural forms, and mixed-direction content.
+- Explicit handling of uncertain payment, deletion and permission states.
+- Expanded synthetic review cases and mocked SDK contract tests.
+- Documentation separating agent guidance, the SDK, and unmeasured quality claims.
 
-## Phase 3 (Next)
+## Next evidence milestones
 
-- Add independently reviewed benchmark cases for FinTech, E-Commerce, and SaaS.
-- Expand dialect support only with native-speaker review and region-specific fixtures.
-- Add adapter examples for more agent runtimes without duplicating skill instructions.
-- Publish release notes and compatibility evidence for every supported minor version.
+- Run blinded with/without-skill comparisons on several model snapshots.
+- Have native Arabic UX writers independently rate held-out examples.
+- Publish disagreement, failures, latency and cost alongside quality results.
+- Add Egyptian, Maghrebi, Levantine and Gulf fixtures with local reviewers.
+- Test RTL guidance in real interfaces with keyboard and screen-reader users.
+
+These milestones are planned, not completed. Directory indexing, adoption and
+ranking are external outcomes, not guaranteed by this roadmap.

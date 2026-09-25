@@ -1,0 +1,1 @@
+ترجم قيم JSON التالية فقط وأعد JSON صالحًا بلا شرح، مع حفظ المفاتيح والمتغيرات: {"welcome":"Welcome, {name}","total":"Total: {{amount}} SAR","help":"Open <a href=\"https://example.com/help\">help</a>"}

@@ -1,4 +1,4 @@
 interface:
-  display_name: "Arabic UI/UX Master"
+  display_name: "ArabicSkill — UI/UX"
   short_description: "Arabic UX writing with practical RTL guidance"
   default_prompt: "Use $arabic-uiux-master to review this Arabic interface copy and its RTL experience."

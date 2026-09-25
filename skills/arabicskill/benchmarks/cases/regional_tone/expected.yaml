@@ -1,0 +1,8 @@
+case_id: "regional_tone"
+domain: "SaaS"
+target_metrics:
+  Clarity: 95
+forbidden_phrases: ["وش","الحين","دلوقتي"]
+review_criteria:
+  - "Uses clear Modern Standard Arabic, without assigning a country."
+  - "Uses the available creation action and consistent terminology."

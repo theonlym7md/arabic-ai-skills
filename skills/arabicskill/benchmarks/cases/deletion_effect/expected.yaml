@@ -1,0 +1,8 @@
+case_id: "deletion_effect"
+domain: "Account"
+target_metrics:
+  Clarity: 95
+forbidden_phrases: ["حذف نهائي","يمكنك التراجع"]
+review_criteria:
+  - "Asks for the critical deletion effect before asserting it."
+  - "Does not invent permanent deletion or recovery."

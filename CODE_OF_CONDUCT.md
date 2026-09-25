@@ -1,6 +1,6 @@
 # Code of Conduct
 
-Arabic Intelligence is committed to providing a welcoming, inclusive, and professional open-source environment for all contributors.
+ArabicSkill is committed to providing a welcoming, inclusive, and professional open-source environment for all contributors.
 
 ## Standards
 - Respect diverse viewpoints and cultural nuances.

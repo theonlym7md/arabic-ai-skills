@@ -1,5 +1,7 @@
 # ADR-002: Ontological Knowledge Graph over Markdown Files
 
+Historical design rationale. The repository provides declarative YAML resources and validators, not the deterministic query engine proposed below. See [the current execution contract](../../SPEC.md).
+
 ## Context
 Managing raw text guidance files scales poorly beyond ~20 files, causing instruction overlap and unresolvable rule conflicts.
 

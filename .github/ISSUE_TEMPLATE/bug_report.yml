@@ -11,7 +11,7 @@ body:
     attributes:
       label: Affected area
       options:
-        - arabic-intelligence
+        - arabicskill
         - arabic-uiux-master
         - Node.js SDK
         - Validators or CI

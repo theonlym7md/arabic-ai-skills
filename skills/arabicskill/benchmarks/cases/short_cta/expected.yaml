@@ -1,0 +1,8 @@
+case_id: "short_cta"
+domain: "SaaS"
+target_metrics:
+  Clarity: 95
+forbidden_phrases: ["قم","ما الجمهور"]
+review_criteria:
+  - "Returns only the CTA, at most two whitespace-delimited words."
+  - "Does not block this fully specified small rewrite with questions."

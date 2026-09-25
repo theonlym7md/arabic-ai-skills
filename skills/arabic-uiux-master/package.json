@@ -1,6 +1,6 @@
 {
   "name": "arabic-uiux-master",
-  "version": "1.2.3",
+  "version": "2.0.0",
   "description": "Arabic UI/UX writing, microcopy, and practical RTL design guidance for AI agents.",
   "main": "SKILL.md",
   "private": true,

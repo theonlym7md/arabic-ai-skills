@@ -12,7 +12,7 @@ const committedPackage = JSON.parse(
   }),
 );
 const { version } = committedPackage;
-const zipPath = path.join(distDir, `arabic-ai-skills-v${version}.zip`);
+const zipPath = path.join(distDir, `ArabicSkill-v${version}.zip`);
 
 if (!fs.existsSync(distDir)) {
   fs.mkdirSync(distDir, { recursive: true });
