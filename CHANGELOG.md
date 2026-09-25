@@ -2,6 +2,13 @@
 
 All notable changes are documented here. This project follows Semantic Versioning.
 
+## [2.0.2] - 2026-09-25
+
+### Improved
+
+- Clarified and shortened both skill descriptions for more precise discovery.
+- Linked directly to the indexed skills.sh pages from the repository guide.
+
 ## [2.0.1] - 2026-09-25
 
 ### Improved

@@ -1,6 +1,6 @@
 {
   "name": "arabicskill",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "ArabicSkill: Arabic product writing, safe localization, and RTL guidance for AI agents.",
   "main": "dist/index.js",
   "private": true,
@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/theonlym7md/arabic-ai-skills.git"
   },
-  "homepage": "https://skills.sh/theonlym7md/arabic-ai-skills",
+  "homepage": "https://skills.sh/theonlym7md/arabic-ai-skills/arabicskill",
   "bugs": {
     "url": "https://github.com/theonlym7md/arabic-ai-skills/issues"
   },

@@ -1,8 +1,8 @@
 ---
 name: arabicskill
-description: "Create, rewrite, localize, or audit Arabic product copy and UX microcopy using a structured context, risk, terminology, drafting, and quality-review workflow. Use whenever a user asks for Arabic buttons, labels, forms, errors, empty states, onboarding, notifications, landing-page copy, product localization, tone adaptation, or an Arabic copy audit—even when they do not mention UX writing explicitly. Do not use for literary translation, long-form journalism, legal advice, or medical diagnosis."
+description: "Write, localize, and audit Arabic product copy and UX microcopy for buttons, forms, errors, empty states, onboarding, notifications, and landing pages. Use for natural Arabic interface wording, tone, terminology, or localization review. Not for literary translation, standalone RTL coding, or legal or medical advice."
 metadata:
-  version: "2.0.1"
+  version: "2.0.2"
 ---
 
 # ArabicSkill

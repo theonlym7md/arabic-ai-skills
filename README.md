@@ -4,7 +4,7 @@
 Arabic product writing, localization, and RTL guidance for AI agents.
 
 [![CI](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/ci.yml)
-[MIT license](LICENSE) · [English guide](docs/GETTING_STARTED.en.md) · [Migration to 2.0](docs/MIGRATION.md) · [مسار العمل](docs/WORKFLOW.md)
+[MIT license](LICENSE) · [English guide](docs/GETTING_STARTED.en.md) · [ArabicSkill على skills.sh](https://skills.sh/theonlym7md/arabic-ai-skills/arabicskill) · [Migration to 2.0](docs/MIGRATION.md) · [مسار العمل](docs/WORKFLOW.md)
 
 ## ابدأ هنا
 
@@ -28,8 +28,8 @@ npx skills add theonlym7md/arabic-ai-skills --skill arabicskill
 
 | المهارة | الاستخدام |
 | --- | --- |
-| [arabicskill](skills/arabicskill/README.md) | كتابة وتدقيق وتوطين نصوص المنتج؛ المتغيرات والجمع وحالات الخطأ الحساسة |
-| [arabic-uiux-master](skills/arabic-uiux-master/README.md) | نصوص شاشة كاملة مع إرشادات RTL والمحتوى ثنائي الاتجاه والوصول |
+| [arabicskill](https://skills.sh/theonlym7md/arabic-ai-skills/arabicskill) | كتابة وتدقيق وتوطين نصوص المنتج؛ المتغيرات والجمع وحالات الخطأ الحساسة |
+| [arabic-uiux-master](https://skills.sh/theonlym7md/arabic-ai-skills/arabic-uiux-master) | نصوص شاشة كاملة مع إرشادات RTL والمحتوى ثنائي الاتجاه والوصول |
 
 لتثبيت المهارة المرافقة:
 

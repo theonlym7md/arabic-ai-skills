@@ -1,8 +1,8 @@
 ---
 name: arabic-uiux-master
-description: "Design, rewrite, and audit Arabic interface copy together with RTL content guidance. Use for Arabic UI screens, buttons, forms, errors, empty states, onboarding, checkout, dashboards, responsive layouts, typography, bidirectional content, or UX-writing systems. Trigger whenever a request combines Arabic content with interface or RTL design decisions. Do not use for code-only RTL bugs, literary writing, or general translation with no product-interface context."
+description: "Write and review Arabic screen copy with RTL and bidirectional-content guidance. Use for requests combining Arabic interface wording with screen UX decisions, including forms, errors, checkout, navigation, typography, and accessibility. Not for code-only RTL debugging or general translation without product-interface context."
 metadata:
-  version: "2.0.1"
+  version: "2.0.2"
 ---
 
 # ArabicSkill — UI/UX Companion
