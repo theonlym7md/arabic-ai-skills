@@ -1,6 +1,6 @@
 {
   "name": "arabicskill",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A structured Arabic product-writing and localization skill for AI agents.",
   "main": "SKILL.md",
   "private": true,

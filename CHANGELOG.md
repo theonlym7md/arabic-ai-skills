@@ -2,6 +2,14 @@
 
 All notable changes are documented here. This project follows Semantic Versioning.
 
+## [2.0.1] - 2026-09-25
+
+### Improved
+
+- Added concrete input-to-output examples and concise final checks inside both skill entrypoints.
+- Added an opt-in, country-specific dialect guide and bundled it in the optional SDK instructions.
+- Documented the human workflow, the earlier E005 scan context, and decisions from the external assessment without claiming unmeasured model gains.
+
 ## [2.0.0] - 2026-09-25
 
 ### Breaking

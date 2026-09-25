@@ -2,7 +2,7 @@
 name: arabicskill
 description: "Create, rewrite, localize, or audit Arabic product copy and UX microcopy using a structured context, risk, terminology, drafting, and quality-review workflow. Use whenever a user asks for Arabic buttons, labels, forms, errors, empty states, onboarding, notifications, landing-page copy, product localization, tone adaptation, or an Arabic copy audit—even when they do not mention UX writing explicitly. Do not use for literary translation, long-form journalism, legal advice, or medical diagnosis."
 metadata:
-  version: "2.0.0"
+  version: "2.0.1"
 ---
 
 # ArabicSkill
@@ -48,6 +48,7 @@ metadata:
 - للمتغيرات وملفات JSON وICU والجمع والأرقام: [references/localization.md](references/localization.md).
 - للدفع والحذف والأذونات أو حالة نظام غير مؤكدة: [references/sensitive-states.md](references/sensitive-states.md).
 - لتدقيق رحلة متعددة الشاشات: [reasoning/stage_8_evaluation.md](reasoning/stage_8_evaluation.md).
+- لطلب لهجة مصرية أو سعودية أو شامية أو مغربية محددة: [references/dialects.md](references/dialects.md).
 
 للمجال المتخصص، راجع [knowledge/relations/routing.yaml](knowledge/relations/routing.yaml) ثم:
 
@@ -77,6 +78,42 @@ metadata:
 - لا تحوّل انتهاء مهلة الاتصال إلى تأكيد فشل الدفع، ولا توجّه لإعادة الدفع قبل التحقق من حالة العملية.
 - لا تعد باسترداد مبلغ أو حفظ بيانات أو إمكانية تراجع لم يثبتها السياق.
 - ميّز حد الكلمات عن المحارف؛ لا تزعم ملاءمة عرض زر دون قياسه في الواجهة.
+
+## أمثلة تطبيقية قصيرة
+
+هذه أمثلة تحريرية مُنشأة للسياق المذكور، وليست نتائج اختبار نموذج. عدّلها عند اختلاف حقائق المنتج.
+
+### حالة فارغة
+
+**الطلب:** «لا توجد مهام بعد في تطبيق مهام عربي. يستطيع المستخدم إضافة مهمة. أريد عنوانًا ووصفًا وزرًا.»
+
+**الناتج:**
+
+- العنوان: «لا توجد مهام بعد»
+- الوصف: «أضف مهمة لتبدأ تنظيم عملك.»
+- الزر: «أضف مهمة»
+
+**القرار:** سُمّيت الحالة والإجراء المتاح، دون افتراض سبب آخر للفراغ.
+
+### دفع لم تُعرف نتيجته
+
+**الطلب:** «انتهت مهلة اتصال الدفع ولا نعرف هل خُصم المبلغ. يوجد إجراء للتحقق من حالة العملية. اكتب عنوانًا ووصفًا وزرًا.»
+
+**الناتج:**
+
+- العنوان: «لم نتأكد من حالة الدفع بعد»
+- الوصف: «تحقّق من حالة العملية قبل الدفع مرة أخرى.»
+- الزر: «تحقّق من الحالة»
+
+**القرار:** انتهاء الاتصال لا يثبت فشل الدفع، وإجراء التحقق مذكور صراحةً في الطلب.
+
+### قيمة ترجمة فيها متغير
+
+**الطلب:** «ترجم قيمة `{"welcome":"Welcome, {name}"}` إلى العربية، مع حفظ المفتاح والمتغير وبنية JSON.»
+
+**الناتج:** `{"welcome":"مرحبًا، {name}"}`
+
+**القرار:** تغيّر النص الظاهر فقط، وبقي المفتاح و`{name}` كما هما.
 
 ## أنماط المكوّنات
 
@@ -116,3 +153,7 @@ metadata:
 - لتدقيق نص: اعرض «المشكلة»، «الأثر»، «الصياغة المقترحة» مع ترتيب النتائج حسب الأهمية.
 
 لا تُخرج `PlanningContext` أو `ReasoningContext` أو أثر القرار الداخلي في الرد النهائي.
+
+## فحص قبل التسليم
+
+تأكد من أن النص يطابق الحالة المؤكدة والإجراء المتاح، ويحافظ على المتغيرات والمفاتيح، ويلائم المنطقة والنبرة والقيود المذكورة. إذا بقيت معلومة حاسمة مجهولة، صرّح بها أو اسأل عنها بدل إكمال ادعاء غير مؤكد.

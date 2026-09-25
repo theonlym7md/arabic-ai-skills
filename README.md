@@ -4,7 +4,7 @@
 Arabic product writing, localization, and RTL guidance for AI agents.
 
 [![CI](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/theonlym7md/arabic-ai-skills/actions/workflows/ci.yml)
-[MIT license](LICENSE) · [English guide](docs/GETTING_STARTED.en.md) · [Migration to 2.0](docs/MIGRATION.md)
+[MIT license](LICENSE) · [English guide](docs/GETTING_STARTED.en.md) · [Migration to 2.0](docs/MIGRATION.md) · [مسار العمل](docs/WORKFLOW.md)
 
 ## ابدأ هنا
 
@@ -80,5 +80,6 @@ node examples/sdk.cjs
 - [المساهمة](CONTRIBUTING.md): مثال واقعي منزوع البيانات الحساسة + النتيجة المتوقعة + سبب التحسين.
 - [الإبلاغ عن مشكلة](https://github.com/theonlym7md/arabic-ai-skills/issues): أرفق النموذج والمنطقة والسياق والمخرجات بعد تنقيحها.
 - [الأمان](SECURITY.md) · [التغييرات](CHANGELOG.md) · [خطة التطوير](ROADMAP.md).
+- [حالة فحص E005](docs/SECURITY_SCAN_STATUS.md): ملخص الأدلة الحالية وطلب إعادة الفحص المفتوح، دون افتراض نتيجة جديدة من منصة الفهرسة.
 
 هدفنا أن تستحق ArabicSkill ثقة المستخدمين العرب بنتائج قابلة للمراجعة، لا بادعاء المركز الأول.

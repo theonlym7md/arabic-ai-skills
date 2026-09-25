@@ -62,6 +62,7 @@ test("SDK includes supporting safety rules in a tool-free request", async (t) =>
   assert.deepEqual(await generateArabicCopy(input), expected);
   assert.match(request.instructions, /# حالات تحتاج حقائق المنتج/);
   assert.match(request.instructions, /# سلامة التوطين/);
+  assert.match(request.instructions, /# اللهجات عند الطلب الصريح/);
   assert.match(request.instructions, /SDK mode/);
   assert.equal(request.model, "test-model");
   assert.equal(request.store, false);

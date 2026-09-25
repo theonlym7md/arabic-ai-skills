@@ -172,7 +172,12 @@ export async function generateArabicCopy(
   let systemPrompt = "";
   try {
     const skillDir = path.join(__dirname, "../skills/arabicskill");
-    systemPrompt = ["SKILL.md", "references/localization.md", "references/sensitive-states.md"]
+    systemPrompt = [
+      "SKILL.md",
+      "references/localization.md",
+      "references/sensitive-states.md",
+      "references/dialects.md",
+    ]
       .map((file) => fs.readFileSync(path.join(skillDir, file), "utf-8"))
       .join("\n\n");
     systemPrompt += `
