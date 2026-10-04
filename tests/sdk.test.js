@@ -1,4 +1,6 @@
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 const { test } = require("node:test");
 const { generateArabicCopy } = require("../dist/index.js");
 
@@ -63,6 +65,17 @@ test("SDK includes supporting safety rules in a tool-free request", async (t) =>
   assert.match(request.instructions, /# حالات تحتاج حقائق المنتج/);
   assert.match(request.instructions, /# سلامة التوطين/);
   assert.match(request.instructions, /# اللهجات عند الطلب الصريح/);
+  const referenceDir = path.join(__dirname, "../skills/arabicskill/references");
+  const sectorRules = fs.readFileSync(path.join(referenceDir, "sector-patterns.md"), "utf8");
+  const sourceRegister = fs.readFileSync(path.join(referenceDir, "saudi-sources.md"), "utf8");
+  assert.ok(
+    request.instructions.includes(sectorRules),
+    "SDK must bundle the complete sector rules",
+  );
+  assert.ok(
+    !request.instructions.includes(sourceRegister),
+    "SDK must not bundle the source register",
+  );
   assert.match(request.instructions, /SDK mode/);
   assert.equal(request.model, "test-model");
   assert.equal(request.store, false);

@@ -2,7 +2,7 @@
 
 This directory stores review fixtures and target thresholds for preventing regressions.
 
-There are nine synthetic cases: government empty state, uncertain payment, deletion effects, location permission, translation variables, Arabic plurals, a short CTA, source injection, and regional neutrality. Golden outputs are authored examples, not a single mandatory phrasing.
+There are sixteen synthetic cases: the original nine (government empty state, uncertain payment, deletion effects, location permission, translation variables, Arabic plurals, a short CTA, source injection, regional neutrality), plus media actions, game onboarding, civic request status, merchant benefits, event availability, installment terms and investment disclosure. Golden outputs are authored examples, not a single mandatory phrasing or copied website content.
 
 ## What the checks prove
 
@@ -14,7 +14,7 @@ The fixture command checks files, metadata ranges and prohibited phrases in the 
 2. Run the same model snapshot, settings and prompts with and without the skill; record the exact loaded files and raw outputs.
 3. Randomize output order and ask at least two Arabic-speaking reviewers to apply the [evidence rubric](../reasoning/stage_8_evaluation.md).
 4. Reject unsafe claims and broken variables independently of style scores. Record disagreements and failed cases.
-5. Publish model/date, prompt, output, settings, rubric version, reviewers, and limitations together. Do not claim statistical significance from nine fixtures.
+5. Publish model/date, prompt, output, settings, rubric version, reviewers, and limitations together. Do not claim statistical significance from this small fixture set.
 
 No with/without model experiment is recorded in this release. Local contract tests use mocked API responses and incur no model usage.
 

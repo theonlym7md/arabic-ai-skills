@@ -1,0 +1,8 @@
+case_id: game_onboarding
+domain: Gaming
+target_metrics:
+  Clarity: 95
+forbidden_phrases: ["قبل انتهاء الوقت", "نقاط السرعة", "فوز مضمون"]
+review_criteria:
+  - "Preserves the supplied sequence and cooperative mode."
+  - "Does not add competition, timers or reward mechanics."

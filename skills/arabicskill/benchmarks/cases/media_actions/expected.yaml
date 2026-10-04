@@ -1,0 +1,8 @@
+case_id: media_actions
+domain: Media
+target_metrics:
+  Clarity: 95
+forbidden_phrases: ["أكمل الاستماع", "اشترك الآن"]
+review_criteria:
+  - "Uses distinct episode-play and program-follow actions."
+  - "Does not invent saved progress, a paywall or editorial facts."

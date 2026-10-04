@@ -2,6 +2,20 @@
 
 All notable changes are documented here. This project follows Semantic Versioning.
 
+## [2.1.0] - 2026-10-04
+
+### Improved
+
+- Added conditional sector-writing guidance from a dated, scope-limited review of 13 public Saudi product websites; original examples, not copied campaigns or model training.
+- Added a self-contained sector screen reference to the UI/UX companion, distinguishing marketing from task states and protecting booking, civic and financial facts.
+- Bundled the main sector rules (not the source register) into the optional tool-free SDK and extended its request contract test.
+- Expanded synthetic review fixtures from nine to sixteen; fixture validation is not a measured model-quality comparison.
+- Tightened media summaries after a limited forward test added an unsupported editorial angle.
+
+### Security
+
+- Updated the development-only transitive `fast-uri` dependency from 3.1.6 to 3.1.8 to address [authority injection](https://github.com/advisories/GHSA-qw65-cvwx-89v3), [host confusion](https://github.com/advisories/GHSA-58mr-gqgx-xq4g), and [host normalization](https://github.com/advisories/GHSA-hrr3-gc8f-f4qj) advisories. No change to the public SDK API.
+
 ## [2.0.2] - 2026-09-25
 
 ### Improved

@@ -1,0 +1,9 @@
+case_id: booking_availability
+domain: Culture
+target_metrics:
+  Trust: 100
+forbidden_phrases: ["احجز الآن", "انضم لقائمة الانتظار", "المركز مغلق", "الدخول مجاني"]
+review_criteria:
+  - "Distinguishes sold-out seats from venue closure."
+  - "Keeps only the details action and preserves age/language."
+  - "Does not claim actual RTL testing or invent missing event data."

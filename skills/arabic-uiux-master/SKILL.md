@@ -2,7 +2,7 @@
 name: arabic-uiux-master
 description: "Write and review Arabic screen copy with RTL and bidirectional-content guidance. Use for requests combining Arabic interface wording with screen UX decisions, including forms, errors, checkout, navigation, typography, and accessibility. Not for code-only RTL debugging or general translation without product-interface context."
 metadata:
-  version: "2.0.2"
+  version: "2.1.0"
 ---
 
 # ArabicSkill — UI/UX Companion
@@ -102,6 +102,8 @@ metadata:
 - **SaaS:** اربط الميزة بالمهمة التي سينجزها المستخدم.
 
 اطلب المصطلح أو السياسة المعتمدة عندما يكون القرار قانونيًا أو ماليًا أو طبيًا عالي المخاطر. لا تخترع امتثالًا.
+
+للشاشات الإعلامية والألعاب والخدمات المدنية والتجار والسفر والفعاليات والتقسيط أو الاستثمار، اقرأ القسم المطابق في [references/sector-screens.md](references/sector-screens.md). هذا مرجع مستقل داخل المهارة، لا يفرض اللهجة السعودية ولا ينسخ شروط العلامات المرجعية.
 
 ## 7. فحص الجودة
 

@@ -2,7 +2,7 @@
 name: arabicskill
 description: "Write, localize, and audit Arabic product copy and UX microcopy for buttons, forms, errors, empty states, onboarding, notifications, and landing pages. Use for natural Arabic interface wording, tone, terminology, or localization review. Not for literary translation, standalone RTL coding, or legal or medical advice."
 metadata:
-  version: "2.0.2"
+  version: "2.1.0"
 ---
 
 # ArabicSkill
@@ -49,6 +49,8 @@ metadata:
 - للدفع والحذف والأذونات أو حالة نظام غير مؤكدة: [references/sensitive-states.md](references/sensitive-states.md).
 - لتدقيق رحلة متعددة الشاشات: [reasoning/stage_8_evaluation.md](reasoning/stage_8_evaluation.md).
 - لطلب لهجة مصرية أو سعودية أو شامية أو مغربية محددة: [references/dialects.md](references/dialects.md).
+- للإعلام والألعاب والخدمات المدنية ومنصات التجار والسفر والضيافة والتقسيط أو الاستثمار: اقرأ القسم المطابق في [references/sector-patterns.md](references/sector-patterns.md). قواعد المجال لا تفرض لهجة أو بلدًا.
+- عند طلب مصدر الإلهام أو مراجعة أسلوب إحدى العلامات المرجعية: [references/saudi-sources.md](references/saudi-sources.md)، مع احترام حدود الصفحات التي راجعناها وعدم نسخ الشعارات أو الشروط.
 
 للمجال المتخصص، راجع [knowledge/relations/routing.yaml](knowledge/relations/routing.yaml) ثم:
 

@@ -1,0 +1,9 @@
+case_id: investment_disclosure
+domain: Investment
+target_metrics:
+  Trust: 100
+forbidden_phrases: ["بلا مخاطرة", "اسحب متى تريد", "عائد مضمون", "أفضل استثمار"]
+review_criteria:
+  - "Retains expected/non-guaranteed status and partial/total loss risk."
+  - "Preserves the withdrawal restriction and maturity period."
+  - "Makes no recommendation or unsupported licensing claim."

@@ -1,6 +1,6 @@
 {
   "name": "arabicskill",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "ArabicSkill: Arabic product writing, safe localization, and RTL guidance for AI agents.",
   "main": "dist/index.js",
   "private": true,

@@ -177,6 +177,7 @@ export async function generateArabicCopy(
       "references/localization.md",
       "references/sensitive-states.md",
       "references/dialects.md",
+      "references/sector-patterns.md",
     ]
       .map((file) => fs.readFileSync(path.join(skillDir, file), "utf-8"))
       .join("\n\n");

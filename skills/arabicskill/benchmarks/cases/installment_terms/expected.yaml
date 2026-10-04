@@ -1,0 +1,8 @@
+case_id: installment_terms
+domain: Consumer Finance
+target_metrics:
+  Trust: 100
+forbidden_phrases: ["بدون أي رسوم", "بلا رسوم", "موافقة فورية", "متوافق مع الشريعة"]
+review_criteria:
+  - "Preserves total, included service fee, amounts and timing."
+  - "Does not generalize the absence of late fees to all fees or promise approval."

@@ -1,0 +1,8 @@
+case_id: merchant_benefit
+domain: E-Commerce
+target_metrics:
+  Clarity: 95
+forbidden_phrases: ["ضاعف مبيعاتك", "أنشئ متجرك", "نمو مضمون"]
+review_criteria:
+  - "Connects the feature to a concrete order-management task."
+  - "Keeps the existing-merchant context and does not invent a business outcome."

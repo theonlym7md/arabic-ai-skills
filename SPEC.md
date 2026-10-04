@@ -20,7 +20,8 @@ or implemented cross-language interfaces.
 OpenAI Responses API. Required inputs: projectNiche, targetAudience, toneOfVoice,
 textType, context. Optional inputs: apiKey, model, store, maxLength (1–100 words).
 
-It loads the core skill and bundled localization/sensitive-state rules, requests
+It loads the core skill and bundled localization, sensitive-state, dialect and
+sector-pattern rules (not the website source register), requests
 1–3 structured text/style options, and validates the returned shape and length.
 It has no file-reading tools, interactive clarification, plugin dispatch,
 18-metric scoring, automatic repair, or guaranteed factuality.
