@@ -50,8 +50,8 @@
     "openai": "^7.18.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.14",
-    "@types/node": "^22.20.3",
+    "@biomejs/biome": "^2.5.15",
+    "@types/node": "^22.20.5",
     "ajv": "^8.17.1",
     "typescript": "^7.0.2",
     "yaml": "^2.9.1"
