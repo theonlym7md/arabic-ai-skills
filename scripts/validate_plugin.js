@@ -35,12 +35,42 @@ function compareSemver(a, b) {
   return 0;
 }
 
+function validateFrameworkRange(rangeExpr, targetSemver) {
+  if (typeof rangeExpr !== "string" || !rangeExpr.trim()) {
+    return { valid: false, reason: "framework_version must be a non-empty string" };
+  }
+  const tokens = rangeExpr.trim().split(/\s+/);
+  for (const token of tokens) {
+    const match = token.match(/^(>=|<=|>|<|=)?(\d+\.\d+\.\d+)$/);
+    if (!match) {
+      return { valid: false, reason: `invalid framework_version comparator "${token}"` };
+    }
+    const op = match[1] ?? "=";
+    const bound = parseSemver(match[2]);
+    const cmp = compareSemver(targetSemver, bound);
+    const ok =
+      (op === ">=" && cmp >= 0) ||
+      (op === "<=" && cmp <= 0) ||
+      (op === ">" && cmp > 0) ||
+      (op === "<" && cmp < 0) ||
+      (op === "=" && cmp === 0);
+    if (!ok) {
+      return {
+        valid: false,
+        reason: `framework version ${targetSemver.join(".")} does not satisfy "${token}"`,
+      };
+    }
+  }
+  return { valid: true };
+}
+
 const currentSemver = parseSemver(frameworkVersion);
 if (!currentSemver) {
   throw new Error(`Invalid arabicskill package.json version: ${frameworkVersion}`);
 }
 
 const pluginSet = new Set(plugins);
+const pluginDependencies = new Map();
 const requiredFields = [
   "api_version",
   "min_framework_version",
@@ -85,10 +115,31 @@ for (const plugin of plugins) {
     continue;
   }
 
+  if (typeof manifest.name !== "string" || manifest.name !== plugin) {
+    failed = true;
+    console.error(`${plugin}: manifest name "${manifest.name}" must match folder name "${plugin}"`);
+    continue;
+  }
+
+  if (typeof manifest.description !== "string" || !manifest.description.trim()) {
+    failed = true;
+    console.error(`${plugin}: description must be a non-empty string`);
+    continue;
+  }
+
   if (manifest.api_version !== 1) {
     failed = true;
     console.error(`${plugin}: unsupported api_version (${manifest.api_version}); expected 1`);
     continue;
+  }
+
+  if (manifest.framework_version !== undefined) {
+    const rangeCheck = validateFrameworkRange(manifest.framework_version, currentSemver);
+    if (!rangeCheck.valid) {
+      failed = true;
+      console.error(`${plugin}: ${rangeCheck.reason}`);
+      continue;
+    }
   }
 
   const minSemver = parseSemver(manifest.min_framework_version);
@@ -118,10 +169,16 @@ for (const plugin of plugins) {
     !manifest.triggers ||
     typeof manifest.triggers !== "object" ||
     Array.isArray(manifest.triggers) ||
-    Object.keys(manifest.triggers).length === 0
+    Object.keys(manifest.triggers).length === 0 ||
+    Object.values(manifest.triggers).some(
+      (list) =>
+        !Array.isArray(list) ||
+        list.length === 0 ||
+        list.some((item) => typeof item !== "string" || !item.trim()),
+    )
   ) {
     failed = true;
-    console.error(`${plugin}: triggers must be a non-empty object`);
+    console.error(`${plugin}: triggers must map each key to a non-empty array of strings`);
     continue;
   }
 
@@ -153,10 +210,10 @@ for (const plugin of plugins) {
   if (manifest.dependencies !== undefined) {
     if (
       !Array.isArray(manifest.dependencies) ||
-      manifest.dependencies.some((dep) => typeof dep !== "string")
+      manifest.dependencies.some((dep) => typeof dep !== "string" || !dep.trim())
     ) {
       failed = true;
-      console.error(`${plugin}: dependencies must be an array of strings`);
+      console.error(`${plugin}: dependencies must be an array of non-empty strings`);
       continue;
     }
 
@@ -166,9 +223,38 @@ for (const plugin of plugins) {
       console.error(`${plugin}: invalid dependencies ${badDeps.join(", ")}`);
       continue;
     }
+    if (new Set(manifest.dependencies).size !== manifest.dependencies.length) {
+      failed = true;
+      console.error(`${plugin}: duplicate dependencies listed`);
+      continue;
+    }
+    pluginDependencies.set(plugin, manifest.dependencies);
   }
 
   console.log(`${plugin}: valid`);
+}
+
+const visitingPlugins = new Set();
+const visitedPlugins = new Set();
+function checkPluginCycle(name, trail) {
+  if (visitedPlugins.has(name)) {
+    return;
+  }
+  if (visitingPlugins.has(name)) {
+    failed = true;
+    console.error(`Plugin dependency cycle detected: ${[...trail, name].join(" -> ")}`);
+    return;
+  }
+  visitingPlugins.add(name);
+  for (const dep of pluginDependencies.get(name) ?? []) {
+    checkPluginCycle(dep, [...trail, name]);
+  }
+  visitingPlugins.delete(name);
+  visitedPlugins.add(name);
+}
+
+for (const plugin of plugins) {
+  checkPluginCycle(plugin, []);
 }
 
 if (failed) {

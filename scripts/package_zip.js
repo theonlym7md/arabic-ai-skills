@@ -18,6 +18,16 @@ if (!fs.existsSync(distDir)) {
   fs.mkdirSync(distDir, { recursive: true });
 }
 
+const dirtyStatus = execFileSync("git", ["status", "--porcelain"], {
+  cwd: rootDir,
+  encoding: "utf8",
+}).trim();
+if (dirtyStatus) {
+  console.warn(
+    "Warning: working tree has uncommitted changes; git archive packages committed HEAD only.",
+  );
+}
+
 console.log(`Generating pristine distribution archive from committed HEAD (v${version})...`);
 
 try {

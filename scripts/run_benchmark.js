@@ -2,9 +2,24 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { execFileSync } = require("node:child_process");
 const YAML = require("yaml");
+const { scanText } = require("./sweep.js");
 
 const validator = path.join(__dirname, "validate_benchmarks.js");
 const casesDir = path.join(__dirname, "../benchmarks/cases");
+
+function resolveCaseSpec(folder) {
+  const specs = {
+    heading_punctuation: { textType: "Heading and description", maxLength: 35 },
+    short_cta: { textType: "CTA button", maxLength: 5 },
+    screen_rtl_table: { textType: "Screen copy table", maxLength: 90 },
+    translation_variables: { textType: "JSON translation bundle", maxLength: 60 },
+    arabic_plural: { textType: "ICU plural message", maxLength: 80 },
+    media_podcast_bdi: { textType: "Podcast card title and description", maxLength: 35 },
+    luxury_hospitality: { textType: "Hospitality card title and description", maxLength: 40 },
+    healthcare_triage: { textType: "Healthcare status message", maxLength: 45 },
+  };
+  return specs[folder] ?? { textType: folder.replace(/_/g, " "), maxLength: 40 };
+}
 
 function parseArgs(argv) {
   let live = false;
@@ -53,11 +68,16 @@ async function runLive(caseFolders) {
     process.exit(1);
   }
 
+  const srcEntry = path.join(__dirname, "../src/index.ts");
   const distEntry = path.join(__dirname, "../dist/index.js");
   if (!fs.existsSync(distEntry)) {
     console.error(
       "Missing dist/index.js. Run `npm run build` before `npm run benchmark -- --live`.",
     );
+    process.exit(1);
+  }
+  if (fs.existsSync(srcEntry) && fs.statSync(srcEntry).mtimeMs > fs.statSync(distEntry).mtimeMs) {
+    console.error("dist/index.js is older than src/index.ts. Run `npm run build` first.");
     process.exit(1);
   }
 
@@ -69,6 +89,7 @@ async function runLive(caseFolders) {
     const prompt = fs.readFileSync(path.join(caseDir, "prompt.md"), "utf8").trim();
     const expected = YAML.parse(fs.readFileSync(path.join(caseDir, "expected.yaml"), "utf8"));
     const forbidden = expected.forbidden_phrases ?? [];
+    const caseSpec = resolveCaseSpec(folder);
 
     const started = Date.now();
     try {
@@ -76,9 +97,9 @@ async function runLive(caseFolders) {
         projectNiche: expected.domain || "General",
         targetAudience: "Arabic product users",
         toneOfVoice: "Clear and natural",
-        textType: folder.replace(/_/g, " "),
+        textType: caseSpec.textType,
         context: prompt,
-        maxLength: 25,
+        maxLength: caseSpec.maxLength,
       });
 
       const badHits = [];
@@ -87,6 +108,9 @@ async function runLive(caseFolders) {
           if (option.text.includes(phrase)) {
             badHits.push(phrase);
           }
+        }
+        for (const slopLabel of scanText(option.text)) {
+          badHits.push(`slop:${slopLabel}`);
         }
       }
 

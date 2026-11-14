@@ -11,14 +11,14 @@ These are authored editorial examples, not recorded model outputs or measured co
 
 **🔍 Failure Diagnosis:**
 - Contains unnecessary formalities: "في إطار حرصنا المستمر", "يرجى التكرم بالعلم".
-- `CognitiveLoad`: High (29 words of fluff for a simple zero-fine status).
+- `InformationDensity` / `Clarity`: Low (24 words of fluff for a simple zero-fine status).
 - `Tone`: Overly dramatic and subservient ("يرجى التكرم").
 
 ---
 
 ### After: editorial revision
 > **العنوان:** لا توجد مخالفات مسجّلة عليك
-> **الوصف:** لا توجد مخالفات مرورية مرتبطة بسجلك حاليًا.
+> **الوصف:** لا توجد مخالفات مرورية مرتبطة بهويتك حاليًا.
 
 **ملاحظات المراجعة:**
 - لا يحتوي النص على مقدمات إدارية أو طلبات مجاملة.

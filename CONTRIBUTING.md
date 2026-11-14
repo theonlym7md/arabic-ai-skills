@@ -9,9 +9,9 @@ We welcome contributions from Arabic linguists, UX writers, product designers, a
 
 ## Submitting a PR
 - Create a focused branch and explain the user-facing outcome.
-- Add or update a synthetic benchmark fixture when changing Arabic output behavior.
+- Add or update a synthetic benchmark fixture when changing Arabic output behavior, and verify changes against both `skills/arabicskill` and `skills/arabic-uiux-master` references/examples when relevant.
 - Never commit API keys, customer copy, personal data, or regulated content.
-- Run `npm ci` and `npm run check` before opening the PR.
+- Run `npm ci`, `npm run check`, and `npm run benchmark` before opening the PR.
 - Update `CHANGELOG.md` for user-visible changes.
 
 ## Adding or updating a skill

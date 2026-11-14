@@ -3,7 +3,7 @@ domain: "Auth_Gateways"
 target_metrics:
   Trust: 100
   Clarity: 95
-  Humanization: 95
+  HumanScore: 95
   AISmell: 0
 forbidden_phrases:
   - "عزيزي المستخدم"

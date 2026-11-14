@@ -17,7 +17,12 @@ if (entityFiles.length === 0) {
   throw new Error("No entity YAML files were found.");
 }
 
-const schema = YAML.parse(fs.readFileSync(schemaPath, "utf8"));
+let schema;
+try {
+  schema = YAML.parse(fs.readFileSync(schemaPath, "utf8"));
+} catch (error) {
+  throw new Error(`Invalid _schema.yaml (${error.message})`);
+}
 const validateEntity = new Ajv2020({ allErrors: true, strict: false }).compile(schema);
 const entities = new Map();
 let failed = false;
@@ -109,26 +114,91 @@ for (const name of entities.keys()) {
   checkCycle(name, []);
 }
 
-const baseWeights = YAML.parse(fs.readFileSync(path.join(relationsDir, "weights.yaml"), "utf8"));
-if (!baseWeights || typeof baseWeights.weights !== "object") {
+function sameMetricTree(left, right) {
+  if (typeof left !== typeof right) {
+    return false;
+  }
+  if (!left || typeof left !== "object" || Array.isArray(left) || Array.isArray(right)) {
+    return left === right;
+  }
+  const leftKeys = Object.keys(left);
+  const rightKeys = Object.keys(right);
+  if (leftKeys.length !== rightKeys.length) {
+    return false;
+  }
+  return leftKeys.every(
+    (key) => Object.hasOwn(right, key) && sameMetricTree(left[key], right[key]),
+  );
+}
+
+let baseWeights;
+try {
+  baseWeights = YAML.parse(fs.readFileSync(path.join(relationsDir, "weights.yaml"), "utf8"));
+} catch (error) {
+  failed = true;
+  console.error(`weights.yaml: invalid YAML (${error.message})`);
+}
+
+if (
+  baseWeights !== undefined &&
+  (!baseWeights ||
+    typeof baseWeights !== "object" ||
+    Array.isArray(baseWeights) ||
+    !baseWeights.weights ||
+    typeof baseWeights.weights !== "object" ||
+    Array.isArray(baseWeights.weights))
+) {
   failed = true;
   console.error("weights.yaml: missing top-level weights object");
-} else {
+} else if (baseWeights) {
+  for (const [category, metrics] of Object.entries(baseWeights.weights)) {
+    if (!metrics || typeof metrics !== "object" || Array.isArray(metrics)) {
+      failed = true;
+      console.error(`weights.yaml: weights.${category} must be an object`);
+      continue;
+    }
+    for (const [metric, score] of Object.entries(metrics)) {
+      if (typeof score !== "number" || !Number.isFinite(score) || score < 0 || score > 100) {
+        failed = true;
+        console.error(`weights.yaml: ${category}.${metric} must be a finite number 0..100`);
+      }
+    }
+  }
+
   const domainWeightsDir = path.join(relationsDir, "domain_weights");
   const weightFiles = fs.readdirSync(domainWeightsDir).filter((file) => file.endsWith(".yaml"));
+  const parsedDomainWeights = new Map();
 
   for (const file of weightFiles) {
-    const parsed = YAML.parse(fs.readFileSync(path.join(domainWeightsDir, file), "utf8"));
+    let parsed;
+    try {
+      parsed = YAML.parse(fs.readFileSync(path.join(domainWeightsDir, file), "utf8"));
+    } catch (error) {
+      failed = true;
+      console.error(`domain_weights/${file}: invalid YAML (${error.message})`);
+      continue;
+    }
     if (
       !parsed ||
+      typeof parsed !== "object" ||
+      Array.isArray(parsed) ||
       typeof parsed.domain !== "string" ||
+      !parsed.domain.trim() ||
       !parsed.weights ||
-      typeof parsed.weights !== "object"
+      typeof parsed.weights !== "object" ||
+      Array.isArray(parsed.weights)
     ) {
       failed = true;
       console.error(`domain_weights/${file}: missing domain or weights object`);
       continue;
     }
+
+    if (parsedDomainWeights.has(parsed.domain)) {
+      failed = true;
+      console.error(`domain_weights/${file}: duplicate domain "${parsed.domain}"`);
+      continue;
+    }
+    parsedDomainWeights.set(parsed.domain, parsed.weights);
 
     for (const [category, metrics] of Object.entries(parsed.weights)) {
       const baseCategory = baseWeights.weights[category];
@@ -146,7 +216,12 @@ if (!baseWeights || typeof baseWeights.weights !== "object") {
         if (!(metric in baseCategory)) {
           failed = true;
           console.error(`domain_weights/${file}: unknown metric "${category}.${metric}"`);
-        } else if (typeof score !== "number" || score < 0 || score > 100) {
+        } else if (
+          typeof score !== "number" ||
+          !Number.isFinite(score) ||
+          score < 0 ||
+          score > 100
+        ) {
           failed = true;
           console.error(`domain_weights/${file}: ${category}.${metric} must be 0..100`);
         }
@@ -155,21 +230,98 @@ if (!baseWeights || typeof baseWeights.weights !== "object") {
 
     console.log(`domain_weights/${file}: valid`);
   }
+
+  const domainOverrides = baseWeights.domain_overrides ?? {};
+  if (!domainOverrides || typeof domainOverrides !== "object" || Array.isArray(domainOverrides)) {
+    failed = true;
+    console.error("weights.yaml: domain_overrides must be an object");
+  } else {
+    for (const [domainName, weightsObj] of parsedDomainWeights.entries()) {
+      if (!Object.hasOwn(domainOverrides, domainName)) {
+        failed = true;
+        console.error(
+          `weights.yaml: domain_overrides is missing "${domainName}" from domain_weights/`,
+        );
+      } else if (!sameMetricTree(domainOverrides[domainName], weightsObj)) {
+        failed = true;
+        console.error(
+          `weights.yaml: domain_overrides.${domainName} does not match domain_weights/`,
+        );
+      }
+    }
+    for (const domainName of Object.keys(domainOverrides)) {
+      if (!parsedDomainWeights.has(domainName)) {
+        failed = true;
+        console.error(
+          `weights.yaml: domain_overrides.${domainName} has no matching file in domain_weights/`,
+        );
+      }
+    }
+  }
 }
 
-const routing = YAML.parse(fs.readFileSync(path.join(relationsDir, "routing.yaml"), "utf8"));
-if (!routing?.domains || typeof routing.domains !== "object") {
+let routing;
+try {
+  routing = YAML.parse(fs.readFileSync(path.join(relationsDir, "routing.yaml"), "utf8"));
+} catch (error) {
+  failed = true;
+  console.error(`routing.yaml: invalid YAML (${error.message})`);
+}
+if (
+  routing !== undefined &&
+  (!routing ||
+    typeof routing !== "object" ||
+    Array.isArray(routing) ||
+    !routing.domains ||
+    typeof routing.domains !== "object" ||
+    Array.isArray(routing.domains))
+) {
   failed = true;
   console.error("routing.yaml: missing domains object");
-} else {
+} else if (routing) {
+  const seenKeywords = new Map();
   for (const [domainName, route] of Object.entries(routing.domains)) {
-    if (!route || typeof route.reference !== "string") {
+    if (!route || typeof route !== "object" || Array.isArray(route)) {
+      failed = true;
+      console.error(`routing.yaml[${domainName}]: route must be an object`);
+      continue;
+    }
+    if (
+      !Array.isArray(route.keywords) ||
+      route.keywords.length === 0 ||
+      route.keywords.some((kw) => typeof kw !== "string" || !kw.trim())
+    ) {
+      failed = true;
+      console.error(`routing.yaml[${domainName}]: keywords must be a non-empty array of strings`);
+    } else {
+      for (const kw of route.keywords) {
+        const normalizedKw = kw.toLowerCase().trim();
+        const existingOwner = seenKeywords.get(normalizedKw);
+        if (existingOwner && existingOwner !== domainName) {
+          failed = true;
+          console.error(
+            `routing.yaml[${domainName}]: duplicate keyword "${kw}" already assigned to "${existingOwner}"`,
+          );
+        } else {
+          seenKeywords.set(normalizedKw, domainName);
+        }
+      }
+    }
+    if (typeof route.reference !== "string" || !route.reference.trim()) {
       failed = true;
       console.error(`routing.yaml[${domainName}]: missing reference path`);
       continue;
     }
 
     const refPath = path.resolve(skillRoot, route.reference);
+    const relToSkill = path.relative(skillRoot, refPath);
+    if (relToSkill.startsWith("..") || path.isAbsolute(relToSkill)) {
+      failed = true;
+      console.error(
+        `routing.yaml[${domainName}]: reference "${route.reference}" escapes skill directory`,
+      );
+      continue;
+    }
     if (!fs.existsSync(refPath)) {
       failed = true;
       console.error(`routing.yaml[${domainName}]: missing reference ${route.reference}`);

@@ -10,3 +10,5 @@ node_modules export-ignore
 coverage export-ignore
 docs/assets/*.gif export-ignore
 docs/assets/*.mp4 export-ignore
+docs/demos/** export-ignore
+docs/assets/ab/** export-ignore

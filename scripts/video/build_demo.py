@@ -3,16 +3,30 @@
 from __future__ import annotations
 
 import math
+import shutil
 import subprocess
 import sys
 from functools import lru_cache
 from pathlib import Path
 
 import arabic_reshaper
-import imageio_ffmpeg
 import numpy as np
 from bidi.algorithm import get_display
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
+
+
+def resolve_ffmpeg() -> str:
+    system_ffmpeg = shutil.which("ffmpeg")
+    if system_ffmpeg:
+        return system_ffmpeg
+    try:
+        import imageio_ffmpeg  # type: ignore[import-not-found]
+
+        return imageio_ffmpeg.get_ffmpeg_exe()
+    except ImportError as error:
+        raise FileNotFoundError(
+            "Could not find `ffmpeg` on PATH or optional `imageio_ffmpeg` package.",
+        ) from error
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -145,12 +159,14 @@ def add_glow(image: Image.Image, center: tuple[int, int], radius: int, color: tu
 
 
 def draw_grid(image: Image.Image, time_value: float) -> None:
-    draw = ImageDraw.Draw(image)
+    grid = Image.new("RGBA", image.size, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(grid)
     offset = int((time_value * 7) % 48)
     for x in range(-48 + offset, WIDTH + 48, 48):
         draw.line((x, 0, x, HEIGHT), fill=(255, 255, 255, 9), width=1)
     for y in range(-48 + offset, HEIGHT + 48, 48):
         draw.line((0, y, WIDTH, y), fill=(255, 255, 255, 7), width=1)
+    image.alpha_composite(grid)
 
 
 def shape_text(draw: ImageDraw.ImageDraw, text: str, position: tuple[int, int], text_font: ImageFont.FreeTypeFont, fill: tuple[int, ...], *, rtl: bool = True) -> None:
@@ -268,23 +284,23 @@ def comparison_scene(
 
     left = (75 - slide, 185, 600 - slide, 590)
     right = (680 + slide, 185, 1205 + slide, 590)
-    rounded(draw, left, 30, (*SURFACE, 248), (*RED, 70), 2)
-    rounded(draw, right, 30, (*SURFACE_2, 250), (*CYAN, 100), 2)
+    rounded(draw, right, 30, (*SURFACE, 248), (*RED, 70), 2)
+    rounded(draw, left, 30, (*SURFACE_2, 250), (*CYAN, 100), 2)
 
-    rounded(draw, (left[0] + 28, left[1] + 28, left[0] + 118, left[1] + 72), 18, (*RED_DARK, 220))
-    shape_text(draw, "قبل", (left[0] + 96, left[1] + 34), font(20, bold=True), (*RED, 255))
-    shape_text(draw, before_title, (left[2] - 34, left[1] + 104), font(31, bold=True), (*TEXT, 230))
-    draw_arabic_block(draw, before_body, left[2] - 34, left[1] + 165, font(23), (*MUTED, 235), left[2] - left[0] - 68, 17)
-    draw.line((left[0] + 34, left[3] - 72, left[2] - 34, left[3] - 72), fill=(*RED, 46), width=2)
-    shape_text(draw, "عام • بلا سياق • بلا خطوة واضحة", (left[2] - 34, left[3] - 52), font(18), (*RED, 215))
+    rounded(draw, (right[2] - 118, right[1] + 28, right[2] - 28, right[1] + 72), 18, (*RED_DARK, 220))
+    shape_text(draw, "قبل", (right[2] - 50, right[1] + 34), font(20, bold=True), (*RED, 255))
+    shape_text(draw, before_title, (right[2] - 34, right[1] + 104), font(31, bold=True), (*TEXT, 230))
+    draw_arabic_block(draw, before_body, right[2] - 34, right[1] + 165, font(23), (*MUTED, 235), right[2] - right[0] - 68, 17)
+    draw.line((right[0] + 34, right[3] - 72, right[2] - 34, right[3] - 72), fill=(*RED, 46), width=2)
+    shape_text(draw, "عام • بلا سياق • بلا خطوة واضحة", (right[2] - 34, right[3] - 52), font(18), (*RED, 215))
 
-    rounded(draw, (right[2] - 118, right[1] + 28, right[2] - 28, right[1] + 72), 18, (*CYAN_DARK, 210))
-    shape_text(draw, "بعد", (right[2] - 50, right[1] + 34), font(20, bold=True), (*CYAN, 255))
-    shape_text(draw, after_title, (right[2] - 34, right[1] + 104), font(31, bold=True), (*TEXT, 255))
-    draw_arabic_block(draw, after_body, right[2] - 34, right[1] + 165, font(23), (*TEXT, 225), right[2] - right[0] - 68, 17)
-    tag_right = right[2] - 34
+    rounded(draw, (left[2] - 118, left[1] + 28, left[2] - 28, left[1] + 72), 18, (*CYAN_DARK, 210))
+    shape_text(draw, "بعد", (left[2] - 50, left[1] + 34), font(20, bold=True), (*CYAN, 255))
+    shape_text(draw, after_title, (left[2] - 34, left[1] + 104), font(31, bold=True), (*TEXT, 255))
+    draw_arabic_block(draw, after_body, left[2] - 34, left[1] + 165, font(23), (*TEXT, 225), left[2] - left[0] - 68, 17)
+    tag_right = left[2] - 34
     for tag in tags:
-        tag_right = chip(draw, tag, tag_right, right[3] - 72, CYAN)
+        tag_right = chip(draw, tag, tag_right, left[3] - 72, CYAN)
     footer(draw, number)
 
 
@@ -306,7 +322,7 @@ def pipeline_scene(layer: Image.Image, local_time: float) -> None:
     for index, (heading, body, accent) in enumerate(labels):
         reveal = ease_out((local_time - index * 0.22) / 0.7)
         y_offset = int(30 * (1 - reveal))
-        x = start_x + index * (card_width + gap)
+        x = WIDTH - start_x - card_width - index * (card_width + gap)
         y = 255 + y_offset
         rounded(draw, (x, y, x + card_width, y + 230), 28, (*SURFACE, int(245 * reveal)), (*accent, int(90 * reveal)), 2)
         draw.ellipse((x + 28, y + 28, x + 64, y + 64), fill=(*accent, int(220 * reveal)))
@@ -314,19 +330,19 @@ def pipeline_scene(layer: Image.Image, local_time: float) -> None:
         shape_text(draw, heading, (x + card_width - 28, y + 90), font(28, bold=True), (*TEXT, int(255 * reveal)))
         draw_arabic_block(draw, body, x + card_width - 28, y + 139, font(18), (*MUTED, int(240 * reveal)), card_width - 56, 12)
         if index < len(labels) - 1:
-            draw.line((x + card_width + 7, y + 115, x + card_width + gap - 7, y + 115), fill=(*MUTED, int(90 * reveal)), width=2)
+            draw.line((x - gap + 7, y + 115, x - 7, y + 115), fill=(*MUTED, int(90 * reveal)), width=2)
     footer(draw, 5)
 
 
 def install_scene(layer: Image.Image, local_time: float) -> None:
     draw = ImageDraw.Draw(layer)
     brand(draw)
-    shape_text(draw, "مهارتان. هدف واحد.", (1180, 96), font(42, bold=True), (*TEXT, 255))
+    shape_text(draw, "مهارتان لهدف واحد", (1180, 96), font(42, bold=True), (*TEXT, 255))
     shape_text(draw, "تجربة عربية واضحة، طبيعية، وقابلة للتنفيذ.", (1180, 152), font(24), (*MUTED, 255))
 
     cards = [
-        (75, "arabicskill", "كتابة المنتج والتوطين والتدقيق", CYAN),
-        (665, "arabic-uiux-master", "النص العربي مع RTL وإتاحة الاستخدام", GOLD),
+        (665, "arabicskill", "كتابة المنتج والتوطين والتدقيق", CYAN),
+        (75, "arabic-uiux-master", "النص العربي مع RTL وإتاحة الاستخدام", GOLD),
     ]
     for index, (x, name, description, accent) in enumerate(cards):
         reveal = ease_out((local_time - index * 0.18) / 0.8)
@@ -338,8 +354,8 @@ def install_scene(layer: Image.Image, local_time: float) -> None:
         shape_text(draw, description, (x + 505, y + 92), font(20), (*MUTED, int(245 * reveal)))
 
     rounded(draw, (75, 460, 1205, 546), 24, (5, 8, 14, 245), (*CYAN, 74), 2)
-    shape_text(draw, "$", (105, 483), font(24, bold=True, latin=True), (*CYAN, 255), rtl=False)
-    shape_text(draw, "npx skills add theonlym7md/arabic-ai-skills", (145, 480), font(24, latin=True), (*TEXT, 255), rtl=False)
+    shape_text(draw, "$", (105, 483), font(22, bold=True, latin=True), (*CYAN, 255), rtl=False)
+    shape_text(draw, "npx skills add theonlym7md/arabic-ai-skills --skill arabicskill", (145, 482), font(22, latin=True), (*TEXT, 255), rtl=False)
     shape_text(draw, "متاح الآن على GitHub و skills.sh", (1180, 584), font(24, bold=True), (*CYAN, 255))
     footer(draw, 6)
 
@@ -419,7 +435,7 @@ def render_frame(frame_index: int) -> Image.Image:
 
 def encode_video() -> None:
     ASSET_DIR.mkdir(parents=True, exist_ok=True)
-    ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
+    ffmpeg = resolve_ffmpeg()
     command = [
         ffmpeg,
         "-y",
@@ -465,7 +481,7 @@ def encode_video() -> None:
 
 
 def encode_preview() -> None:
-    ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
+    ffmpeg = resolve_ffmpeg()
     filter_graph = (
         "fps=10,scale=720:-1:flags=lanczos,split[s0][s1];"
         "[s0]palettegen=max_colors=80:stats_mode=diff[p];"

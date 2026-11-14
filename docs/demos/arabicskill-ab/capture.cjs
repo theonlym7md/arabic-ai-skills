@@ -2,7 +2,15 @@
 const assert = require("node:assert/strict");
 const path = require("node:path");
 const { pathToFileURL } = require("node:url");
-const { chromium } = require("playwright");
+let chromium;
+try {
+  ({ chromium } = require("playwright"));
+} catch {
+  console.error(
+    "Playwright is required to recapture demo screenshots. Install it with: npx playwright install chromium",
+  );
+  process.exit(1);
+}
 const expected = require("./copy.js");
 
 async function capture() {

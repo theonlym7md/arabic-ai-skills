@@ -23,15 +23,87 @@ domain_overrides:
     quality:
       Trust: 100
       Clarity: 100
+      Accessibility: 95
+    style:
+      Localization: 95
+      Brand: 90
+      Tone: 90
+      SentenceRhythm: 80
     optimization:
       Creativity: 10
   FinTech:
     quality:
       Trust: 100
       Clarity: 95
+      Accessibility: 90
+      InformationDensity: 90
+    style:
+      Localization: 95
+      Brand: 85
+      Tone: 90
     optimization:
       Creativity: 30
-  GovTech_SubDomain:
-    inherit: Government
+  E-Commerce:
+    quality:
+      Trust: 100
+      Clarity: 95
+      Accessibility: 90
+    style:
+      Localization: 95
+      Brand: 85
+      Tone: 85
+      SentenceRhythm: 80
+    optimization:
+      Humanization: 80
+      Persuasiveness: 75
+      Creativity: 55
+  Healthcare:
+    quality:
+      Trust: 100
+      Clarity: 100
+      Accessibility: 100
+      InformationDensity: 90
     style:
       Tone: 95
+      Localization: 90
+    optimization:
+      Creativity: 10
+      Humanization: 85
+  Luxury:
+    quality:
+      Trust: 100
+      Clarity: 95
+    style:
+      Brand: 95
+      Tone: 90
+      Localization: 90
+      SentenceRhythm: 90
+    optimization:
+      Creativity: 85
+      Persuasiveness: 80
+  Media:
+    quality:
+      Trust: 95
+      Clarity: 90
+      Accessibility: 90
+    style:
+      Localization: 95
+      Brand: 90
+      Tone: 90
+      SentenceRhythm: 90
+    optimization:
+      Humanization: 85
+      Creativity: 75
+  SaaS:
+    quality:
+      Trust: 100
+      Clarity: 95
+      Accessibility: 90
+    style:
+      Localization: 95
+      Brand: 85
+      Tone: 85
+      SentenceRhythm: 85
+    optimization:
+      Humanization: 80
+      Creativity: 65

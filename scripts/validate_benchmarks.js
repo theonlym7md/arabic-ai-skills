@@ -80,6 +80,60 @@ function validateArabicPlural(goldenOutput) {
   return null;
 }
 
+const suitePath = path.join(__dirname, "../benchmarks/regression_suite.yaml");
+if (!fs.existsSync(suitePath)) {
+  throw new Error("benchmarks/regression_suite.yaml does not exist.");
+}
+
+const regressionSuite = YAML.parse(fs.readFileSync(suitePath, "utf8"));
+if (
+  !regressionSuite ||
+  typeof regressionSuite !== "object" ||
+  Array.isArray(regressionSuite) ||
+  typeof regressionSuite.suite_name !== "string" ||
+  !regressionSuite.suite_name.trim() ||
+  typeof regressionSuite.version !== "string" ||
+  !regressionSuite.version.trim() ||
+  !regressionSuite.threshold_rules ||
+  typeof regressionSuite.threshold_rules !== "object" ||
+  Array.isArray(regressionSuite.threshold_rules) ||
+  typeof regressionSuite.measurement_status !== "string" ||
+  !regressionSuite.measurement_status.trim()
+) {
+  throw new Error(
+    "benchmarks/regression_suite.yaml must define suite_name, version, threshold_rules object, and measurement_status.",
+  );
+}
+
+const weightsPath = path.join(__dirname, "../skills/arabicskill/knowledge/relations/weights.yaml");
+const routingPath = path.join(__dirname, "../skills/arabicskill/knowledge/relations/routing.yaml");
+const weightsData = YAML.parse(fs.readFileSync(weightsPath, "utf8"));
+const routingData = YAML.parse(fs.readFileSync(routingPath, "utf8"));
+const validMetricKeys = new Set([
+  ...Object.values(weightsData?.weights ?? {}).flatMap((group) =>
+    group && typeof group === "object" ? Object.keys(group) : [],
+  ),
+  "HumanScore",
+  "AISmell",
+]);
+const allowedDomains = new Set([
+  ...Object.keys(routingData?.domains ?? {}),
+  ...Object.keys(weightsData?.domain_overrides ?? {}),
+  "Consumer Finance",
+  "Investment",
+  "Culture",
+  "Location",
+  "Account",
+  "Payments",
+  "Security",
+  "UIUX_RTL",
+]);
+const shortLabelLinePattern =
+  /^(?:العنوان|عنوان الشاشة|الزر|الإجراء(?:\s+(?:الأساسي|الثانوي))?|الشارة|شارة الحالة|بطاقة الخيار|الحالة|عنوان الحقل):\s*(.+)$/u;
+const shortTableComponentPattern =
+  /^(?:العنوان|عنوان الشاشة الرئيسي|عنوان الحقل|الشارة|شارة الحالة|الزر الأساسي|الإجراء الأساسي|الإجراء الثانوي|بطاقة خطة الدفع \(العنوان\)|شارة التوفير|زر الاشتراك)$/u;
+const trailingPeriodPattern = /[.\u06D4\u2026](?=[\p{Cf}\s»"”'’)\]}*_`~]*$)/u;
+
 let failed = false;
 for (const benchmarkCase of cases) {
   const caseDir = path.join(casesDir, benchmarkCase);
@@ -106,9 +160,26 @@ for (const benchmarkCase of cases) {
   }
 
   const metrics = expected.target_metrics;
-  if (!expected.case_id || !expected.domain || !metrics || typeof metrics !== "object") {
+  if (
+    !expected.case_id ||
+    typeof expected.domain !== "string" ||
+    !expected.domain.trim() ||
+    !metrics ||
+    typeof metrics !== "object"
+  ) {
     failed = true;
-    console.error(`${benchmarkCase}: expected.yaml lacks case_id, domain, or target_metrics`);
+    console.error(
+      `${benchmarkCase}: expected.yaml lacks case_id, non-empty domain, or target_metrics`,
+    );
+    continue;
+  }
+
+  const unknownMetricKeys = Object.keys(metrics).filter((key) => !validMetricKeys.has(key));
+  if (unknownMetricKeys.length > 0) {
+    failed = true;
+    console.error(
+      `${benchmarkCase}: unknown target_metrics key(s): ${unknownMetricKeys.join(", ")}`,
+    );
     continue;
   }
 
@@ -118,13 +189,23 @@ for (const benchmarkCase of cases) {
     continue;
   }
 
+  if (!allowedDomains.has(expected.domain.trim())) {
+    failed = true;
+    console.error(`${benchmarkCase}: unknown domain "${expected.domain}"`);
+    continue;
+  }
+
   const metricValues = Object.values(metrics);
   if (
     metricValues.length === 0 ||
-    metricValues.some((value) => typeof value !== "number" || value < 0 || value > 100)
+    metricValues.some(
+      (value) => typeof value !== "number" || !Number.isFinite(value) || value < 0 || value > 100,
+    )
   ) {
     failed = true;
-    console.error(`${benchmarkCase}: target metrics must be non-empty numbers between 0 and 100`);
+    console.error(
+      `${benchmarkCase}: target metrics must be non-empty finite numbers between 0 and 100`,
+    );
     continue;
   }
 
@@ -135,6 +216,18 @@ for (const benchmarkCase of cases) {
   ) {
     failed = true;
     console.error(`${benchmarkCase}: expected.yaml requires non-empty review_criteria array`);
+    continue;
+  }
+
+  if (
+    expected.forbidden_phrases !== undefined &&
+    (!Array.isArray(expected.forbidden_phrases) ||
+      expected.forbidden_phrases.some((item) => typeof item !== "string" || !item.trim()))
+  ) {
+    failed = true;
+    console.error(
+      `${benchmarkCase}: expected.yaml forbidden_phrases must be an array of non-empty strings`,
+    );
     continue;
   }
 
@@ -153,6 +246,48 @@ for (const benchmarkCase of cases) {
     console.error(
       `${benchmarkCase}: golden output contains forbidden phrases: ${violations.join(", ")}`,
     );
+    continue;
+  }
+
+  if (benchmarkCase === "short_cta" && trailingPeriodPattern.test(goldenOutput)) {
+    failed = true;
+    console.error(`${benchmarkCase}: short CTA golden output must not end with a period`);
+    continue;
+  }
+
+  let lineError = false;
+  for (const line of goldenOutput.split(/\r?\n/u)) {
+    const labelMatch = line.match(shortLabelLinePattern);
+    if (labelMatch && trailingPeriodPattern.test(labelMatch[1])) {
+      failed = true;
+      lineError = true;
+      console.error(`${benchmarkCase}: short UI label ends with trailing period: ${line}`);
+      break;
+    }
+    const tableMatch = line.match(/^\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|/);
+    if (
+      tableMatch &&
+      shortTableComponentPattern.test(tableMatch[1].trim()) &&
+      trailingPeriodPattern.test(tableMatch[2].trim())
+    ) {
+      failed = true;
+      lineError = true;
+      console.error(
+        `${benchmarkCase}: short table component "${tableMatch[1]}" ends with trailing period: ${tableMatch[2]}`,
+      );
+      break;
+    }
+  }
+  if (lineError) {
+    continue;
+  }
+
+  if (
+    benchmarkCase === "media_podcast_bdi" &&
+    !/<bdi dir="ltr">\d+<\/bdi>\s*دقيقة/u.test(goldenOutput)
+  ) {
+    failed = true;
+    console.error(`${benchmarkCase}: missing <bdi dir="ltr"> around numeric minute duration`);
     continue;
   }
 

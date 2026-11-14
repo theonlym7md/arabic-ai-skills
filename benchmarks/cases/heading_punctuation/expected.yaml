@@ -3,7 +3,7 @@ domain: "Headings_Identity"
 target_metrics:
   Trust: 95
   Clarity: 100
-  Humanization: 95
+  HumanScore: 95
   AISmell: 0
 forbidden_phrases:
   - "في إطار حرصنا"

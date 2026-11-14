@@ -6,17 +6,17 @@ export interface GenerateArabicCopyParams {
   /**
    * Your OpenAI API key. When omitted, the SDK reads OPENAI_API_KEY.
    */
-  apiKey?: string;
+  apiKey?: string | undefined;
 
   /**
    * Model used by the Responses API. Defaults to OPENAI_MODEL, then gpt-5.4.
    */
-  model?: string;
+  model?: string | undefined;
 
   /**
    * Whether OpenAI may store the response for later retrieval. Defaults to false.
    */
-  store?: boolean;
+  store?: boolean | undefined;
 
   /**
    * The type of website or platform (e.g. "Ecommerce", "Government", "Creative Studio").
@@ -46,17 +46,17 @@ export interface GenerateArabicCopyParams {
   /**
    * Optional target country or regional market (e.g. "Saudi Arabia", "Egypt", "MSA").
    */
-  region?: string;
+  region?: string | undefined;
 
   /**
    * Optional explicit dialect request (defaults to clear Modern Standard Arabic).
    */
-  dialect?: string;
+  dialect?: string | undefined;
 
   /**
    * Maximum length of the generated copy in whitespace-delimited words (1-100).
    */
-  maxLength?: number;
+  maxLength?: number | undefined;
 }
 
 export interface GeneratedOption {
@@ -73,87 +73,102 @@ interface SectionRule {
   keywords: RegExp;
 }
 
+interface MarkdownSections {
+  intro: string;
+  sections: Array<{ heading: string; body: string }>;
+}
+
 const skillRoot = path.join(__dirname, "../skills/arabicskill");
 const fileCache = new Map<string, string>();
+const parsedSectionsCache = new Map<string, MarkdownSections>();
+let cachedCoreRules: string | undefined;
 
-const SECTOR_RULES: SectionRule[] = [
+export const SECTOR_RULES: SectionRule[] = [
   {
     headingPrefix: "1. الإعلام والمحتوى",
     keywords:
-      /\b(media|content|podcast|audio|video|article|news|magazine)\b|إعلام|محتوى|بودكاست|فيديو|مقال|حلقة|صوتي/iu,
+      /\b(media|content|podcast|audio|video|article|news|magazine)\b|(?<![\p{L}])(?:[وف]?(?:لل|[بكل]?(?:ال)?))?(?:اعلام[\p{L}]*|محتو[\p{L}]*|بودكاست|فيديو[\p{L}]*|مقال[\p{L}]*|حلق[\p{L}]*|صوتي[\p{L}]*)(?![\p{L}])/iu,
   },
   {
     headingPrefix: "2. الألعاب والتجارب الاجتماعية",
-    keywords: /\b(game|gaming|social|play|player)\b|لعبة|ألعاب|لاعب|جولة/iu,
+    keywords:
+      /\b(game|gaming|gamers|gameplay|multiplayer|leaderboard|arcade|quest|players?|social\s+(?:game|gaming|club|app)|play\s+(?:now|round|mode))\b|(?<![\p{L}])(?:[وف]?(?:لل|[بكل]?(?:ال)?))?(?:لعبة|العاب|لاعب|لاعبين|لاعبون|جولة|جولات)(?![\p{L}])/iu,
   },
   {
     headingPrefix: "3. الخدمات الحكومية والمدنية",
     keywords:
-      /\b(gov|govtech|government|civic|municipal|permit|traffic)\b|حكوم|مدني|مخالف|تصريح|رخصة|بلدي|سدايا/iu,
+      /\b(gov|govtech|government|civic|municipal|permit|traffic)\b|(?<![\p{L}])(?:[وف]?(?:لل|[بكل]?(?:ال)?))?(?:حكوم[\p{L}]*|مدني[\p{L}]*|مخالف[\p{L}]*|تصريح|تصاريح|رخصة|رخص|بلدي[\p{L}]*|سدايا)(?![\p{L}])/iu,
   },
   {
     headingPrefix: "4. منصات التجار والتجارة الإلكترونية",
     keywords:
-      /\b(ecommerce|e-commerce|commerce|merchant|store|shop|retail|shipping|order|cart)\b|تجارة|متجر|تاجر|شحن|سلة|مشتري/iu,
+      /\b(ecommerce|e-commerce|commerce|merchants?|storefront|retail|shipping|shopping\s+(?:cart|bag)|checkout\s+cart|orders?\s+(?:status|tracking|history|summary|confirmation|page|list|delay)|(?:purchase|customer|tracking|shopping|online|delivery|return|cancel)\s+orders?|(?:online|ecommerce|e-commerce|merchant|retail|brand|apparel|fashion)\s+stores?|stores?\s+(?:owner|dashboard|setup|builder|front|launch))\b|(?<![\p{L}])(?:[وف]?(?:لل|[بكل]?(?:ال)?))?(?:تجارة|متجر|متاجر|تاجر|تجار|شحن|سلة|سلات|منتج|منتجات|مشتري|مشترين|مدفوعات|مشتريات|طلبات(?=\s+(?:الشراء|المتجر|الشحن|غير|العملاء)|$))(?![\p{L}])/iu,
   },
   {
     headingPrefix: "5. السفر والسياحة والثقافة والضيافة",
     keywords:
-      /\b(travel|tourism|culture|hospitality|hotel|booking|flight|event|workshop)\b|سفر|سياحة|ثقاف|ضياف|فندق|حجز|رحل|فعالية|ورشة/iu,
+      /\b(travel|tourism|culture|hospitality|hotel|booking|flight|events?|workshop)\b|(?<![\p{L}])(?:[وف]?(?:لل|[بكل]?(?:ال)?))?(?:سفر|سياح[\p{L}]*|فندق|فنادق|اقام[\p{L}]*|فعالي[\p{L}]*|معرض|معارض|تذكرة|تذاكر|مطار|مطارات|طيران|حجز|حجوزات|وجهة|وجهات|رحلة|رحلات|رحلتك|ورشة|ورش)(?![\p{L}])/iu,
   },
   {
     headingPrefix: "6. التقسيط والتمويل والاستثمار",
     keywords:
-      /\b(payment|payments|fintech|finance|installment|bnpl|loan|invest|investment|billing|subscription|checkout)\b|دفع|تمويل|تقسيط|استثمار|مالي|رسوم|اشتراك|بطاقة/iu,
+      /\b(payments?|fintech|finance|installments?|bnpl|loan|investment|billing|subscription|checkout)\b|(?<![\p{L}])(?:[وف]?(?:لل|[بكل]?(?:ال)?))?(?:دفع|تمويل|تقسيط|استثمار|مالي[\p{L}]*|اشتراك|اشتراكات|بطاق(?:ة|ات|تي)\s+(?:ائتمان[\p{L}]*|مدى|بنكي[\p{L}]*|مسبق[\p{L}]*|دفع|سداد|رقمية|تمويل)|رسوم(?!\s+(?:توضيحية|متحركة|بيانية|كاريكاتيرية)))(?![\p{L}])/iu,
+  },
+  {
+    headingPrefix: "7. العلامات الفاخرة والضيافة الراقية والتجارب الحصرية",
+    keywords:
+      /\b(luxury|vip|concierge|bespoke|fine dining|high-end|couture|exclusive)\b|(?<![\p{L}])(?:[وف]?(?:لل|[بكل]?(?:ال)?))?(?:فاخر[\p{L}]*|فخامة|نخبة|حصري[\p{L}]*|ضيافة\s+(?:راقية|فاخرة)|ازياء\s+فاخر[\p{L}]*|مجوهرات|عطور|كونسيرج)(?![\p{L}])/iu,
   },
 ];
 
-const UI_FLOW_RULES: SectionRule[] = [
+export const UI_FLOW_RULES: SectionRule[] = [
   {
     headingPrefix: "1. واجهات الذكاء الاصطناعي والمحادثة",
     keywords:
-      /\b(ai|llm|chat|chatbot|assistant|copilot|summary|generate)\b|ذكاء اصطناعي|محادثة|مساعد|تلخيص|توليد/iu,
+      /\b(ai|llm|chat|chatbot|assistant|copilot|summary|generate)\b|(?<![\p{L}])(?:[وف]?(?:لل|[بكل]?(?:ال)?))?(?:ذكاء\s+(?:ال)?اصطناعي|محادثة|مساعد|تلخيص|توليد)(?![\p{L}])/iu,
   },
   {
     headingPrefix: "2. المصادقة والأمان ورموز التحقق",
     keywords:
-      /\b(auth|login|signin|otp|2fa|mfa|passkey|password|security|verify)\b|مصادقة|تسجيل دخول|رمز تحقق|كلمة مرور|أمان|تحقق/iu,
+      /\b(auth|login|signin|sign-in|otp|2fa|mfa|passkey|password|security|verify)\b|(?<![\p{L}])(?:[وف]?(?:لل|[بكل]?(?:ال)?))?(?:مصادقة|تسجيل\s+(?:ال)?دخول|رم(?:ز|وز)\s+(?:ال)?تحقق|كلمة\s+(?:ال)?مرور|امان|تحقق)(?![\p{L}])/iu,
   },
   {
     headingPrefix: "3. تحقق النماذج المضمن",
-    keywords: /\b(form|input|field|validation|iban|phone|email)\b|نموذج|حقل|تحقق|جوال|آيبان|بريد/iu,
+    keywords:
+      /\b(forms?|inputs?|fields?|validation|iban|phone|email)\b|(?<![\p{L}])(?:[وف]?(?:لل|[بكل]?(?:ال)?))?(?:نموذج|نماذج|استمارة|استمارات|حقل|حقول|اخطاء\s+(?:ال)?حقول|تحقق|جوال|ايبان|بريد)(?![\p{L}])/iu,
   },
   {
     headingPrefix: "4. إتاحة الاستخدام في النصوص",
-    keywords: /\b(a11y|accessibility|aria|screen reader|alt)\b|إتاحة|قارئ شاشة|وصول|نص بديل/iu,
+    keywords:
+      /\b(a11y|accessibility|aria|screen reader|alt)\b|(?<![\p{L}])(?:[وف]?(?:لل|[بكل]?(?:ال)?))?(?:اتاحة\s+(?:ال)?وصول|سهولة\s+(?:ال)?وصول|اتاحة|قارئ(?:ات)?\s+(?:ال)?شاش[\p{L}]*|صورة\s+بديلة|نص\s+بديل|تباين)(?![\p{L}])/iu,
   },
 ];
 
-const EXPERIENCE_RULES: SectionRule[] = [
+export const EXPERIENCE_RULES: SectionRule[] = [
   {
     headingPrefix: "2. أنماط تسجيل الدخول والمصادقة",
     keywords:
-      /\b(auth|login|signin|signup|register|onboarding|otp|sso|nafath|qr)\b|تسجيل دخول|إنشاء حساب|مصادقة|نفاذ|بوابة دخول|تصفح كضيف/iu,
+      /\b(auth|login|signin|sign-in|signup|sign-up|register|onboarding|otp|2fa|mfa|passkey|password|sso|nafath|qr|social\s+login)\b|(?<![\p{L}])(?:[وف]?(?:لل|[بكل]?(?:ال)?))?(?:تسجيل\s+(?:ال)?دخول|انشاء\s+(?:ال)?حساب|مصادقة|نفاذ|بوابة\s+(?:ال)?دخول|تصفح\s+كضيف|رم(?:ز|وز)\s+(?:ال)?تحقق|كلمة\s+(?:ال)?مرور)(?![\p{L}])/iu,
   },
   {
     headingPrefix: "3. أنماط الدفع، السلة، التقسيط، والتسعير",
     keywords:
-      /\b(payment|payments|checkout|cart|bag|bnpl|installment|pricing|plan|tier|gift|shipping|escrow)\b|دفع|سلة|تقسيط|تسعير|باقة|هدية|شحن|مقارنة|ضمان/iu,
+      /\b(payments?|checkout|cart|bag|bnpl|installments?|pricing|plans?|tier|gift|shipping|escrow|apple\s+pay|discount|loyalty)\b|(?<![\p{L}])(?:[وف]?(?:لل|[بكل]?(?:ال)?))?(?:دفع|سلة|سلات|تقسيط|اقساط|دفعات|تسعير|باقة|باقات|خط(?:ة|ط)\s+(?:ال)?(?:دفع|سداد|اسعار|اشتراك|سنوية|شهرية|نمو|مجانية)|اهداء|هدية|هدايا|شحن|مقارنة|ضمان|توفير|فاتورة|فواتير|مدى)(?![\p{L}])/iu,
   },
   {
     headingPrefix: "4. أنماط الاكتشاف، الحجز، وبناء النماذج",
     keywords:
-      /\b(search|filter|booking|calendar|ticket|form|inquiry|map|location|router)\b|بحث|تصفية|حجز|تقويم|تذكرة|نموذج|استفسار|خريطة|موقع/iu,
+      /\b(search|filter|booking|calendar|tickets?|forms?|inquiry|map|location|router)\b|(?<![\p{L}])(?:[وف]?(?:لل|[بكل]?(?:ال)?))?(?:موقع\s+جغرافي|الموقع\s+(?:ال)?جغرافي|تحديد\s+(?:ال)?موقع|موقعك|فرع|فروع|خريطة|خرائط|تذكرة|تذاكر|استمارة|استمارات|نموذج|نماذج|فلتر|فلاتر|تصفية|بحث|حجز|حجوزات|تقويم|استفسار)(?![\p{L}])/iu,
   },
   {
     headingPrefix: "5. أنماط الإعلام والمحتوى العميق والإتاحة",
     keywords:
-      /\b(media|article|audio|podcast|video|reading|a11y|accessibility|ai)\b|إعلام|مقال|صوت|بودكاست|فيديو|قراءة|إتاحة|ذكاء اصطناعي/iu,
+      /\b(media|article|audio|podcast|video|reading|tabs?|a11y|accessibility|ai)\b|(?<![\p{L}])(?:[وف]?(?:لل|[بكل]?(?:ال)?))?(?:اعلام|مقال|مقالات|صوت|بودكاست|فيديو|قراءة|اتاحة|تبويب|تبويبات|ذكاء\s+(?:ال)?اصطناعي)(?![\p{L}])/iu,
   },
   {
     headingPrefix: "6. أخطاء تجربة حقيقية مرصودة يجب تجنّبها",
     keywords:
-      /\b(rtl|bidi|ltr|cookie|i18n|translation|error|punctuation|heading)\b|اتجاه|ترقيم|نقطة|ترجمة|خطأ|كوكيز|انقلاب/iu,
+      /\b(rtl|bidi|ltr|cookies?|i18n|translation|errors?|punctuation|headings?)\b|(?<![\p{L}])(?:[وف]?(?:لل|[بكل]?(?:ال)?))?(?:اتجاه|ترقيم|نقطة|نقاط|ترجمة|خطا|اخطاء|كوكيز|ملفات\s+(?:ال)?ارتباط|انقلاب|اتجاه\s+(?:ال)?اسهم)(?![\p{L}])/iu,
   },
 ];
 
@@ -190,6 +205,13 @@ function readBundledFile(relativePath: string): string {
   return content;
 }
 
+function normalizeQueryText(text: string): string {
+  return text
+    .normalize("NFC")
+    .replace(/[\p{Mn}\u0640]/gu, "")
+    .replace(/[أإآ]/gu, "ا");
+}
+
 function splitMarkdownSections(markdown: string): {
   intro: string;
   sections: Array<{ heading: string; body: string }>;
@@ -197,9 +219,23 @@ function splitMarkdownSections(markdown: string): {
   const lines = markdown.split(/\r?\n/);
   const introLines: string[] = [];
   const sections: Array<{ heading: string; bodyLines: string[] }> = [];
+  let inFence = false;
+  let fenceChar = "";
 
   for (const line of lines) {
-    if (line.startsWith("## ")) {
+    const fenceMatch = line.match(/^\s*(```|~~~)/u);
+    if (fenceMatch) {
+      const marker = fenceMatch[1]?.[0] ?? "";
+      if (!inFence && marker) {
+        inFence = true;
+        fenceChar = marker;
+      } else if (marker && marker === fenceChar) {
+        inFence = false;
+        fenceChar = "";
+      }
+    }
+
+    if (!inFence && line.startsWith("## ")) {
       sections.push({ heading: line.slice(3).trim(), bodyLines: [line] });
     } else if (sections.length === 0) {
       introLines.push(line);
@@ -220,33 +256,101 @@ function splitMarkdownSections(markdown: string): {
   };
 }
 
-function extractSdkSkillRules(skillMarkdown: string): string {
+function getParsedSections(relativePath: string): MarkdownSections {
+  const cached = parsedSectionsCache.get(relativePath);
+  if (cached !== undefined) {
+    return cached;
+  }
+
+  const parsed = splitMarkdownSections(readBundledFile(relativePath));
+  parsedSectionsCache.set(relativePath, parsed);
+  return parsed;
+}
+
+function sanitizeMarkdownLinksForSdk(markdown: string): string {
+  return markdown.replace(/(?<!!)\[([^\]]+)\]\(((?!https?:|mailto:)[^)]+)\)/giu, "$1");
+}
+
+function sanitizeSdkReferenceText(relativePath: string, content: string): string {
+  let sanitized = sanitizeMarkdownLinksForSdk(content);
+  if (relativePath === "references/localization.md") {
+    sanitized = sanitized
+      .replace(
+        "إذا كانت الصيغة غير معروفة اسأل عن المحرك قبل اختراع بناء خاص به.",
+        "إذا كانت الصيغة غير معروفة فلا تخترع بناءً خاصًا بها والتزم الصيغة المؤكدة فقط.",
+      )
+      .replace(
+        "اسأل هل الحد كلمات أم محارف إذا كان ذلك يغيّر النتيجة.",
+        "ميّز هل الحد كلمات أم محارف بحسب المعطيات المؤكدة، ولا تفترض تساوي عرض الكلمات مع المساحة.",
+      );
+  } else if (relativePath === "references/sensitive-states.md") {
+    sanitized = sanitized
+      .replace("إن لم يُذكر، اسأل أو اكتفِ بوصف عدم اليقين.", "إن لم يُذكر، اكتفِ بوصف عدم اليقين.")
+      .replace(
+        "عند غياب الأثر اطلبه قبل صياغة تأكيد يوهم المستخدم بمعرفته.",
+        "عند غياب الأثر لا تصغ تأكيدًا يوهم المستخدم بمعرفة إمكانية التراجع أو نطاق الحذف.",
+      );
+  } else if (relativePath === "references/dialects.md") {
+    sanitized = sanitized.replace(
+      "1. اطلب البلد أو السوق المقصود إذا قال المستخدم «بالعامية» فقط وكان الاختلاف سيغيّر الناتج.",
+      "1. التزم الفصحى المبسطة الواضحة إذا لم يُحدّد البلد أو السوق المقصود.",
+    );
+  } else if (relativePath === "references/sector-patterns.md") {
+    sanitized = sanitized
+      .replace("، وحدّد الناقص في ملاحظة للمحرّر.", "، واقتصر على الحقائق المقدّمة.")
+      .replace(
+        "عند غياب شروط حاسمة اطلبها في وضع الوكيل؛ في SDK اكتب صياغة محافظة بلا ادعاء ولا إجراء مختلق.",
+        "عند غياب شروط حاسمة اكتب صياغة محافظة بلا ادعاء ولا إجراء مختلق.",
+      );
+  } else if (relativePath === "references/experience-patterns.md") {
+    sanitized = sanitized
+      .replace(
+        /\n### اختيار الشخصية البصرية والمعمارية حسب الفكرة \(دون قوالب مكررة\)[\s\S]*?(?=\n---\n|\n## |$)/u,
+        "",
+      )
+      .trim();
+  }
+  return sanitized;
+}
+
+function getCoreSdkRules(): string {
+  if (cachedCoreRules !== undefined) {
+    return cachedCoreRules;
+  }
+
   const sdkKeepHeadings = new Set(["بوابة السياق", "قواعد الكتابة العربية", "أنماط المكوّنات"]);
-  const { sections } = splitMarkdownSections(skillMarkdown);
+  const { sections } = getParsedSections("SKILL.md");
   const kept = sections
     .filter((section) => sdkKeepHeadings.has(section.heading))
     .map((section) =>
-      section.body
-        .split(/\r?\n/)
-        .filter((line) => !line.includes("reasoning/stage_"))
-        .join("\n"),
+      sanitizeMarkdownLinksForSdk(
+        section.body
+          .split(/\r?\n/)
+          .filter((line) => !line.includes("reasoning/stage_"))
+          .join("\n")
+          .replace(
+            /^اسأل بحسب أثر المعلومة لا عدد الفجوات:.*$/mu,
+            "عند غياب حقيقة حاسمة، صغ النص بحذر يوضح الحالة المتاحة دون افتراض إتمام عملية أو أمان إعادة المحاولة أو سياسة استرجاع. للفجوات الأسلوبية الصغيرة استخدم فصحى واضحة دون افتراض بلد أو جنس المستخدم.",
+          ),
+      ),
     );
 
-  return kept.length > 0 ? kept.join("\n\n") : skillMarkdown;
+  cachedCoreRules = kept.length > 0 ? kept.join("\n\n") : readBundledFile("SKILL.md");
+  return cachedCoreRules;
 }
 
 function selectRelevantSections(
-  markdown: string,
+  relativePath: string,
   rules: SectionRule[],
   queryText: string,
   alwaysIncludeHeadings: string[],
   fallbackToAllWhenUnmatched: boolean,
 ): string {
-  const { intro, sections } = splitMarkdownSections(markdown);
+  const { intro, sections } = getParsedSections(relativePath);
+  const normalizedQuery = normalizeQueryText(queryText);
   const matchedPrefixes = new Set(
-    rules.filter((rule) => rule.keywords.test(queryText)).map((rule) => rule.headingPrefix),
+    rules.filter((rule) => rule.keywords.test(normalizedQuery)).map((rule) => rule.headingPrefix),
   );
-  const rulePrefixes = new Set(rules.map((rule) => rule.headingPrefix));
   const includeAllRules = matchedPrefixes.size === 0 && fallbackToAllWhenUnmatched;
 
   const selectedBodies = sections
@@ -255,46 +359,59 @@ function selectRelevantSections(
         return true;
       }
       if (includeAllRules) {
-        return true;
+        return rules.some((rule) => section.heading.startsWith(rule.headingPrefix));
       }
       for (const prefix of matchedPrefixes) {
         if (section.heading.startsWith(prefix)) {
           return true;
         }
       }
-      return !Array.from(rulePrefixes).some((prefix) => section.heading.startsWith(prefix));
+      return false;
     })
-    .map((section) => section.body);
+    .map((section) => sanitizeSdkReferenceText(relativePath, section.body));
 
   if (selectedBodies.length === 0) {
     return "";
   }
 
-  return [intro, ...selectedBodies].filter(Boolean).join("\n\n");
+  const sanitizedIntro = sanitizeSdkReferenceText(relativePath, intro).replace(
+    /\s*مصدر الملاحظات وحدودها في [^.\n]+\./gu,
+    "",
+  );
+  return [sanitizedIntro, ...selectedBodies].filter(Boolean).join("\n\n");
 }
 
 function buildSystemPrompt(queryText: string): string {
   try {
-    const coreRules = extractSdkSkillRules(readBundledFile("SKILL.md"));
-    const localization = readBundledFile("references/localization.md");
-    const sensitiveStates = readBundledFile("references/sensitive-states.md");
-    const dialects = readBundledFile("references/dialects.md");
+    const coreRules = getCoreSdkRules();
+    const localization = sanitizeSdkReferenceText(
+      "references/localization.md",
+      readBundledFile("references/localization.md"),
+    );
+    const sensitiveStates = sanitizeSdkReferenceText(
+      "references/sensitive-states.md",
+      readBundledFile("references/sensitive-states.md"),
+    );
+    const dialects = sanitizeSdkReferenceText(
+      "references/dialects.md",
+      readBundledFile("references/dialects.md"),
+    );
     const sectorPatterns = selectRelevantSections(
-      readBundledFile("references/sector-patterns.md"),
+      "references/sector-patterns.md",
       SECTOR_RULES,
       queryText,
       ["اختيار النمط وحدوده", "فحص النقل إلى المنتج الحالي"],
       true,
     );
     const uiFlows = selectRelevantSections(
-      readBundledFile("references/ui-flows.md"),
+      "references/ui-flows.md",
       UI_FLOW_RULES,
       queryText,
       [],
       false,
     );
     const experiencePatterns = selectRelevantSections(
-      readBundledFile("references/experience-patterns.md"),
+      "references/experience-patterns.md",
       EXPERIENCE_RULES,
       queryText,
       ["1. العناوين، التنوع البصري، ومنع التكرار"],
@@ -389,18 +506,33 @@ function validateResult(value: unknown, maxLength: number, textType: string): Ar
 
   const withinLimit = normalizedOptions.filter((option) => countWords(option.text) <= maxLength);
   if (withinLimit.length === 0) {
-    throw new Error(`A generated option exceeded the ${maxLength}-word limit.`);
+    throw new Error(`Every generated option exceeded the maximum word limit (${maxLength} words).`);
   }
 
+  const normalizedType = textType.trim().replace(/\s+/gu, " ");
+  const hasBodyComponent =
+    /\b(?:description|body|paragraphs?|copy|explanation|details?|message|disclaimer|disclosure|subcopy)\b|(?<![\p{L}])(?:و)?(?:ال)?(?:وصف|وصفي[\p{L}]*|تفاصيل|تفصيلي[\p{L}]*|توضيح|توضيحي[\p{L}]*|شرح|فقرة|فقرات|محتوى|رسالة|إفصاح|تنبيه)(?![\p{L}])/iu.test(
+      normalizedType,
+    );
   const shortLabel =
-    /^(?:(?:page|hero|section|card|main|screen) )?(?:headings?|titles?|badges?|cta(?: buttons?)?|buttons?(?: labels?)?|calls? to action)$/iu.test(
-      textType.replace(/\s+/gu, " "),
-    ) || /^(?:عنوان(?: .+)?|زر(?: .+)?|شارة(?: .+)?|دعوة إلى الإجراء)$/u.test(textType);
+    !hasBodyComponent &&
+    (/^(?:(?:page|hero|section|card|main|screen|modal|dialog|empty[- ]state|form|nav|navigation|tab|list|short|item|primary|secondary|submit|action|header|footer|status|input|field|error|step|menu|banner|pricing|checkout)\s+)*(?:h[1-6]|headings?|subheadings?|titles?|subtitles?|headers?|badges?|tags?|chips?|pills?|labels?|tabs?|cta(?:\s+(?:buttons?|labels?|text))?|buttons?(?:\s+(?:labels?|text))?|calls?[- ]to[- ]action|links?(?:\s+(?:labels?|text))?|status(?:es)?(?:\s+(?:badges?|labels?|titles?))?|nav(?:igation)?\s+(?:items?|labels?|titles?)|tab\s+(?:labels?|titles?)|list\s+titles?)$/iu.test(
+      normalizedType,
+    ) ||
+      /^(?:(?:ال)?(?:عنوان|عناوين|عنوان\s+فرعي|تسمية|تسميات|ترويسة|زر|أزرار|شارة|شارات|وسم|وسوم|بطاقة(?:\s+(?:حالة|تصنيف|ميزة|عنوان|باقة))?|تبويب|تبويبات|عنصر\s+تنقل|عناصر\s+(?:ال)?تنقل|رابط\s+(?:إجراء|تنقل)|نص\s+(?:ال)?(?:زر|رابط|شارة|تبويب))|دعوة\s+(?:إلى|لـ?|لاتخاذ)\s+(?:ال)?إجراء)(?:\s+[\p{L}0-9-]+)*$/u.test(
+        normalizedType,
+      ));
   const validOptions = shortLabel
-    ? withinLimit.filter((option) => !/\.[\p{Cf}\s]*$/u.test(option.text))
+    ? withinLimit.filter(
+        (option) => !/[.\u06D4\u2026](?=[\p{Cf}\s»"”'’)\]}*_`~]*$)/u.test(option.text),
+      )
     : withinLimit;
   if (validOptions.length === 0) {
-    throw new Error("Every generated option for this UI label ends in a terminal period.");
+    throw new Error(
+      normalizedOptions.length > withinLimit.length
+        ? `No generated option both met the ${maxLength}-word limit and omitted a terminal period.`
+        : "Every generated option for this UI label ends in a terminal period.",
+    );
   }
 
   return { options: validOptions };
@@ -465,6 +597,10 @@ export async function generateArabicCopy(
   }
 
   const normalizedApiKey = apiKey !== undefined ? requireText(apiKey, "apiKey", 500) : undefined;
+  const resolvedApiKey = normalizedApiKey ?? process.env.OPENAI_API_KEY?.trim();
+  if (!resolvedApiKey) {
+    throw new Error("apiKey must be provided or set via the OPENAI_API_KEY environment variable.");
+  }
   const rawModel = model !== undefined ? model : process.env.OPENAI_MODEL?.trim() || "gpt-5.4";
   const normalizedModel = requireText(rawModel, "model", 100);
   const normalizedProjectNiche = requireText(projectNiche, "projectNiche", 200);
@@ -478,6 +614,7 @@ export async function generateArabicCopy(
 
   const queryText = [
     normalizedProjectNiche,
+    normalizedTargetAudience,
     normalizedTextType,
     normalizedToneOfVoice,
     normalizedContext,
@@ -486,7 +623,7 @@ export async function generateArabicCopy(
   ].join(" ");
   const systemPrompt = buildSystemPrompt(queryText);
   const openai = new OpenAI({
-    ...(normalizedApiKey ? { apiKey: normalizedApiKey } : {}),
+    apiKey: resolvedApiKey,
     timeout: 30_000,
     maxRetries: 1,
     fetch: (url, init) => globalThis.fetch(url, init),
@@ -533,7 +670,7 @@ ${taskData}
     if (response.status !== "completed") {
       throw new Error(`The OpenAI response was not completed (${response.status}).`);
     }
-    const content = response.output_text;
+    const content = response.output_text?.trim();
     if (!content) {
       const refusalReason = extractRefusalReason(response.output);
       throw new Error(

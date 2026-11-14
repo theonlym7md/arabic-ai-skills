@@ -2,7 +2,12 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const { test } = require("node:test");
-const { generateArabicCopy } = require("../dist/index.js");
+const {
+  EXPERIENCE_RULES,
+  SECTOR_RULES,
+  UI_FLOW_RULES,
+  generateArabicCopy,
+} = require("../dist/index.js");
 
 const input = {
   apiKey: "synthetic-test-key",
@@ -341,4 +346,249 @@ test("SDK configures a 30-second request timeout", async (t) => {
   intercept(t, responseBody({ options: [{ text: "راجع الطلب", style: "واضح" }] }));
   await generateArabicCopy(input);
   assert.ok(timeouts.includes(30_000), `Unexpected timeouts: ${timeouts}`);
+});
+
+test("SDK routes sector guidance based on targetAudience", async (t) => {
+  let lastPayload = null;
+  intercept(
+    t,
+    responseBody({ options: [{ text: "افتح متجرك الآن", style: "مباشر" }] }),
+    (payload) => {
+      lastPayload = payload;
+    },
+  );
+
+  await generateArabicCopy({
+    ...input,
+    projectNiche: "General",
+    targetAudience: "تاجر",
+    context: "صفحة ترحيب",
+  });
+  assert.match(lastPayload.instructions, /4\. منصات التجار والتجارة الإلكترونية/);
+
+  await generateArabicCopy({
+    ...input,
+    projectNiche: "General",
+    targetAudience: "Gamers",
+    context: "بداية سريعة",
+  });
+  assert.match(lastPayload.instructions, /2\. الألعاب والتجارب الاجتماعية/);
+});
+
+test("SDK Arabic boundary matching prevents substring false positives", async (t) => {
+  const seen = [];
+  intercept(
+    t,
+    responseBody({ options: [{ text: "متابعة العملية", style: "واضح" }] }),
+    (payload) => {
+      seen.push(payload.instructions);
+    },
+  );
+
+  await generateArabicCopy({
+    ...input,
+    projectNiche: "General",
+    targetAudience: "Users",
+    context: "مرحلة الدفع",
+  });
+  assert.doesNotMatch(seen.at(-1), /5\. السفر والسياحة والثقافة والضيافة/);
+
+  await generateArabicCopy({
+    ...input,
+    projectNiche: "Media",
+    targetAudience: "Listeners",
+    context: "مراسلة الدعم",
+  });
+  assert.doesNotMatch(seen.at(-1), /4\. منصات التجار والتجارة الإلكترونية/);
+
+  await generateArabicCopy({
+    ...input,
+    projectNiche: "General",
+    targetAudience: "Users",
+    context: "وصول الرمز عبر موقع إلكتروني",
+  });
+  assert.doesNotMatch(seen.at(-1), /4\. إتاحة الاستخدام في النصوص/);
+  assert.doesNotMatch(seen.at(-1), /4\. أنماط الاكتشاف، الحجز، وبناء النماذج/);
+});
+
+test("SDK rejects extended shortLabel variants and periods inside guillemets", async (t) => {
+  const valid = { text: "ابدأ التجربة", style: "واضح" };
+  intercept(t, responseBody({ options: [{ text: "«أدر متجرك.»", style: "مباشر" }, valid] }));
+  for (const textType of [
+    "Hero H1",
+    "Subheading",
+    "Tag",
+    "Primary button",
+    "العنوان الرئيسي",
+    "وسم",
+  ]) {
+    assert.deepEqual(await generateArabicCopy({ ...input, textType }), { options: [valid] });
+  }
+});
+
+test("SDK rejects missing API key before calling fetch when env key is unset", async (t) => {
+  const previousKey = process.env.OPENAI_API_KEY;
+  delete process.env.OPENAI_API_KEY;
+  const fetchMock = t.mock.method(globalThis, "fetch", async () => {
+    throw new Error("fetch should not be called without an API key");
+  });
+
+  try {
+    const { apiKey: _omitted, ...inputWithoutKey } = input;
+    await assert.rejects(
+      generateArabicCopy(inputWithoutKey),
+      /apiKey must be provided or set via the OPENAI_API_KEY environment variable/i,
+    );
+    assert.equal(fetchMock.mock.callCount(), 0);
+  } finally {
+    if (previousKey !== undefined) {
+      process.env.OPENAI_API_KEY = previousKey;
+    }
+  }
+});
+
+test("SDK normalizes Arabic hamza variants and second-word al- prefixes in rule matching", async (t) => {
+  let request;
+  intercept(
+    t,
+    responseBody({ options: [{ text: "نراجع الإجابة الآن", style: "واضح" }] }),
+    (body) => {
+      request = body;
+    },
+  );
+
+  await generateArabicCopy({
+    ...input,
+    projectNiche: "General",
+    targetAudience: "Arabic users",
+    textType: "Status banner",
+    context: "واجهة تعتمد على الذكاء الاصطناعي",
+  });
+
+  assert.match(request.instructions, /1\. واجهات الذكاء الاصطناعي والمحادثة/);
+  assert.match(request.instructions, /5\. أنماط الإعلام والمحتوى العميق والإتاحة/);
+});
+
+test("SDK routes product card queries to E-Commerce instead of FinTech and avoids English false positives", async (t) => {
+  const seen = [];
+  intercept(t, responseBody({ options: [{ text: "اعرض التفاصيل", style: "مباشر" }] }), (body) => {
+    seen.push(body.instructions);
+  });
+
+  await generateArabicCopy({
+    ...input,
+    projectNiche: "General",
+    targetAudience: "Buyers",
+    textType: "Card label",
+    context: "بطاقة منتج لإضافة عنصر إلى السلة",
+  });
+  assert.match(seen.at(-1), /4\. منصات التجار والتجارة الإلكترونية/);
+  assert.doesNotMatch(seen.at(-1), /6\. التقسيط والتمويل والاستثمار/);
+
+  await generateArabicCopy({
+    ...input,
+    projectNiche: "Government",
+    targetAudience: "Residents",
+    textType: "Login",
+    context: "Sign in via social login in order to continue",
+  });
+  assert.match(seen.at(-1), /3\. الخدمات الحكومية والمدنية/);
+  assert.match(seen.at(-1), /2\. المصادقة والأمان ورموز التحقق/);
+  assert.doesNotMatch(seen.at(-1), /4\. منصات التجار والتجارة الإلكترونية/);
+  assert.doesNotMatch(seen.at(-1), /2\. الألعاب والتجارب الاجتماعية/);
+});
+
+test("SDK enforces no-period discipline across extended short labels and Markdown/ellipsis formatting while preserving compound body types", async (t) => {
+  const valid = { text: "أدر متجرك", style: "مباشر" };
+  intercept(
+    t,
+    responseBody({
+      options: [
+        { text: "**أدر متجرك.**", style: "خطأ 1" },
+        { text: "`أدر متجرك.`", style: "خطأ 2" },
+        valid,
+      ],
+    }),
+  );
+
+  for (const textType of [
+    "Status badge",
+    "Input label",
+    "Field label",
+    "Tab",
+    "Button text",
+    "Call-to-Action",
+    "Error title",
+    "تسمية حقل",
+    "عنوان حقل",
+    "نص الزر",
+    "تبويبات",
+    "عناصر التنقل",
+    "رابط إجراء",
+  ]) {
+    assert.deepEqual(await generateArabicCopy({ ...input, textType }), { options: [valid] });
+  }
+
+  intercept(
+    t,
+    responseBody({
+      options: [{ text: "أدر متجرك…", style: "خطأ 3" }, valid],
+    }),
+  );
+  assert.deepEqual(await generateArabicCopy({ ...input, textType: "Heading" }), {
+    options: [valid],
+  });
+
+  const compound = {
+    options: [{ text: "أدر متجرك\nتحكّم بكل الطلبات من مكان واحد.", style: "واضح" }],
+  };
+  intercept(t, responseBody(compound));
+  assert.deepEqual(
+    await generateArabicCopy({ ...input, textType: "عنوان ووصف", maxLength: 20 }),
+    compound,
+  );
+  assert.deepEqual(
+    await generateArabicCopy({ ...input, textType: "Card title and description", maxLength: 20 }),
+    compound,
+  );
+});
+
+test("SDK sanitizes layout specs and editor meta notes from system prompt and aligns rule headings", async (t) => {
+  let request;
+  intercept(t, responseBody({ options: [{ text: "استكشف الخطة", style: "هادئ" }] }), (body) => {
+    request = body;
+  });
+
+  await generateArabicCopy({
+    ...input,
+    projectNiche: "Travel",
+    context: "صفحة رحلة وتقسيط",
+  });
+
+  assert.doesNotMatch(request.instructions, /1px/);
+  assert.doesNotMatch(request.instructions, /ملاحظة للمحرّر/);
+  assert.doesNotMatch(request.instructions, /وضع الوكيل/);
+
+  const referenceDir = path.join(__dirname, "../skills/arabicskill/references");
+  const getHeadings = (file) =>
+    fs
+      .readFileSync(path.join(referenceDir, file), "utf8")
+      .split(/\r?\n/u)
+      .filter((line) => line.startsWith("## "))
+      .map((line) => line.slice(3).trim());
+
+  const checks = [
+    ["sector-patterns.md", SECTOR_RULES],
+    ["ui-flows.md", UI_FLOW_RULES],
+    ["experience-patterns.md", EXPERIENCE_RULES],
+  ];
+  for (const [file, rules] of checks) {
+    const headings = getHeadings(file);
+    for (const rule of rules) {
+      assert.ok(
+        headings.some((heading) => heading.startsWith(rule.headingPrefix)),
+        `${file} is missing heading prefix "${rule.headingPrefix}"`,
+      );
+    }
+  }
 });

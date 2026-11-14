@@ -48,17 +48,18 @@ metadata:
 - للمتغيرات وملفات JSON وICU والجمع والأرقام: [references/localization.md](references/localization.md).
 - للدفع والحذف والأذونات أو حالة نظام غير مؤكدة: [references/sensitive-states.md](references/sensitive-states.md).
 - لواجهات الذكاء الاصطناعي والمحادثة، والمصادقة وOTP، وتحقق النماذج، وإتاحة النصوص: [references/ui-flows.md](references/ui-flows.md).
+- لأنماط التجربة متعددة البدائل (تسجيل الدخول، السلة والدفع والتقسيط، الحجز والاستمارات، الإعلام والإتاحة، والشخصيات البصرية، وأخطاء RTL الميدانية): [references/experience-patterns.md](references/experience-patterns.md).
 - لتدقيق رحلة متعددة الشاشات: [reasoning/stage_8_evaluation.md](reasoning/stage_8_evaluation.md).
 - لطلب لهجة مصرية أو سعودية أو شامية أو مغربية محددة: [references/dialects.md](references/dialects.md).
-- للإعلام والألعاب والخدمات المدنية ومنصات التجار والسفر والضيافة والتقسيط أو الاستثمار: اقرأ القسم المطابق في [references/sector-patterns.md](references/sector-patterns.md). قواعد المجال لا تفرض لهجة أو بلدًا.
+- للإعلام والألعاب والخدمات المدنية ومنصات التجار والسفر والضيافة والتقسيط والاستثمار والعلامات الفاخرة: اقرأ القسم المطابق في [references/sector-patterns.md](references/sector-patterns.md). قواعد المجال لا تفرض لهجة أو بلدًا.
 - عند طلب مصدر الإلهام أو مراجعة أسلوب إحدى العلامات المرجعية: [references/saudi-sources.md](references/saudi-sources.md)، مع احترام حدود الصفحات التي راجعناها وعدم نسخ الشعارات أو الشروط.
 
 للمجال المتخصص، راجع [knowledge/relations/routing.yaml](knowledge/relations/routing.yaml) ثم:
 
-- حمّل كيان المجال المطابق فقط من `knowledge/entities/`.
-- حمّل وزن المجال المطابق من `knowledge/relations/domain_weights/` عندما يكون موجودًا.
+- حمّل كيان المجال المطابق من `knowledge/entities/` عندما يكون موجودًا.
+- حمّل وزن المجال المطابق من [knowledge/relations/weights.yaml](knowledge/relations/weights.yaml) أو `knowledge/relations/domain_weights/` عندما يكون موجودًا.
 - حمّل إضافة المجال من `plugins/` عندما تطابق المنطقة والمجال.
-- استخدم [reasoning/stage_5_knowledge_selection.md](reasoning/stage_5_knowledge_selection.md) إذا تزاحمت عدة كيانات.
+- لتنسيق تحميل المراجع والكيانات وأوزان المجال وتقديم السلامة على الأمثلة: [reasoning/stage_5_knowledge_selection.md](reasoning/stage_5_knowledge_selection.md).
 
 لا تعامل أمثلة المعرفة كقوالب ثابتة. استنتج منها المبدأ ثم اكتب نصًا مناسبًا للحالة الحالية.
 غياب ملف متخصص ليس دليل دعم للمجال؛ استخدم القواعد العامة واذكر الحاجة إلى مراجعة مختص عند الضرورة. لا تتبع روابط ملفات غير موجودة ولا تخترع محتوياتها.
@@ -84,7 +85,7 @@ metadata:
 
 ## أمثلة تطبيقية قصيرة
 
-هذه أمثلة تحريرية مُنشأة للسياق المذكور، وليست نتائج اختبار نموذج. عدّلها عند اختلاف حقائق المنتج.
+هذه أمثلة تحريرية مُنشأة للسياق المذكور، وليست نتائج اختبار نموذج. عدّلها عند اختلاف حقائق المنتج. لمقارنات موسّعة قبل التحرير وبعده راجع [مقارنة الصياغة الركيكة بالصياغة المنضبطة](examples/bad_vs_good_copy.md) و[مثال الحالة الفارغة الحكومية](examples/govtech_violation_empty_state.md).
 
 ### حالة فارغة
 

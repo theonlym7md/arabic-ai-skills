@@ -2,7 +2,7 @@
 
 This directory stores review fixtures and target thresholds for preventing regressions.
 
-There are twenty-one synthetic cases: the original nine (government empty state, uncertain payment, deletion effects, location permission, translation variables, Arabic plurals, a short CTA, source injection, regional neutrality), seven sector cases (media actions, game onboarding, civic request status, merchant benefits, event availability, installment terms, investment disclosure), three modern UI-flow cases (AI uncertainty disclosure, OTP verification error, and inline form validation), and two cross-domain experience cases (heading/button punctuation discipline and flexible auth gateway variants). Golden outputs are authored examples, not a single mandatory phrasing or copied website content.
+There are twenty-five synthetic cases: the original nine (government empty state, uncertain payment, deletion effects, location permission, translation variables, Arabic plurals, a short CTA, source injection, regional neutrality), nine sector cases (media actions, media podcast BDI, game onboarding, civic request status, merchant benefits, event availability, installment terms, investment disclosure, luxury hospitality), four modern UI-flow cases (AI uncertainty disclosure, OTP verification error, inline form validation, healthcare triage intake), and three cross-domain experience and UI/UX cases (heading/button punctuation discipline, flexible auth gateway variants, and the 3-column RTL screen review table). Golden outputs are authored examples, not a single mandatory phrasing or copied website content.
 
 ## What the checks prove
 

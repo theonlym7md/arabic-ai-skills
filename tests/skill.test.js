@@ -1,6 +1,7 @@
 const assert = require("node:assert/strict");
 const { execFileSync, spawnSync } = require("node:child_process");
 const fs = require("node:fs");
+const os = require("node:os");
 const path = require("node:path");
 const { describe, test } = require("node:test");
 const YAML = require("yaml");
@@ -91,38 +92,85 @@ describe("ArabicSkill repository", () => {
   }
 
   test("positive examples avoid known grammar regressions", () => {
+    const collectMd = (dir) =>
+      fs
+        .readdirSync(path.join(root, dir))
+        .filter((name) => name.endsWith(".md"))
+        .map((name) => path.join(dir, name).replace(/\\/g, "/"));
     const positiveFiles = [
-      "README.md",
-      "benchmarks/cases/govtech_empty_state/golden_output.md",
-      "benchmarks/cases/heading_punctuation/golden_output.md",
-      "benchmarks/cases/auth_gateway_variants/golden_output.md",
-      "skills/arabicskill/examples/govtech_violation_empty_state.md",
-      "skills/arabicskill/knowledge/entities/saudi_govtech.yaml",
-      "skills/arabicskill/references/experience-patterns.md",
-      "skills/arabicskill/references/saudi-sources.md",
-      "skills/arabic-uiux-master/SKILL.md",
-      "skills/arabic-uiux-master/references/flow-patterns.md",
+      ...new Set([
+        "README.md",
+        "benchmarks/cases/govtech_empty_state/golden_output.md",
+        "benchmarks/cases/heading_punctuation/golden_output.md",
+        "benchmarks/cases/auth_gateway_variants/golden_output.md",
+        "skills/arabicskill/examples/govtech_violation_empty_state.md",
+        "skills/arabicskill/knowledge/entities/saudi_govtech.yaml",
+        ...collectMd("skills/arabicskill/references"),
+        "skills/arabic-uiux-master/SKILL.md",
+        ...collectMd("skills/arabic-uiux-master/references"),
+        ...collectMd("skills/arabic-uiux-master/examples"),
+      ]),
     ];
 
     for (const file of positiveFiles) {
-      const content = read(file);
-      assert.doesNotMatch(content, /سجلك خالي من المخالفات/);
-      assert.doesNotMatch(content, /جاري (مراجعة|جلب|معالجة)/);
+      for (const line of read(file).split(/\r?\n/)) {
+        if (/(?:تجنّ?ب|بدلًا?\s+من|بدل\s*:|لا تقل|قبل التحرير|صياغة خاطئة|Before:|❌)/u.test(line)) {
+          continue;
+        }
+        assert.doesNotMatch(line, /سجلك خالي من المخالفات/u, file);
+        assert.doesNotMatch(line, /جاري (?:مراجعة|جلب|معالجة)/u, file);
+      }
     }
   });
 
   test("main titles and CTA labels in golden outputs omit trailing periods", () => {
+    const tableShortLabels = new Set([
+      "العنوان",
+      "عنوان الشاشة الرئيسي",
+      "عنوان الحقل",
+      "الشارة",
+      "شارة الحالة",
+      "شارة التوفير",
+      "الزر",
+      "الزر الأساسي",
+      "الإجراء الأساسي",
+      "الإجراء الثانوي",
+      "بطاقة خطة الدفع (العنوان)",
+    ]);
     const casesDir = path.join(root, "benchmarks", "cases");
     for (const folder of fs.readdirSync(casesDir)) {
       const goldenPath = path.join(casesDir, folder, "golden_output.md");
       if (!fs.existsSync(goldenPath)) continue;
-      for (const line of fs.readFileSync(goldenPath, "utf8").split(/\r?\n/)) {
-        if (/^(العنوان|الزر|الأزرار|الشعار|خيار بديل):/.test(line.trim())) {
+      const content = fs.readFileSync(goldenPath, "utf8");
+      if (folder === "short_cta") {
+        assert.doesNotMatch(
+          content.trim(),
+          /[.\u06D4]\s*$/u,
+          `${folder}/golden_output.md CTA must not end with a period: ${content}`,
+        );
+      }
+      for (const line of content.split(/\r?\n/)) {
+        const trimmed = line.trim();
+        if (
+          /^(العنوان|الزر|الأزرار|زر التشغيل|زر المتابعة|الإجراء الأساسي|الإجراء البديل|الشعار|خيار بديل|الشارة|شارة الحالة|بطاقة الخيار):/u.test(
+            trimmed,
+          )
+        ) {
           assert.doesNotMatch(
-            line.trim(),
-            /\.\s*$/,
+            trimmed,
+            /[.\u06D4]\s*$/u,
             `${folder}/golden_output.md title/CTA must not end with a period: ${line}`,
           );
+        }
+        if (trimmed.startsWith("|")) {
+          const cells = trimmed.split("|").map((cell) => cell.trim());
+          if (cells.length >= 4 && tableShortLabels.has(cells[1])) {
+            assert.doesNotMatch(
+              cells[2],
+              /[.\u06D4]\s*$/u,
+              `${folder}/golden_output.md table cell "${cells[1]}" must not end with a period: ${cells[2]}`,
+            );
+          }
         }
       }
     }
@@ -259,6 +307,77 @@ describe("ArabicSkill repository", () => {
           `${file}: missing ${dependency}`,
         );
       }
+    }
+  });
+
+  test("package resolution points to compiled dist/index.js", () => {
+    const resolved = require.resolve("arabicskill");
+    assert.equal(resolved.endsWith(path.join("dist", "index.js")), true, resolved);
+  });
+
+  test("both skills unify visual archetypes and README keeps archive links intact", () => {
+    const expPatterns = read("skills/arabicskill/references/experience-patterns.md");
+    const uiuxSkill = read("skills/arabic-uiux-master/SKILL.md");
+    const uiuxFlows = read("skills/arabic-uiux-master/references/flow-patterns.md");
+
+    for (const archetype of [
+      "Clean Light Editorial",
+      "Warm Cultural Archive",
+      "Modular Bento Clarity",
+      "Dark Editorial Cinema",
+      "High-Contrast Utility",
+    ]) {
+      assert.ok(expPatterns.includes(archetype), `experience-patterns.md missing ${archetype}`);
+      assert.ok(uiuxSkill.includes(archetype), `arabic-uiux-master/SKILL.md missing ${archetype}`);
+      assert.ok(uiuxFlows.includes(archetype), `flow-patterns.md missing ${archetype}`);
+    }
+
+    const ignoredPrefixes = ["docs/demos/", "docs/assets/ab/"];
+    for (const match of read("README.md").matchAll(/\]\(([^)]+)\)/g)) {
+      const target = match[1].trim().split(/[?#\s]/, 1)[0];
+      if (/^(?:https?:|mailto:)/i.test(target)) {
+        continue;
+      }
+      for (const prefix of ignoredPrefixes) {
+        assert.equal(
+          target.startsWith(prefix),
+          false,
+          `README.md relative link "${target}" is excluded from release ZIP archives by .gitattributes`,
+        );
+      }
+    }
+  });
+
+  test("sweep catches expanded slop patterns and resets negative blocks at horizontal rules", () => {
+    const { scanText, scanFile } = require(path.join(root, "scripts", "sweep.js"));
+    assert.ok(scanText("قم بتأكيد الحساب").length > 0);
+    assert.ok(scanText("- قم بـتأكيد الحساب").length > 0);
+    assert.ok(scanText("جاري التحقق من الرمز").length > 0);
+    assert.ok(scanText("تم الحفظ بنجاح").length > 0);
+
+    const fixture = fs.mkdtempSync(path.join(os.tmpdir(), "arabicskill-sweep-"));
+    try {
+      const testMd = path.join(fixture, "sample.md");
+      fs.writeFileSync(
+        testMd,
+        "### Before\nقم بـتأكيد الطلب\n---\n- رسالة مباشرة: جاري التحقق الآن.\n",
+      );
+      const docHits = scanFile(testMd, fixture, { isSkillDoc: true });
+      assert.equal(docHits.length, 1);
+      assert.equal(docHits[0].line, 4);
+
+      const cliResult = spawnSync(
+        process.execPath,
+        [path.join(root, "scripts", "sweep.js"), "--target", testMd],
+        {
+          cwd: root,
+          encoding: "utf8",
+        },
+      );
+      assert.notEqual(cliResult.status, 0);
+      assert.match(cliResult.stderr, /Found 2 Arabic slop match/);
+    } finally {
+      fs.rmSync(fixture, { recursive: true, force: true });
     }
   });
 });

@@ -10,7 +10,7 @@ Plugins extend the ontology graph with domain-specific rules without altering th
 api_version: 1
 framework_version: ">=1.0.0"
 min_framework_version: "1.0.0"
-max_framework_version: "2.0.0"
+max_framework_version: "2.9.9"
 plugin_version: "1.0.0"
 deprecated_after: ""      # ISO date string if plugin is deprecated (e.g. "2027-01-01")
 replacement: ""           # Recommended replacement plugin name

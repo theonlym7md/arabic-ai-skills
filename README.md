@@ -43,19 +43,19 @@ npx skills add theonlym7md/arabic-ai-skills --skill arabic-uiux-master
 
 #### قبل · بدون مهارة
 
-![صفحة الدخول الكاملة الناتجة من الجلسة التي لم تستخدم مهارات](docs/demos/login-build/baseline-desktop.png)
+![صفحة الدخول الكاملة الناتجة من الجلسة التي لم تستخدم مهارات](https://raw.githubusercontent.com/theonlym7md/arabic-ai-skills/main/docs/demos/login-build/baseline-desktop.png)
 
-[لقطة الجوال](docs/demos/login-build/baseline-mobile.png) · [مصدر الصفحة](docs/demos/login-build/baseline/index.html)
+[لقطة الجوال](https://github.com/theonlym7md/arabic-ai-skills/blob/main/docs/demos/login-build/baseline-mobile.png) · [مصدر الصفحة](https://github.com/theonlym7md/arabic-ai-skills/blob/main/docs/demos/login-build/baseline/index.html)
 
 #### بعد · مع ArabicSkill 2.2.0 فقط
 
-![صفحة الدخول الكاملة الناتجة من الجلسة التي استخدمت ArabicSkill فقط](docs/demos/login-build/arabicskill-desktop.png)
+![صفحة الدخول الكاملة الناتجة من الجلسة التي استخدمت ArabicSkill فقط](https://raw.githubusercontent.com/theonlym7md/arabic-ai-skills/main/docs/demos/login-build/arabicskill-desktop.png)
 
-[لقطة الجوال](docs/demos/login-build/arabicskill-mobile.png) · [مصدر الصفحة](docs/demos/login-build/arabicskill/index.html)
+[لقطة الجوال](https://github.com/theonlym7md/arabic-ai-skills/blob/main/docs/demos/login-build/arabicskill-mobile.png) · [مصدر الصفحة](https://github.com/theonlym7md/arabic-ai-skills/blob/main/docs/demos/login-build/arabicskill/index.html)
 
 في هذه الجولة، خرجت النسخة الأولى بهوية بنفسجية ورسوم تذاكر، بينما اختارت ArabicSkill ألوان الطين ونفّذت معرض ورش ظاهرًا من البداية. النسختان تشتركان في الدخول بالبريد، لكن نسخة ArabicSkill تربط اختيار ورشة بمسار دخول ينتهي بحجز تجريبي؛ النسخة الأولى تنتهي بعرض التذاكر.
 
-[طريقة المقارنة وإعادة التصوير](docs/demos/login-build/README.md). هذه عينة واحدة لكل شرط؛ الاختلاف الملحوظ لا يثبت تفوقًا عامًا.
+[طريقة المقارنة وإعادة التصوير](https://github.com/theonlym7md/arabic-ai-skills/blob/main/docs/demos/login-build/README.md) · [مقارنة الشاشات الثلاث (A/B)](https://github.com/theonlym7md/arabic-ai-skills/blob/main/docs/demos/arabicskill-ab/README.md). هذه عينة واحدة لكل شرط؛ الاختلاف الملحوظ لا يثبت تفوقًا عامًا.
 
 ## ما الجديد في 2.2
 
@@ -71,7 +71,7 @@ npx skills add theonlym7md/arabic-ai-skills --skill arabic-uiux-master
 
 يوثّق [سجل المصادر](skills/arabicskill/references/saudi-sources.md) مراجعة واجهات عامة من قائمة بدأت بـ١١٥ رابطًا، وحدود الوصول لبعض المواقع. استُخلصت منها أنماط للتكييف، دون نسخ أسعار أو شروط أو شعارات. هذا تطوير لتعليمات المهارة، وليس تدريبًا للنموذج أو اعتمادًا من العلامات المذكورة.
 
-يتضمن المشروع **٢١ حالة تقييم مرجعية**. الفحوص الآلية تتحقق من ملفاتها وبنية المخرجات والروابط والعقود البرمجية. لا تثبت تحسّن جودة نموذج حي أو امتثال واجهة فعلية. راجع [منهجية التقييم](benchmarks/README.md) و[مسار العمل](docs/WORKFLOW.md).
+يتضمن المشروع **٢٥ حالة تقييم مرجعية**. الفحوص الآلية تتحقق من ملفاتها وبنية المخرجات والروابط والعقود البرمجية. لا تثبت تحسّن جودة نموذج حي أو امتثال واجهة فعلية. راجع [منهجية التقييم](benchmarks/README.md) و[مسار العمل](docs/WORKFLOW.md).
 
 </details>
 
@@ -82,7 +82,6 @@ npx skills add theonlym7md/arabic-ai-skills --skill arabic-uiux-master
 ```bash
 npm ci
 npm run check
-npm run build
 node examples/sdk.cjs
 ```
 

@@ -1,0 +1,13 @@
+case_id: "media_podcast_bdi"
+domain: "Media"
+target_metrics:
+  Clarity: 95
+  Localization: 95
+forbidden_phrases:
+  - "أكمل المشاهدة"
+  - "حصريًا للمشتركين"
+  - "min"
+review_criteria:
+  - "Isolates numeric episode duration with `<bdi dir=\"ltr\">` while keeping the Arabic unit `دقيقة`."
+  - "Separates episode title, program name, and confirmed play action without inventing subscription locks."
+  - "Omits trailing periods on the heading and play button."

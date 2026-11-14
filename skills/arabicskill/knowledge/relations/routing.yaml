@@ -15,19 +15,41 @@ domains:
     reference: "references/sector-patterns.md"
     section: "6. التقسيط والتمويل والاستثمار"
     weight_profile: "fintech"
-    keywords: ["دفع", "تقسيط", "تمويل", "استثمار", "عائد", "رسوم", "اشتراك"]
+    keywords: ["تمويل", "استثمار", "عائد", "رسوم", "اشتراك", "بطاقة ائتمانية", "خطة دفعات"]
 
   E-Commerce:
     reference: "references/sector-patterns.md"
     section: "4. منصات التجار والتجارة الإلكترونية"
     weight_profile: "ecommerce"
-    keywords: ["متجر", "سلة", "تاجر", "طلب", "شحن", "إرجاع", "تخفيض"]
+    keywords: ["متجر", "تاجر", "طلب", "إرجاع", "تخفيض", "مشتريات"]
 
   SaaS:
     reference: "references/ui-flows.md"
     section: "3. تحقق النماذج المضمن"
     weight_profile: "saas"
-    keywords: ["حساب", "مهام", "لوحة", "إعدادات", "حذف", "نموذج"]
+    keywords: ["مهام", "لوحة", "إعدادات", "حقل", "تحقق مضمن"]
+
+  Account_Deletion:
+    reference: "references/sensitive-states.md"
+    section: "الحذف"
+    weight_profile: "saas"
+    keywords: ["حذف", "حذف الحساب", "إلغاء الحساب", "أرشفة"]
+
+  Payments_Uncertain:
+    reference: "references/sensitive-states.md"
+    section: "الدفع والاشتراكات"
+    weight_profile: "fintech"
+    keywords: ["حالة الدفع", "انتهت المهلة", "خصم المبلغ", "استرداد", "إلغاء الاشتراك"]
+
+  Permissions_Privacy:
+    reference: "references/sensitive-states.md"
+    section: "الأذونات والخصوصية"
+    weight_profile: "government"
+    keywords: ["إذن", "أذونات", "خصوصية", "تتبع", "صلاحية الوصول"]
+
+  Dialects:
+    reference: "references/dialects.md"
+    keywords: ["لهجة", "عامية", "سعودية", "مصرية", "شامية", "دارجة"]
 
   Media:
     reference: "references/sector-patterns.md"
@@ -45,7 +67,7 @@ domains:
     reference: "references/sector-patterns.md"
     section: "5. السفر والسياحة والثقافة والضيافة"
     weight_profile: "ecommerce"
-    keywords: ["حجز", "رحلة", "فندق", "فعالية", "تذاكر", "ورشة"]
+    keywords: ["رحلة", "فندق", "فعالية", "إقامة", "سياحة", "ورشة"]
 
   Healthcare:
     reference: "references/sensitive-states.md"
@@ -54,8 +76,9 @@ domains:
 
   Luxury:
     reference: "references/sector-patterns.md"
+    section: "7. العلامات الفاخرة والضيافة الراقية والتجارب الحصرية"
     weight_profile: "luxury"
-    keywords: ["فاخر", "حصري", "نخبة"]
+    keywords: ["فاخر", "حصري", "نخبة", "فخامة", "كونسيرج"]
 
   AI_Chat:
     reference: "references/ui-flows.md"
@@ -67,7 +90,7 @@ domains:
     reference: "references/ui-flows.md"
     section: "2. المصادقة والأمان ورموز التحقق"
     weight_profile: "fintech"
-    keywords: ["تحقق", "OTP", "كلمة مرور", "تسجيل دخول", "أمان", "صلاحية"]
+    keywords: ["تحقق", "OTP", "كلمة مرور", "أمان", "صلاحية", "حساب"]
 
   Localization:
     reference: "references/localization.md"
@@ -83,19 +106,37 @@ domains:
     reference: "references/experience-patterns.md"
     section: "2. أنماط تسجيل الدخول والمصادقة"
     weight_profile: "fintech"
-    keywords: ["بوابة دخول", "تسجيل دخول", "نفاذ", "مصادقة", "حساب"]
+    keywords: ["بوابة دخول", "تسجيل دخول", "نفاذ", "مصادقة", "تصفح كضيف"]
 
   Checkout_Pricing:
     reference: "references/experience-patterns.md"
     section: "3. أنماط الدفع، السلة، التقسيط، والتسعير"
     weight_profile: "ecommerce"
-    keywords: ["بوابة دفع", "تقسيط", "سلة", "شحن", "إهداء", "مقارنة", "تسعير", "باقة"]
+    keywords: ["بوابة دفع", "دفع", "تقسيط", "سلة", "شحن", "إهداء", "مقارنة", "تسعير", "باقة"]
 
   Discovery_Forms:
     reference: "references/experience-patterns.md"
     section: "4. أنماط الاكتشاف، الحجز، وبناء النماذج"
     weight_profile: "saas"
     keywords: ["نموذج", "بحث", "تصفية", "خريطة", "حجز", "استفسار", "تذكرة"]
+
+  Accessibility_Microcopy:
+    reference: "references/ui-flows.md"
+    section: "4. إتاحة الاستخدام في النصوص (Accessibility Microcopy)"
+    weight_profile: "saas"
+    keywords: ["قارئ شاشة", "نص بديل", "صورة بديلة", "aria", "تباين"]
+
+  Media_Accessibility:
+    reference: "references/experience-patterns.md"
+    section: "5. أنماط الإعلام والمحتوى العميق والإتاحة"
+    weight_profile: "media"
+    keywords: ["مدة القراءة", "مشغل الصوت", "تبويبات", "إتاحة"]
+
+  UX_Pitfalls:
+    reference: "references/experience-patterns.md"
+    section: "6. أخطاء تجربة حقيقية مرصودة يجب تجنّبها"
+    weight_profile: "saas"
+    keywords: ["انقلاب الترقيم", "نوافذ الكوكيز", "اتجاه الأسهم", "مفاتيح خام"]
 
 capabilities:
   - Generate

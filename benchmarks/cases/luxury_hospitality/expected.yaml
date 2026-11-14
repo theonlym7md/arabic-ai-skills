@@ -1,0 +1,16 @@
+case_id: "luxury_hospitality"
+domain: "Luxury"
+target_metrics:
+  Trust: 100
+  Brand: 95
+  Clarity: 95
+forbidden_phrases:
+  - "أفخم"
+  - "أسطوري"
+  - "لا مثيل له"
+  - "إلغاء مجاني"
+  - "خصم حصري"
+review_criteria:
+  - "Uses calm editorial restraint with concrete hospitality details instead of exaggerated adjectives."
+  - "Does not invent free cancellation, unverified discounts, or guaranteed privilege access."
+  - "Keeps the heading and CTA button free of trailing periods."

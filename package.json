@@ -34,11 +34,8 @@
   "bugs": {
     "url": "https://github.com/theonlym7md/arabic-ai-skills/issues"
   },
-  "workspaces": [
-    "skills/*"
-  ],
   "scripts": {
-    "clean": "node -e \"for (const f of ['index.js','index.js.map','index.d.ts','index.d.ts.map']) require('node:fs').rmSync('dist/' + f, { force: true })\"",
+    "clean": "node -e \"const fs = require('node:fs'); for (const name of ['index.js', 'index.js.map', 'index.d.ts', 'index.d.ts.map']) { fs.rmSync('dist/' + name, { force: true }); }\"",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "pretest": "npm run build",

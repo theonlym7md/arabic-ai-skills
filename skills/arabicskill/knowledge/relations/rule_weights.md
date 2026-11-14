@@ -25,5 +25,5 @@ If `Humanization (75)` dictates using slang to sound friendly, but `Trust (100)`
 **Decision:** Trust and Brand win. The tone remains formal, direct, and clear, overriding casual humanization.
 
 ## Dynamic Weight Adjustments
-- If `Domain == Startup` or `Luxury`: Boost `Creativity` (up to 85–90), keeping mandatory safety gates unchanged.
+- If `Domain == Media` or `Luxury`: Boost `Creativity` (up to 75–85) and `Brand` (up to 90–95), while keeping mandatory `Trust` (95–100) and `Clarity` (90–95) safety gates higher or equal.
 - If `Intent == Error Message`: Prioritize `Clarity` (100) and `Trust` (100), drop `Creativity` (0–10).

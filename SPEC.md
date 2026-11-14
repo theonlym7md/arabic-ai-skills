@@ -22,15 +22,22 @@ textType, context. Optional inputs: apiKey, model, store, maxLength (1–100 wor
 region, dialect.
 
 It caches bundled guidance in memory and builds an SDK-focused system prompt
-from core Arabic writing/safety rules plus bundled localization, sensitive-state,
-UI-flow, dialect, and matched sector-pattern and experience-pattern rules (always
-retaining core heading-punctuation and anti-repetition rules, falling back to all
-sector patterns when no sector keyword matches, and excluding the website source
-register). It requests 1–3 structured text/style options and validates the
-returned shape and length, filtering out individual overlong options if at least
-one option satisfies `maxLength`. For recognized heading, badge and button
-`textType` labels, it drops options with a trailing ASCII period; if none remain,
-the request rejects. Body copy retains its punctuation.
+from core Arabic writing/safety rules plus uniformly sanitized localization,
+sensitive-state, UI-flow, dialect, and matched sector-pattern and
+experience-pattern rules (normalizing Arabic hamza variants and stripping
+diacritics/tatweel during rule matching, tracking Markdown code fences when
+splitting sections, retaining core heading-punctuation and anti-repetition
+rules without verbose layout instructions, falling back to all sector patterns
+when no sector keyword matches, stripping relative Markdown links and interactive
+clarification prompts, and excluding the website source register). It requests
+1–3 structured text/style options and validates the returned shape and length,
+filtering out individual overlong options if at least one option satisfies
+`maxLength`. For recognized short single-label `textType` values (such as
+headings, status badges, input labels, tabs, and CTA buttons — excluding
+compound requests with body/description components), it drops options with a
+trailing ASCII Full Stop (`.`), Arabic Full Stop (`۔`), or ellipsis (`…`),
+including inside closing quotes, brackets, or Markdown formatting; if none
+remain, the request rejects. Body copy retains its punctuation.
 
 It has no file-reading tools, interactive clarification, plugin dispatch,
 18-metric scoring, automatic repair, or guaranteed factuality.
