@@ -1,0 +1,12 @@
+case_id: "ai_uncertainty"
+domain: "AI_Chat"
+target_metrics:
+  Trust: 100
+  Clarity: 95
+forbidden_phrases:
+  - "دقة 99%"
+  - "معتمد قانونيًا"
+  - "خلال ثوانٍ"
+review_criteria:
+  - "Marks output as AI-generated and advises human review."
+  - "Uses only the supplied actions and invents no accuracy or legal compliance claim."

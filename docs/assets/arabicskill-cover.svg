@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 380" role="img" aria-labelledby="title desc">
+  <title id="title">ArabicSkill</title>
+  <desc id="desc">An editorial banner with a warm paper background and a dark geometric interface motif.</desc>
+  <defs>
+    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="#d5ccbc"/>
+    </pattern>
+  </defs>
+  <rect width="1280" height="380" rx="28" fill="#f6f0e4"/>
+  <rect x="16" y="16" width="1248" height="348" rx="18" fill="none" stroke="#d4c8b5"/>
+  <rect x="762" y="17" width="498" height="346" rx="18" fill="url(#grid)"/>
+  <path d="M72 85h32m10 0h15" stroke="#b74b2d" stroke-width="3"/>
+  <text x="146" y="91" fill="#6b3a2b" font-family="monospace" font-size="20" font-weight="700" letter-spacing="3">OPEN SOURCE / AGENT SKILLS</text>
+  <text x="70" y="201" fill="#152c29" font-family="Arial, sans-serif" font-size="100" font-weight="700" letter-spacing="-5">ArabicSkill</text>
+  <text x="75" y="254" fill="#38554f" font-family="Arial, sans-serif" font-size="30">Arabic UX writing, localization and RTL</text>
+  <path d="M75 289h641" stroke="#d4c8b5"/>
+  <text x="75" y="325" fill="#38554f" font-family="monospace" font-size="20" letter-spacing="2">01  COPY  /  02  FLOWS  /  03  REVIEW</text>
+  <rect x="823" y="49" width="343" height="283" rx="27" fill="#133c34"/>
+  <path d="M846 100h297M846 281h297" stroke="#578076" fill="none"/>
+  <circle cx="852" cy="76" r="4" fill="#f3d9a5"/>
+  <circle cx="870" cy="76" r="4" fill="#80a697"/>
+  <circle cx="888" cy="76" r="4" fill="#80a697"/>
+  <path d="M891 206c0 22 18 39 39 39h77c22 0 39-17 39-39v-36m-35 21 35-34 35 34" fill="none" stroke="#f4dfae" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M937 142h50m-50 19h34" stroke="#91b4a7" stroke-width="5" stroke-linecap="round"/>
+  <rect x="1045" y="244" width="79" height="48" rx="10" fill="#de704b"/>
+  <path d="M1066 267h38m-9-9 9 9-9 9" fill="none" stroke="#142e28" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="1183" cy="104" r="10" fill="#de704b"/>
+  <path d="M792 316h-24v-24m414-73h24v24" fill="none" stroke="#8b6751" stroke-width="2"/>
+</svg>

@@ -1,0 +1,12 @@
+case_id: "auth_otp_error"
+domain: "Auth_Security"
+target_metrics:
+  Trust: 100
+  Clarity: 95
+forbidden_phrases:
+  - "خلال 5 دقائق"
+  - "لقد أخطأت"
+  - "حاول لاحقًا"
+review_criteria:
+  - "States clearly that the verification code expired without blaming the user."
+  - "Uses only the available resend action and invents no expiry duration."

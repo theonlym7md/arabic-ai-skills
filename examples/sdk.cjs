@@ -7,6 +7,7 @@ async function main() {
     toneOfVoice: "Official and clear",
     textType: "Empty state",
     context: "Traffic violation page with no recorded violations",
+    maxLength: 20,
   });
 
   console.log(result.options);

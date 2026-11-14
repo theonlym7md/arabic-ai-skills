@@ -1,0 +1,14 @@
+domain: "Media"
+weights:
+  quality:
+    Trust: 95
+    Clarity: 90
+    Accessibility: 90
+  style:
+    Localization: 95
+    Brand: 90
+    Tone: 90
+    SentenceRhythm: 90
+  optimization:
+    Humanization: 85
+    Creativity: 75

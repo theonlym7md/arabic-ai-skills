@@ -1,14 +1,101 @@
 # Capability & Semantic Routing Matrix
 
-version: "1.0.0"
+version: "2.2.0"
 
 domains:
-  - GovTech
-  - FinTech
-  - E-Commerce
-  - SaaS
-  - Media & Content
-  - Healthcare
+  GovTech:
+    reference: "references/sector-patterns.md"
+    section: "3. الخدمات الحكومية والمدنية"
+    entity: "saudi_govtech"
+    weight_profile: "government"
+    plugin: "govtech"
+    keywords: ["حكومي", "مخالفات", "رخصة", "تصريح", "سجل", "بلدي", "سدايا"]
+
+  FinTech:
+    reference: "references/sector-patterns.md"
+    section: "6. التقسيط والتمويل والاستثمار"
+    weight_profile: "fintech"
+    keywords: ["دفع", "تقسيط", "تمويل", "استثمار", "عائد", "رسوم", "اشتراك"]
+
+  E-Commerce:
+    reference: "references/sector-patterns.md"
+    section: "4. منصات التجار والتجارة الإلكترونية"
+    weight_profile: "ecommerce"
+    keywords: ["متجر", "سلة", "تاجر", "طلب", "شحن", "إرجاع", "تخفيض"]
+
+  SaaS:
+    reference: "references/ui-flows.md"
+    section: "3. تحقق النماذج المضمن"
+    weight_profile: "saas"
+    keywords: ["حساب", "مهام", "لوحة", "إعدادات", "حذف", "نموذج"]
+
+  Media:
+    reference: "references/sector-patterns.md"
+    section: "1. الإعلام والمحتوى"
+    weight_profile: "media"
+    keywords: ["حلقة", "برنامج", "مقال", "بودكاست", "فيديو", "تشغيل"]
+
+  Gaming:
+    reference: "references/sector-patterns.md"
+    section: "2. الألعاب والتجارب الاجتماعية"
+    weight_profile: "saas"
+    keywords: ["لعبة", "جولة", "غرفة", "نقاط", "لاعب"]
+
+  Travel:
+    reference: "references/sector-patterns.md"
+    section: "5. السفر والسياحة والثقافة والضيافة"
+    weight_profile: "ecommerce"
+    keywords: ["حجز", "رحلة", "فندق", "فعالية", "تذاكر", "ورشة"]
+
+  Healthcare:
+    reference: "references/sensitive-states.md"
+    weight_profile: "healthcare"
+    keywords: ["صحي", "طبي", "عيادة", "تشخيص", "دواء", "موعد"]
+
+  Luxury:
+    reference: "references/sector-patterns.md"
+    weight_profile: "luxury"
+    keywords: ["فاخر", "حصري", "نخبة"]
+
+  AI_Chat:
+    reference: "references/ui-flows.md"
+    section: "1. واجهات الذكاء الاصطناعي والمحادثة"
+    weight_profile: "saas"
+    keywords: ["ذكاء اصطناعي", "محادثة", "توليد", "مساعد", "تلخيص"]
+
+  Auth_Security:
+    reference: "references/ui-flows.md"
+    section: "2. المصادقة والأمان ورموز التحقق"
+    weight_profile: "fintech"
+    keywords: ["تحقق", "OTP", "كلمة مرور", "تسجيل دخول", "أمان", "صلاحية"]
+
+  Localization:
+    reference: "references/localization.md"
+    keywords: ["JSON", "ICU", "جمع", "متغيرات", "RTL", "توطين"]
+
+  Headings_Identity:
+    reference: "references/experience-patterns.md"
+    section: "1. العناوين، التنوع البصري، ومنع التكرار"
+    weight_profile: "saas"
+    keywords: ["عنوان", "بطل", "ترويسة", "أسلوب", "تصميم", "تنوع", "نقطة"]
+
+  Auth_Gateways:
+    reference: "references/experience-patterns.md"
+    section: "2. أنماط تسجيل الدخول والمصادقة"
+    weight_profile: "fintech"
+    keywords: ["بوابة دخول", "تسجيل دخول", "نفاذ", "مصادقة", "حساب"]
+
+  Checkout_Pricing:
+    reference: "references/experience-patterns.md"
+    section: "3. أنماط الدفع، السلة، التقسيط، والتسعير"
+    weight_profile: "ecommerce"
+    keywords: ["بوابة دفع", "تقسيط", "سلة", "شحن", "إهداء", "مقارنة", "تسعير", "باقة"]
+
+  Discovery_Forms:
+    reference: "references/experience-patterns.md"
+    section: "4. أنماط الاكتشاف، الحجز، وبناء النماذج"
+    weight_profile: "saas"
+    keywords: ["نموذج", "بحث", "تصفية", "خريطة", "حجز", "استفسار", "تذكرة"]
 
 capabilities:
   - Generate
@@ -16,14 +103,3 @@ capabilities:
   - Analyze
   - Audit
   - Translate
-
-triggers:
-  semantic_keywords:
-    - "مخالفات"
-    - "دفع"
-    - "سلة"
-    - "حالة فارغة"
-    - "رسالة خطأ"
-    - "زر"
-    - "صفحة هبوط"
-    - "هوية"

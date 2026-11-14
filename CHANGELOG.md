@@ -2,6 +2,21 @@
 
 All notable changes are documented here. This project follows Semantic Versioning.
 
+## [2.2.0] - 2026-11-14
+
+### Improved
+
+- Added `skills/arabicskill/references/experience-patterns.md` and `skills/arabic-uiux-master/references/flow-patterns.md` synthesizing cross-domain UI/UX, product thinking, auth gateways (6 variants), payment/checkout/pricing flows (6 variants), intent-routed forms, and visual/editorial styles from a `2026-11-13` multi-page audit of 81 unique Arabic/GCC/Saudi portals (after deduplicating 115 raw URLs, with transparent documentation of WAF/CAPTCHA/maintenance/DNS exclusions).
+- Enforced strict no-trailing-period punctuation on main headings, section titles, card titles, badges, and CTA buttons (reserving periods for multi-sentence body descriptions and disclosures) across skills, references, examples, SDK instructions, and automated tests.
+- Added anti-repetition and idea-fit selection guidance so generated UI copy and flows adapt to each product brief rather than locking a domain to a single stock template.
+- Expanded selective bundling and semantic routing, added optional region and dialect settings, and expanded the benchmark suite to 21 synthetic cases.
+- Redesigned the main README, including a repository-hosted cover, quick install, before/after examples, and links to both skills and their references.
+
+### Fixed
+
+- The SDK now filters options ending in a period for recognized heading, badge and button types, without removing punctuation from body copy.
+- Corrected RTL form guidance to distinguish numeric verification codes, telephone input and alphanumeric identifiers such as IBAN.
+
 ## [2.1.0] - 2026-10-04
 
 ### Improved

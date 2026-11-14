@@ -1,8 +1,27 @@
 {
   "name": "arabicskill",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "ArabicSkill: Arabic product writing, safe localization, and RTL guidance for AI agents.",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/index.js",
+    "dist/index.js.map",
+    "dist/index.d.ts",
+    "dist/index.d.ts.map",
+    "skills/",
+    "docs/assets/arabicskill-cover.svg",
+    "LICENSE",
+    "README.md",
+    "SPEC.md"
+  ],
   "private": true,
   "engines": {
     "node": "^22.0.0 || ^24.0.0"
@@ -19,15 +38,17 @@
     "skills/*"
   ],
   "scripts": {
+    "clean": "node -e \"for (const f of ['index.js','index.js.map','index.d.ts','index.d.ts.map']) require('node:fs').rmSync('dist/' + f, { force: true })\"",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "pretest": "npm run build",
     "test": "node --test tests/*.test.js",
     "validate": "node scripts/validate_all.js",
+    "sweep": "node scripts/sweep.js",
     "benchmark": "node scripts/run_benchmark.js",
     "lint": "biome check .",
     "format": "biome format --write .",
-    "check": "npm run validate && npm run typecheck && npm test && npm run lint",
+    "check": "npm run validate && npm run sweep && npm run typecheck && npm test && npm run lint",
     "package:zip": "node scripts/package_zip.js"
   },
   "keywords": [
@@ -47,7 +68,7 @@
   "license": "MIT",
   "type": "commonjs",
   "dependencies": {
-    "openai": "^7.18.0"
+    "openai": "^7.23.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.14",

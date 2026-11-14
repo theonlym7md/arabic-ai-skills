@@ -1,6 +1,6 @@
 # ArabicSkill execution contract
 
-Version 2.0.0.
+Version 2.2.0.
 
 ## Agent skill
 
@@ -18,11 +18,20 @@ or implemented cross-language interfaces.
 
 `generateArabicCopy(params)` is a one-request copy-generation helper using the
 OpenAI Responses API. Required inputs: projectNiche, targetAudience, toneOfVoice,
-textType, context. Optional inputs: apiKey, model, store, maxLength (1–100 words).
+textType, context. Optional inputs: apiKey, model, store, maxLength (1–100 words),
+region, dialect.
 
-It loads the core skill and bundled localization, sensitive-state, dialect and
-sector-pattern rules (not the website source register), requests
-1–3 structured text/style options, and validates the returned shape and length.
+It caches bundled guidance in memory and builds an SDK-focused system prompt
+from core Arabic writing/safety rules plus bundled localization, sensitive-state,
+UI-flow, dialect, and matched sector-pattern and experience-pattern rules (always
+retaining core heading-punctuation and anti-repetition rules, falling back to all
+sector patterns when no sector keyword matches, and excluding the website source
+register). It requests 1–3 structured text/style options and validates the
+returned shape and length, filtering out individual overlong options if at least
+one option satisfies `maxLength`. For recognized heading, badge and button
+`textType` labels, it drops options with a trailing ASCII period; if none remain,
+the request rejects. Body copy retains its punctuation.
+
 It has no file-reading tools, interactive clarification, plugin dispatch,
 18-metric scoring, automatic repair, or guaranteed factuality.
 If material facts are missing, its instructions require conservative copy that
@@ -33,8 +42,10 @@ Use the agent skill for ICU files or multi-component UI systems; the SDK is
 intentionally limited to short independent strings.
 
 Requests default to `store: false`, a 30-second timeout per attempt, and one retry.
-Provider/network errors, refusals, incomplete responses, malformed data and
-overlong text reject the promise. Input errors are rejected before a request.
+Each SDK call resolves the current OpenAI connection settings, including the
+API endpoint, organization, and project. Provider/network errors, refusals, incomplete
+responses, malformed data, and requests where no option meets `maxLength` reject
+the promise. Input errors are rejected before a request.
 Product context is sent to the configured model provider; callers remain
 responsible for privacy, costs, secrets, and human review.
 

@@ -1,0 +1,17 @@
+case_id: "auth_gateway_variants"
+domain: "Auth_Gateways"
+target_metrics:
+  Trust: 100
+  Clarity: 95
+  Humanization: 95
+  AISmell: 0
+forbidden_phrases:
+  - "عزيزي المستخدم"
+  - "الرجاء"
+  - "لقد أخطأت"
+  - "قم بـ"
+review_criteria:
+  - "Presents a clear benefit-led login gateway with non-intrusive guest browsing option."
+  - "Clearly labels both identifiers and uses a neutral post-request message that does not disclose account existence."
+  - "Limits OTP and privacy wording to confirmed product behavior, without promises about data use."
+  - "Headings and buttons omit trailing periods."

@@ -1,0 +1,14 @@
+domain: "SaaS"
+weights:
+  quality:
+    Trust: 100
+    Clarity: 95
+    Accessibility: 90
+  style:
+    Localization: 95
+    Brand: 85
+    Tone: 85
+    SentenceRhythm: 85
+  optimization:
+    Humanization: 80
+    Creativity: 65

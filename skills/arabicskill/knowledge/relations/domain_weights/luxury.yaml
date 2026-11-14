@@ -7,7 +7,7 @@ weights:
     Brand: 100
     Tone: 95
     Localization: 90
-    EmotionalPrecision: 100
+    SentenceRhythm: 95
   optimization:
     Creativity: 90
-    SentenceRhythm: 95
+    Persuasiveness: 85

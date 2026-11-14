@@ -19,4 +19,4 @@ Only the optional repository SDK requires a key and makes billable model request
 Hosts need relative-file access to use supporting resources.
 
 See [migration](MIGRATION.md), [the execution contract](../SPEC.md), and
-[review fixtures](../skills/arabicskill/benchmarks/README.md).
+[review fixtures](../benchmarks/README.md).

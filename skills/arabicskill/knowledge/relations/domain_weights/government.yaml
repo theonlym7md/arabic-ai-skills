@@ -8,6 +8,6 @@ weights:
     Localization: 95
     Brand: 90
     Tone: 90
-  optimization:
-    Creativity: 15
     SentenceRhythm: 80
+  optimization:
+    Creativity: 10

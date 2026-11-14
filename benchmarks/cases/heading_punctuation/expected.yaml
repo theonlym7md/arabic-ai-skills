@@ -1,0 +1,16 @@
+case_id: "heading_punctuation"
+domain: "Headings_Identity"
+target_metrics:
+  Trust: 95
+  Clarity: 100
+  Humanization: 95
+  AISmell: 0
+forbidden_phrases:
+  - "في إطار حرصنا"
+  - "تم بنجاح"
+  - "قم بـ"
+  - "الرجاء"
+review_criteria:
+  - "Headline and CTA button strictly omit trailing periods."
+  - "Multi-phrase body description retains proper sentence punctuation."
+  - "Copy avoids AI boilerplate and translates value clearly."

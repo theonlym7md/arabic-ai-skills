@@ -2,17 +2,17 @@
 
 This directory stores review fixtures and target thresholds for preventing regressions.
 
-There are sixteen synthetic cases: the original nine (government empty state, uncertain payment, deletion effects, location permission, translation variables, Arabic plurals, a short CTA, source injection, regional neutrality), plus media actions, game onboarding, civic request status, merchant benefits, event availability, installment terms and investment disclosure. Golden outputs are authored examples, not a single mandatory phrasing or copied website content.
+There are twenty-one synthetic cases: the original nine (government empty state, uncertain payment, deletion effects, location permission, translation variables, Arabic plurals, a short CTA, source injection, regional neutrality), seven sector cases (media actions, game onboarding, civic request status, merchant benefits, event availability, installment terms, investment disclosure), three modern UI-flow cases (AI uncertainty disclosure, OTP verification error, and inline form validation), and two cross-domain experience cases (heading/button punctuation discipline and flexible auth gateway variants). Golden outputs are authored examples, not a single mandatory phrasing or copied website content.
 
 ## What the checks prove
 
-The fixture command checks files, metadata ranges and prohibited phrases in the authored reference output. It does not generate text, parse ICU, validate RTL rendering, or prove safety against prompt injection. Legacy 0–100 target values are review aspirations, not measured scores or enforced generation gates.
+The validation command checks files, metadata ranges, case ID alignment, review criteria, JSON/ICU structural integrity where applicable, and prohibited phrases in the authored reference output. With `OPENAI_API_KEY` set, `npm run benchmark -- --live` runs the SDK and checks generated options for prohibited phrases. Quality scores require a separate evaluation using the rubric below. The 0–100 targets describe review goals.
 
 ## Reproducible comparison
 
 1. Keep some prompts held out from skill editing. Use only synthetic or carefully sanitized data.
 2. Run the same model snapshot, settings and prompts with and without the skill; record the exact loaded files and raw outputs.
-3. Randomize output order and ask at least two Arabic-speaking reviewers to apply the [evidence rubric](../reasoning/stage_8_evaluation.md).
+3. Randomize output order and ask at least two Arabic-speaking reviewers to apply the [evidence rubric](../skills/arabicskill/reasoning/stage_8_evaluation.md).
 4. Reject unsafe claims and broken variables independently of style scores. Record disagreements and failed cases.
 5. Publish model/date, prompt, output, settings, rubric version, reviewers, and limitations together. Do not claim statistical significance from this small fixture set.
 

@@ -1,0 +1,10 @@
+case_id: "inline_form_validation"
+domain: "SaaS"
+target_metrics:
+  Clarity: 95
+forbidden_phrases:
+  - "إدخال غير صحيح"
+  - "خطأ في الحقل"
+review_criteria:
+  - "Shows the exact expected phone format with a concrete example instead of a generic error."
+  - "Includes an RTL/LTR direction note for numeric phone input."

@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Questions and ideas · أسئلة وأفكار
+    url: https://github.com/theonlym7md/arabic-ai-skills/discussions
+    about: Ask about use, share examples, or discuss ideas before filing an issue.
   - name: Security vulnerability
     url: https://github.com/theonlym7md/arabic-ai-skills/security/advisories/new
     about: Report vulnerabilities privately instead of opening a public issue.

@@ -38,10 +38,60 @@ RED_DARK = (107, 40, 48)
 GOLD = (248, 195, 94)
 BLUE = (99, 152, 255)
 
-ARABIC_REGULAR = Path("C:/Windows/Fonts/tahoma.ttf")
-ARABIC_BOLD = Path("C:/Windows/Fonts/tahomabd.ttf")
-LATIN_REGULAR = Path("C:/Windows/Fonts/segoeui.ttf")
-LATIN_BOLD = Path("C:/Windows/Fonts/segoeuib.ttf")
+def resolve_font(candidates: tuple[str, ...], label: str) -> Path:
+    font_dirs = [
+        Path("C:/Windows/Fonts"),
+        Path("/System/Library/Fonts"),
+        Path("/System/Library/Fonts/Supplemental"),
+        Path("/Library/Fonts"),
+        Path("/usr/share/fonts"),
+        Path("/usr/local/share/fonts"),
+    ]
+    for name in candidates:
+        direct = Path(name)
+        if direct.is_file():
+            return direct
+        for directory in font_dirs:
+            candidate = directory / name
+            if candidate.is_file():
+                return candidate
+            if directory.exists():
+                for found in directory.rglob(name):
+                    if found.is_file():
+                        return found
+    raise FileNotFoundError(
+        f"Could not find a {label} font. Checked: {', '.join(candidates)}",
+    )
+
+
+ARABIC_REGULAR_CANDIDATES = (
+    "tahoma.ttf",
+    "Tahoma.ttf",
+    "arial.ttf",
+    "Arial.ttf",
+    "NotoSansArabic-Regular.ttf",
+    "DejaVuSans.ttf",
+)
+ARABIC_BOLD_CANDIDATES = (
+    "tahomabd.ttf",
+    "Tahoma Bold.ttf",
+    "arialbd.ttf",
+    "Arial Bold.ttf",
+    "NotoSansArabic-Bold.ttf",
+    "DejaVuSans-Bold.ttf",
+)
+LATIN_REGULAR_CANDIDATES = (
+    "segoeui.ttf",
+    "arial.ttf",
+    "Arial.ttf",
+    "DejaVuSans.ttf",
+)
+LATIN_BOLD_CANDIDATES = (
+    "segoeuib.ttf",
+    "arialbd.ttf",
+    "Arial Bold.ttf",
+    "DejaVuSans-Bold.ttf",
+)
 
 
 def clamp(value: float, low: float = 0.0, high: float = 1.0) -> float:
@@ -64,20 +114,25 @@ def ar(text: str) -> str:
 
 @lru_cache(maxsize=None)
 def font(size: int, bold: bool = False, latin: bool = False) -> ImageFont.FreeTypeFont:
-    path = LATIN_BOLD if latin and bold else LATIN_REGULAR if latin else ARABIC_BOLD if bold else ARABIC_REGULAR
+    if latin and bold:
+        path = resolve_font(LATIN_BOLD_CANDIDATES, "Latin bold")
+    elif latin:
+        path = resolve_font(LATIN_REGULAR_CANDIDATES, "Latin regular")
+    elif bold:
+        path = resolve_font(ARABIC_BOLD_CANDIDATES, "Arabic bold")
+    else:
+        path = resolve_font(ARABIC_REGULAR_CANDIDATES, "Arabic regular")
     return ImageFont.truetype(str(path), size=size)
 
 
-def make_background() -> Image.Image:
+@lru_cache(maxsize=1)
+def background_image() -> Image.Image:
     y = np.linspace(0, 1, HEIGHT, dtype=np.float32)[:, None, None]
     top = np.array((7, 10, 17), dtype=np.float32)[None, None, :]
     bottom = np.array((12, 18, 29), dtype=np.float32)[None, None, :]
     gradient = top * (1 - y) + bottom * y
     gradient = np.repeat(gradient, WIDTH, axis=1).astype(np.uint8)
     return Image.fromarray(gradient, "RGB").convert("RGBA")
-
-
-BACKGROUND = make_background()
 
 
 def add_glow(image: Image.Image, center: tuple[int, int], radius: int, color: tuple[int, int, int], alpha: int) -> None:
@@ -133,10 +188,11 @@ def draw_arabic_block(
     max_width: int,
     spacing: int = 14,
 ) -> int:
+    lines = wrap_arabic(draw, text, text_font, max_width)
     line_height = text_font.size + spacing
-    for index, line in enumerate(wrap_arabic(draw, text, text_font, max_width)):
+    for index, line in enumerate(lines):
         shape_text(draw, line, (right, top + index * line_height), text_font, fill)
-    return top + len(wrap_arabic(draw, text, text_font, max_width)) * line_height
+    return top + len(lines) * line_height
 
 
 def rounded(draw: ImageDraw.ImageDraw, box: tuple[int, int, int, int], radius: int, fill: tuple[int, ...], outline: tuple[int, ...] | None = None, width: int = 1) -> None:
@@ -170,7 +226,7 @@ def composite_with_opacity(base: Image.Image, layer: Image.Image, opacity: float
 def brand(draw: ImageDraw.ImageDraw) -> None:
     draw.ellipse((70, 52, 88, 70), fill=CYAN)
     draw.ellipse((77, 59, 81, 63), fill=BG)
-    shape_text(draw, "ARABIC AI SKILLS", (102, 47), font(18, bold=True, latin=True), (*TEXT, 225), rtl=False)
+    shape_text(draw, "ARABICSKILL", (102, 47), font(18, bold=True, latin=True), (*TEXT, 225), rtl=False)
 
 
 def footer(draw: ImageDraw.ImageDraw, scene_number: int) -> None:
@@ -187,7 +243,7 @@ def title_scene(layer: Image.Image, local_time: float) -> None:
     shape_text(draw, "ليست ترجمة حرفية. إنها تجربة منتج كاملة.", (1165, 304 + offset), font(29), (*MUTED, 255))
     rounded(draw, (798, 380 + offset, 1165, 444 + offset), 20, (*CYAN, 22), (*CYAN, 80))
     shape_text(draw, "سياق ← صياغة ← مراجعة", (1135, 394 + offset), font(25, bold=True), (*CYAN, 255))
-    shape_text(draw, "ARABIC INTELLIGENCE", (70, 594), font(86, bold=True, latin=True), (255, 255, 255, 20), rtl=False)
+    shape_text(draw, "ARABICSKILL", (70, 594), font(86, bold=True, latin=True), (255, 255, 255, 20), rtl=False)
     footer(draw, 1)
 
 
@@ -264,7 +320,6 @@ def pipeline_scene(layer: Image.Image, local_time: float) -> None:
 
 def install_scene(layer: Image.Image, local_time: float) -> None:
     draw = ImageDraw.Draw(layer)
-    p = ease_out(local_time / 0.9)
     brand(draw)
     shape_text(draw, "مهارتان. هدف واحد.", (1180, 96), font(42, bold=True), (*TEXT, 255))
     shape_text(draw, "تجربة عربية واضحة، طبيعية، وقابلة للتنفيذ.", (1180, 152), font(24), (*MUTED, 255))
@@ -346,7 +401,7 @@ SCENES = [
 
 def render_frame(frame_index: int) -> Image.Image:
     time_value = frame_index / FPS
-    image = BACKGROUND.copy()
+    image = background_image().copy()
     add_glow(image, (1080 + int(30 * math.sin(time_value / 2)), 90), 250, CYAN, 22)
     add_glow(image, (120 + int(24 * math.cos(time_value / 2.7)), 650), 230, BLUE, 16)
     draw_grid(image, time_value)

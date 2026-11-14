@@ -1,0 +1,15 @@
+domain: "E-Commerce"
+weights:
+  quality:
+    Trust: 100
+    Clarity: 95
+    Accessibility: 90
+  style:
+    Localization: 95
+    Brand: 85
+    Tone: 85
+    SentenceRhythm: 80
+  optimization:
+    Humanization: 80
+    Persuasiveness: 75
+    Creativity: 55

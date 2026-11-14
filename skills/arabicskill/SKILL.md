@@ -1,8 +1,8 @@
 ---
 name: arabicskill
-description: "Write, localize, and audit Arabic product copy and UX microcopy for buttons, forms, errors, empty states, onboarding, notifications, and landing pages. Use for natural Arabic interface wording, tone, terminology, or localization review. Not for literary translation, standalone RTL coding, or legal or medical advice."
+description: "Write, localize, and audit Arabic product copy and UX microcopy for buttons, forms, errors, empty states, onboarding, notifications, AI flows, and landing pages (كتابة نصوص الواجهات العربية، الميكروكوبي، رسائل الخطأ، الحالات الفارغة، وتوطين JSON/ICU). Use for natural Arabic interface wording, tone, terminology, or localization review. Not for literary translation, standalone RTL coding, or legal or medical advice."
 metadata:
-  version: "2.1.0"
+  version: "2.2.0"
 ---
 
 # ArabicSkill
@@ -47,6 +47,7 @@ metadata:
 
 - للمتغيرات وملفات JSON وICU والجمع والأرقام: [references/localization.md](references/localization.md).
 - للدفع والحذف والأذونات أو حالة نظام غير مؤكدة: [references/sensitive-states.md](references/sensitive-states.md).
+- لواجهات الذكاء الاصطناعي والمحادثة، والمصادقة وOTP، وتحقق النماذج، وإتاحة النصوص: [references/ui-flows.md](references/ui-flows.md).
 - لتدقيق رحلة متعددة الشاشات: [reasoning/stage_8_evaluation.md](reasoning/stage_8_evaluation.md).
 - لطلب لهجة مصرية أو سعودية أو شامية أو مغربية محددة: [references/dialects.md](references/dialects.md).
 - للإعلام والألعاب والخدمات المدنية ومنصات التجار والسفر والضيافة والتقسيط أو الاستثمار: اقرأ القسم المطابق في [references/sector-patterns.md](references/sector-patterns.md). قواعد المجال لا تفرض لهجة أو بلدًا.
@@ -119,6 +120,14 @@ metadata:
 
 ## أنماط المكوّنات
 
+### العناوين الرئيسية والبطاقات والشارات
+
+امنع النقطة (`.`) في نهاية العناوين الرئيسية (`Hero H1/H2`) وعناوين الأقسام وعناوين البطاقات والأزرار والشارات، لأنها تشوّه الإيقاع البصري للكتلة الكبيرة. احتفظ بالنقطة للفقرات التفسيرية والجمل متعددة العبارات وشروط التنفيذ أو الإفصاحات.
+
+### تخصيص الأسلوب ومنع التكرار
+
+صمّم لكل فكرة أسلوبها الخاص ونبرتها الخاصة بما يلائم المنتج وجمهوره بلغة عربية طبيعية ومفهومة، بلا صياغات غريبة أو قوالب متكررة. عند بناء تسجيل الدخول، الدفع والتسعير، السلة، الحجز، أو الاستمارات، اختر الشكل الأنسب من الخيارات متعددة البدائل في [أنماط التجربة القابلة للاختيار](references/experience-patterns.md) ولا تحصر نوع موقع في نمط واحد.
+
 ### رسالة الخطأ
 
 رتّبها هكذا: المشكلة → أثرها → الإجراء المتاح. لا تعرض رمز الخطأ إلا إذا كان مفيدًا للدعم.
@@ -154,8 +163,8 @@ metadata:
 - لطلب خيارات: اعرض ثلاثة خيارات كحد أقصى وميّز النبرة أو الاستخدام، لا تغييرات مترادفة طفيفة.
 - لتدقيق نص: اعرض «المشكلة»، «الأثر»، «الصياغة المقترحة» مع ترتيب النتائج حسب الأهمية.
 
-لا تُخرج `PlanningContext` أو `ReasoningContext` أو أثر القرار الداخلي في الرد النهائي.
+لا تُخرج خطوات التفكير أو سياق التخطيط الداخلي أو درجات التقييم الرقمية في الرد النهائي.
 
 ## فحص قبل التسليم
 
-تأكد من أن النص يطابق الحالة المؤكدة والإجراء المتاح، ويحافظ على المتغيرات والمفاتيح، ويلائم المنطقة والنبرة والقيود المذكورة. إذا بقيت معلومة حاسمة مجهولة، صرّح بها أو اسأل عنها بدل إكمال ادعاء غير مؤكد.
+تأكد من أن النص يطابق الحالة المؤكدة والإجراء المتاح، ويحافظ على المتغيرات والمفاتيح، ويلائم المنطقة والنبرة والقيود المذكورة، وأن العناوين الرئيسية وعناوين البطاقات والأزرار والشارات تخلو من النقطة الختامية، وأن الأسلوب مختار خصيصًا للفكرة دون تكرار قوالب جامدة. إذا بقيت معلومة حاسمة مجهولة، صرّح بها أو اسأل عنها بدل إكمال ادعاء غير مؤكد.

@@ -1,0 +1,13 @@
+domain: "FinTech"
+weights:
+  quality:
+    Trust: 100
+    Clarity: 95
+    Accessibility: 90
+    InformationDensity: 90
+  style:
+    Localization: 95
+    Brand: 85
+    Tone: 90
+  optimization:
+    Creativity: 30

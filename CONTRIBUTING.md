@@ -5,7 +5,7 @@ We welcome contributions from Arabic linguists, UX writers, product designers, a
 ## How to Contribute
 1. **Add Ontology Entities:** Submit pull requests to `skills/arabicskill/knowledge/entities/` following `_schema.yaml`.
 2. **Develop Plugins:** Create declarative domain packs in `skills/arabicskill/plugins/`.
-3. **Submit Benchmarks:** Add synthetic cases in `skills/arabicskill/benchmarks/cases/`; include review criteria, not invented model scores.
+3. **Submit Benchmarks:** Add synthetic cases in `benchmarks/cases/`; include review criteria, not invented model scores.
 
 ## Submitting a PR
 - Create a focused branch and explain the user-facing outcome.
