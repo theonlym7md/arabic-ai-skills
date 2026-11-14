@@ -9,6 +9,17 @@
       "preset": "recommended"
     }
   },
+  "overrides": [
+    {
+      "includes": ["docs/demos/login-build/*/index.html"],
+      "linter": {
+        "rules": {
+          "complexity": { "noImportantStyles": "off" },
+          "suspicious": { "useIterableCallbackReturn": "off" }
+        }
+      }
+    }
+  ],
   "formatter": {
     "enabled": true,
     "indentStyle": "space",

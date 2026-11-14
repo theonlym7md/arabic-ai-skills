@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="ar-SA" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>تسجيل الدخول | فسحة</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #faf6ee;
+      --ink: #2a211d;
+      --muted: #645349;
+      --line: #e3d6c7;
+      --red: #972f23;
+      --red-dark: #752319;
+      --focus: #345681;
+      --font: "Segoe UI", Tahoma, Arial, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font); }
+    h1, h2, h3, p, figure { margin: 0; }
+    a { color: inherit; text-underline-offset: .23em; }
+    button, input { font: inherit; }
+    button, summary { cursor: pointer; }
+    :focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+    [tabindex="-1"]:focus { outline: none; }
+    .wrap { width: min(1180px, calc(100% - 96px)); margin-inline: auto; }
+
+    .site-header { border-bottom: 1px solid var(--line); }
+    .header-inner { min-height: 80px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .wordmark { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-size: 2rem; font-weight: 750; line-height: 1; padding-block-end: .1em; }
+    .mark { position: relative; width: 31px; height: 31px; display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 2px; transform: rotate(-12deg); }
+    .mark i { background: var(--red); border-radius: 78% 78% 0 78%; }
+    .mark i:nth-child(2) { transform: rotate(270deg); }
+    .mark i:nth-child(3) { transform: rotate(90deg); }
+    .mark i:nth-child(4) { transform: rotate(180deg); }
+    .header-link { min-height: 44px; display: inline-flex; align-items: center; text-decoration: none; font-weight: 650; }
+    .header-link:hover { text-decoration: underline; color: var(--red); }
+
+    .hero { display: grid; grid-template-columns: 0.79fr 1.21fr; gap: clamp(36px, 6vw, 94px); align-items: center; padding-block: 52px 62px; }
+    .entry { min-width: 0; width: 100%; max-width: 410px; margin-inline: auto; }
+    .entry h1 { font-size: clamp(2.35rem, 4.3vw, 3.9rem); line-height: 1.16; font-weight: 760; margin-block-end: 16px; }
+    .intro { color: var(--muted); font-size: 1.055rem; line-height: 1.82; max-width: 31ch; }
+    .auth-form { margin-block-start: 29px; }
+    label { display: block; font-weight: 700; margin-block-end: 9px; }
+    .field { display: block; width: 100%; min-height: 55px; padding: 11px 16px; border: 1px solid #b4a194; border-radius: 10px; background: #fffdf9; color: var(--ink); font-family: var(--font); font-size: 1rem; }
+    .field::placeholder { color: #716159; opacity: 1; }
+    .field[aria-invalid="true"] { border-color: var(--red); }
+    .field-error { margin-block-start: 7px; font-size: .89rem; color: var(--red-dark); line-height: 1.55; }
+    .primary { width: 100%; min-height: 54px; display: flex; gap: 10px; align-items: center; justify-content: center; padding: 10px 15px; border-radius: 10px; border: 1px solid transparent; color: #fffaf4; background: var(--red); font-weight: 700; font-size: 1.02rem; line-height: 1.45; text-decoration: none; }
+    .auth-form .primary { margin-block-start: 15px; }
+    .primary:hover { background: var(--red-dark); }
+    .primary:disabled { cursor: wait; color: #fffaf4; background: #744b41; }
+    .primary span[aria-hidden] { font-size: 1.23em; font-weight: 400; }
+    .working { color: var(--muted); font-size: .87rem; line-height: 1.5; }
+    .working:not(:empty) { margin-block-start: 8px; }
+    .alternate { border-block-start: 1px solid var(--line); margin-block-start: 20px; padding-block-start: 11px; display: flex; align-items: center; justify-content: center; }
+    .guest { min-height: 43px; display: inline-flex; align-items: center; gap: 9px; padding-inline: 8px; font-weight: 720; color: var(--red-dark); text-decoration: none; }
+    .guest:hover { text-decoration: underline; }
+    .local-note { display: flex; gap: 8px; align-items: flex-start; color: var(--muted); font-size: .84rem; line-height: 1.65; margin-block-start: 16px; }
+    .info-symbol { width: 16px; height: 16px; flex: 0 0 16px; border: 1px solid #8c7569; border-radius: 50%; display: inline-grid; place-items: center; font: 700 11px/1 Arial, sans-serif; margin-block-start: 3px; }
+
+    .poster { min-width: 0; position: relative; margin: 0; min-height: 552px; overflow: hidden; isolation: isolate; background: #963e31; color: #fff6e6; border-radius: 13px; }
+    .poster canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .poster::after { position: absolute; content: ""; inset: 0; z-index: 1; background: linear-gradient(0deg, #2d1b19 0%, #2d1b19d6 9%, #2d1b1952 33%, transparent 64%); pointer-events: none; }
+    .poster-tag { position: absolute; inset-block-start: 24px; inset-inline-start: 24px; z-index: 2; display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px 9px; background: #ffe6af; color: #45231d; border-radius: 4px; font-size: .84rem; font-weight: 750; }
+    .poster-tag::before { content: ""; inline-size: 7px; block-size: 7px; background: #98352b; transform: rotate(45deg); }
+    .poster-caption { position: absolute; inset-inline: 34px; inset-block-end: 30px; z-index: 2; }
+    .poster-caption h2 { font-size: clamp(1.65rem, 3.8vw, 3.3rem); font-weight: 750; line-height: 1.16; margin-block-end: 11px; }
+    .poster-caption p { color: #f9e8d3; font-size: clamp(.88rem, 1.25vw, 1.06rem); line-height: 1.6; }
+
+    .notice { padding: 13px 15px; background: #f5e9d5; border: 1px solid #e6d3b6; border-radius: 9px; color: #4c3025; font-size: .92rem; line-height: 1.65; margin-block-start: 17px; overflow-wrap: anywhere; }
+    .demo-code { display: inline-block; border-radius: 4px; background: #fff8e9; color: #39241e; padding: 0 7px; margin-inline: 2px; font: 700 1rem/1.65 Consolas, monospace; letter-spacing: .08em; }
+    #code { font-family: Consolas, monospace; letter-spacing: .18em; }
+    .bare { min-height: 43px; display: inline-flex; align-items: center; color: var(--red-dark); background: transparent; border: 0; padding: 4px 1px; font-weight: 690; text-decoration: underline; text-underline-offset: .23em; }
+    .bare:hover { color: var(--red); }
+    .account { margin-block-start: 20px; }
+    .ticket { border-block-end: 1px solid var(--line); padding-block: 8px; }
+    .ticket h2 { font-size: 1rem; }
+    .ticket p { color: var(--muted); font-size: .87rem; line-height: 1.55; }
+    .reservation .primary { margin-block-start: 9px; }
+
+    .workshops { border-block-start: 1px solid var(--line); padding-block: 41px 64px; scroll-margin-block-start: 20px; }
+    .section-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px 14px; margin-block-end: 24px; }
+    .section-head h2 { font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 760; line-height: 1.2; }
+    .section-head p { color: var(--muted); font-size: .94rem; line-height: 1.6; }
+    .workshop-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: start; }
+    .workshop { background: #fffaf2; border: 1px solid var(--line); border-radius: 11px; overflow: hidden; }
+    .workshop-art { height: clamp(130px, 14vw, 178px); position: relative; isolation: isolate; overflow: hidden; }
+    .workshop-art::before, .workshop-art::after { content: ""; position: absolute; display: block; }
+    .art-clay { background: linear-gradient(146deg, #d68763 0 55%, #b2523a 55% 100%); }
+    .art-clay::before { width: 126px; height: 80px; inset: auto 16% 14%; border-radius: 18% 18% 48% 48%; transform: rotate(10deg); background: repeating-linear-gradient(172deg, transparent 0 6px, #974a3a5e 7px 9px, transparent 10px 13px), linear-gradient(120deg, #f1bf87, #bc6e50 85%); box-shadow: 19px 14px 0 #82342766; }
+    .art-clay::after { width: 125px; height: 33px; inset: auto calc(16% + 2px) calc(14% + 62px); border-radius: 50%; background: radial-gradient(ellipse, #7b382d 48%, #a15842 51% 58%, #f2c090 60% 69%, transparent 71%); transform: rotate(10deg); }
+    .art-paper { background: linear-gradient(26deg, #424e62, #697d91 74%); }
+    .art-paper::before { width: 146px; height: 96px; inset: auto 24% 16%; background: #efd7a8; transform: rotate(-12deg); border-radius: 1px 7px 7px 1px; box-shadow: 6px 8px 0 #27394d85; }
+    .art-paper::after { width: 136px; height: 88px; inset: auto 26% 22%; background: repeating-linear-gradient(45deg, #88504a 0 2px, transparent 2px 10px), repeating-linear-gradient(-45deg, #b86946 0 2px, #d5926f 2px 10px); transform: rotate(-12deg); border-inline-start: 16px solid #8e392c; border-radius: 0 5px 5px 0; }
+    .art-coffee { background: linear-gradient(155deg, #c8a65f 0 59%, #b28544 59%); }
+    .art-coffee::before { width: 120px; height: 115px; border-radius: 50%; inset: auto 25% 13%; background: radial-gradient(circle, #c27540 0 20%, #77503c 22% 30%, #f8e9c9 33% 55%, #b77d43 56% 59%, #e7c795 62% 70%); box-shadow: 12px 12px 0 #79563160; transform: rotate(-15deg); }
+    .art-coffee::after { width: 11px; height: 95px; border-radius: 90% 90% 35% 35%; inset: auto 19% 22%; background: #624735; transform: rotate(36deg); box-shadow: 3px 4px 0 #815a39; }
+    .workshop-copy { padding: 15px 17px 8px; }
+    .workshop-copy h3 { font-size: 1.18rem; line-height: 1.45; }
+    .meta { margin-block-start: 4px; color: var(--muted); font-size: .9rem; line-height: 1.6; }
+    .workshop details { margin-block-start: 7px; border-block-start: 1px solid var(--line); }
+    .workshop summary { min-height: 42px; padding-block: 9px; font-weight: 650; color: var(--red-dark); }
+    .workshop details p { color: var(--muted); font-size: .9rem; line-height: 1.65; }
+    .site-footer { border-block-start: 1px solid var(--line); padding-block: 21px; color: var(--muted); font-size: .88rem; }
+
+    @media (max-width: 950px) {
+      .wrap { width: calc(100% - 64px); }
+      .hero { gap: 34px; grid-template-columns: 0.9fr 1.1fr; }
+      .poster { min-height: 510px; }
+    }
+
+    @media (max-width: 720px) {
+      .wrap { width: calc(100% - 42px); }
+      .header-inner { min-height: 65px; }
+      .wordmark { font-size: 1.68rem; }
+      .mark { inline-size: 26px; block-size: 26px; }
+      .hero { grid-template-columns: 1fr; gap: 32px; padding-block: 32px 35px; }
+      .entry { max-width: 480px; margin-inline: 0; }
+      .poster { min-height: 340px; }
+      .poster-tag { inset-block-start: 18px; inset-inline-start: 18px; }
+      .poster-caption { inset-inline: 20px; inset-block-end: 21px; }
+      .workshops { padding-block: 31px 44px; }
+      .workshop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    }
+
+    @media (max-width: 460px) {
+      .workshop-grid { grid-template-columns: 1fr; }
+      .workshop-art { height: 150px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="wordmark jump" href="#entry" aria-label="فسحة، بداية الصفحة">
+        <span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        فسحة
+      </a>
+      <nav aria-label="التنقل الرئيسي"><a class="header-link jump" href="#workshops">ورش نهاية الأسبوع</a></nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="wrap hero" aria-labelledby="entry">
+      <div class="entry">
+        <h1 id="entry" tabindex="-1">تسجيل الدخول</h1>
+        <p class="intro" id="intro">ادخل برمز تحقق من ٦ خانات عبر بريدك الإلكتروني لحجز الورش وإدارة تذاكرك.</p>
+
+        <form id="email-form" class="auth-form" novalidate>
+          <label for="email">البريد الإلكتروني</label>
+          <input class="field" type="email" id="email" placeholder="name@example.com" dir="ltr" autocomplete="email" spellcheck="false" required aria-describedby="email-error">
+          <p class="field-error" id="email-error" role="alert"></p>
+          <button class="primary" type="submit" id="request-button"><span id="request-label">اطلب رمز التحقق</span><span aria-hidden="true">←</span></button>
+        </form>
+
+        <div id="code-step" hidden>
+          <div class="notice" id="code-note">هذا طلب تجريبي. لم نرسل بريدًا. استخدم الرمز <bdi dir="ltr" class="demo-code" id="demo-code"></bdi> لتجربة الدخول.</div>
+          <form id="code-form" class="auth-form" novalidate>
+            <label for="code">رمز التحقق</label>
+            <input class="field" type="text" id="code" dir="ltr" inputmode="numeric" autocomplete="off" required aria-describedby="code-note code-error" spellcheck="false">
+            <p class="field-error" id="code-error" role="alert"></p>
+            <button class="primary" type="submit">تحقّق وسجّل الدخول <span aria-hidden="true">←</span></button>
+            <button class="bare" id="edit-email" type="button">غيّر البريد الإلكتروني</button>
+          </form>
+        </div>
+
+        <div class="account" id="account" hidden>
+          <div class="reservation notice" id="reservation" hidden>
+            <p>الورشة المختارة: <strong id="chosen-workshop"></strong></p>
+            <button class="primary" type="button" id="confirm-booking">أكّد الحجز التجريبي</button>
+          </div>
+          <p id="empty-tickets" class="notice">لا توجد تذاكر تجريبية بعد. اختر ورشة من القائمة لتجربة الحجز.</p>
+          <div id="tickets"></div>
+          <button class="bare" type="button" id="sign-out">سجّل الخروج</button>
+        </div>
+
+        <p class="working" id="working" role="status" aria-atomic="true"></p>
+
+        <div class="alternate">
+          <a class="guest jump" id="guest" href="#workshops">تصفّح الورش كضيف <span aria-hidden="true">↙</span></a>
+        </div>
+        <p class="local-note"><span class="info-symbol" aria-hidden="true">i</span>تجري المحاكاة على جهازك. لا نرسل بريدًا أو بيانات.</p>
+      </div>
+
+      <figure class="poster">
+        <canvas id="pottery" width="730" height="640" aria-hidden="true"></canvas>
+        <span class="poster-tag">صناعة يدوية</span>
+        <figcaption class="poster-caption">
+          <h2>نهاية أسبوع من صنع يدك</h2>
+          <p>من تشكيل الطين إلى تجليد الدفاتر، اختر ورشة تجرّب فيها شيئًا جديدًا.</p>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="wrap workshops" aria-labelledby="workshops">
+      <div class="section-head">
+        <h2 id="workshops" tabindex="-1">ورش نهاية الأسبوع</h2>
+        <p>ورش تجريبية في الرياض وجدّة</p>
+      </div>
+      <div class="workshop-grid">
+        <article class="workshop" data-workshop="clay">
+          <div class="workshop-art art-clay" aria-hidden="true"></div>
+          <div class="workshop-copy">
+            <h3>شكّل كوبك من الطين</h3>
+            <p class="meta">الرياض · الجمعة · ساعتان</p>
+            <details>
+              <summary aria-label="تفاصيل ورشة شكّل كوبك من الطين">تفاصيل الورشة</summary>
+              <p>شكّل كوبًا يدويًا وتعلّم كيف تزيّن سطحه قبل الحرق. الأدوات والطين متوفّرة في الورشة.</p>
+              <button class="bare choose" type="button" aria-label="جرّب حجز ورشة شكّل كوبك من الطين">جرّب الحجز</button>
+            </details>
+          </div>
+        </article>
+        <article class="workshop" data-workshop="paper">
+          <div class="workshop-art art-paper" aria-hidden="true"></div>
+          <div class="workshop-copy">
+            <h3>تجليد الدفاتر يدويًا</h3>
+            <p class="meta">جدّة · السبت · ساعتان</p>
+            <details>
+              <summary aria-label="تفاصيل ورشة تجليد الدفاتر يدويًا">تفاصيل الورشة</summary>
+              <p>اطوِ الورق واختر الغلاف، ثم خِط دفترًا صغيرًا تأخذه معك. الورشة مناسبة للمبتدئين.</p>
+              <button class="bare choose" type="button" aria-label="جرّب حجز ورشة تجليد الدفاتر يدويًا">جرّب الحجز</button>
+            </details>
+          </div>
+        </article>
+        <article class="workshop" data-workshop="coffee">
+          <div class="workshop-art art-coffee" aria-hidden="true"></div>
+          <div class="workshop-copy">
+            <h3>تذوّق القهوة المختصّة</h3>
+            <p class="meta">الرياض · السبت · ساعة ونصف</p>
+            <details>
+              <summary aria-label="تفاصيل ورشة تذوّق القهوة المختصّة">تفاصيل الورشة</summary>
+              <p>تذوّق أنواعًا من البن وقارن النكهات، ثم جرّب تحضير كوب باستخدام أداة ترشيح يدوية.</p>
+              <button class="bare choose" type="button" aria-label="جرّب حجز ورشة تذوّق القهوة المختصّة">جرّب الحجز</button>
+            </details>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><p class="wrap">فسحة · ورش نهاية الأسبوع</p></footer>
+
+  <script>
+    const byId = (id) => document.getElementById(id);
+    const email = byId('email');
+    const code = byId('code');
+    const entry = byId('entry');
+    const intro = byId('intro');
+    const emailForm = byId('email-form');
+    const codeStep = byId('code-step');
+    const account = byId('account');
+    const requestButton = byId('request-button');
+    const requestLabel = byId('request-label');
+    const guest = byId('guest');
+    const working = byId('working');
+    const tickets = byId('tickets');
+    const reservation = byId('reservation');
+    const demoCode = '482615';
+    const signInMessage = intro.textContent;
+    const booked = new Set();
+    const workshops = new Map();
+    let signedIn = false;
+    let selectedWorkshop = null;
+
+    byId('demo-code').textContent = demoCode;
+
+    function showError(field, message, example) {
+      const error = byId(`${field.id}-error`);
+      error.textContent = message;
+      if (example) {
+        const directionIsolate = document.createElement('bdi');
+        directionIsolate.dir = 'ltr';
+        directionIsolate.textContent = example;
+        error.append(' ', directionIsolate, '.');
+      }
+      if (message) {
+        field.setAttribute('aria-invalid', 'true');
+        field.focus();
+      } else {
+        field.removeAttribute('aria-invalid');
+      }
+    }
+
+    function showStep(step) {
+      emailForm.hidden = step !== 'email';
+      codeStep.hidden = step !== 'code';
+      account.hidden = step !== 'account';
+      const titles = { email: 'تسجيل الدخول', code: 'أدخل رمز التحقق', account: 'تذاكري' };
+      entry.textContent = titles[step];
+      document.title = `${titles[step]} | فسحة`;
+      const chosenTitle = workshops.get(selectedWorkshop)?.title;
+      const emailMessage = chosenTitle ? `سجّل الدخول لتجربة حجز ورشة «${chosenTitle}».` : signInMessage;
+      const descriptions = { email: emailMessage, code: 'أدخل رمز التحقق التجريبي من ٦ خانات.', account: 'أدر حجوزاتك التجريبية هنا.' };
+      intro.textContent = descriptions[step];
+      guest.firstChild.nodeValue = step === 'account' ? 'تصفّح الورش ' : 'تصفّح الورش كضيف ';
+    }
+
+    email.addEventListener('input', () => showError(email, ''));
+    code.addEventListener('input', () => showError(code, ''));
+
+    emailForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (requestButton.disabled) return;
+      const address = email.value.trim();
+      if (!address) {
+        showError(email, 'أدخل بريدك الإلكتروني.');
+        return;
+      }
+      if (!email.validity.valid || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address)) {
+        showError(email, 'أدخل بريدًا إلكترونيًا بصيغة مثل', 'name@example.com');
+        return;
+      }
+
+      requestButton.disabled = true;
+      email.readOnly = true;
+      requestLabel.textContent = 'نجهّز الرمز التجريبي';
+      working.textContent = 'نجهّز رمز التحقق للتجربة.';
+      window.setTimeout(() => {
+        const focusWasInForm = emailForm.contains(document.activeElement) || document.activeElement === document.body;
+        requestButton.disabled = false;
+        email.readOnly = false;
+        requestLabel.textContent = 'اطلب رمز التحقق';
+        working.textContent = '';
+        showStep('code');
+        if (focusWasInForm) code.focus();
+      }, 550);
+    });
+
+    byId('edit-email').addEventListener('click', () => {
+      code.value = '';
+      showError(code, '');
+      showStep('email');
+      email.focus();
+    });
+
+    byId('code-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const value = code.value.trim()
+        .replace(/[٠-٩]/g, (digit) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(digit)))
+        .replace(/[۰-۹]/g, (digit) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)));
+      if (!/^\d{6}$/.test(value)) {
+        showError(code, 'أدخل رمز التحقق من ٦ خانات كما يظهر في رسالة التجربة.');
+        return;
+      }
+      if (value !== demoCode) {
+        showError(code, 'الرمز مختلف. استخدم رمز التحقق التجريبي الظاهر في الصفحة.');
+        return;
+      }
+      signedIn = true;
+      code.value = '';
+      email.value = '';
+      showStep('account');
+      renderTickets();
+      entry.focus();
+      working.textContent = 'سجّلت الدخول في النسخة التجريبية.';
+    });
+
+    document.querySelectorAll('.jump').forEach((link) => {
+      link.addEventListener('click', () => document.querySelector(link.hash).focus({ preventScroll: true }));
+    });
+
+    document.querySelectorAll('[data-workshop]').forEach((card) => {
+      const id = card.dataset.workshop;
+      workshops.set(id, { title: card.querySelector('h3').textContent, meta: card.querySelector('.meta').textContent });
+      card.querySelector('.choose').addEventListener('click', () => {
+        selectedWorkshop = id;
+        if (signedIn) {
+          renderTickets();
+          working.textContent = booked.has(id) ? 'هذه الورشة موجودة في تذاكرك التجريبية.' : '';
+        } else if (!emailForm.hidden && !requestButton.disabled) {
+          showStep('email');
+        }
+        entry.focus({ preventScroll: true });
+        entry.scrollIntoView({ block: 'start' });
+      });
+    });
+
+    function renderTickets() {
+      tickets.replaceChildren();
+      reservation.hidden = !selectedWorkshop || booked.has(selectedWorkshop);
+      if (!reservation.hidden) byId('chosen-workshop').textContent = workshops.get(selectedWorkshop).title;
+      byId('empty-tickets').hidden = booked.size > 0 || !reservation.hidden;
+
+      booked.forEach((id) => {
+        const item = workshops.get(id);
+        const ticket = document.createElement('article');
+        const title = document.createElement('h2');
+        const meta = document.createElement('p');
+        const cancel = document.createElement('button');
+        ticket.className = 'ticket';
+        title.textContent = item.title;
+        meta.textContent = item.meta;
+        cancel.type = 'button';
+        cancel.className = 'bare';
+        cancel.textContent = 'ألغِ الحجز التجريبي';
+        cancel.setAttribute('aria-label', `ألغِ الحجز التجريبي لورشة «${item.title}»`);
+        cancel.addEventListener('click', () => {
+          if (selectedWorkshop === id) selectedWorkshop = null;
+          booked.delete(id);
+          renderTickets();
+          entry.focus();
+          working.textContent = `أُلغي الحجز التجريبي لورشة «${item.title}».`;
+        });
+        ticket.append(title, meta, cancel);
+        tickets.append(ticket);
+      });
+    }
+
+    byId('confirm-booking').addEventListener('click', () => {
+      if (!signedIn || !selectedWorkshop) return;
+      const item = workshops.get(selectedWorkshop);
+      booked.add(selectedWorkshop);
+      selectedWorkshop = null;
+      renderTickets();
+      entry.focus();
+      working.textContent = `أُضيفت تذكرة تجريبية لورشة «${item.title}».`;
+    });
+
+    byId('sign-out').addEventListener('click', () => {
+      signedIn = false;
+      selectedWorkshop = null;
+      booked.clear();
+      renderTickets();
+      showStep('email');
+      email.focus();
+      working.textContent = 'سجّلت الخروج من النسخة التجريبية.';
+    });
+
+    const canvas = byId('pottery');
+    const paint = canvas.getContext('2d');
+
+    if (paint) {
+      const width = canvas.width;
+      const height = canvas.height;
+      const gradient = (x0, y0, x1, y1, stops) => {
+        const fill = paint.createLinearGradient(x0, y0, x1, y1);
+        stops.forEach(([position, color]) => fill.addColorStop(position, color));
+        return fill;
+      };
+      const fill = (shape, color) => {
+        paint.fillStyle = color;
+        paint.fill(new Path2D(shape));
+      };
+      const stroke = (shape, color, weight) => {
+        paint.strokeStyle = color;
+        paint.lineWidth = weight;
+        paint.stroke(new Path2D(shape));
+      };
+      const ellipse = (x, y, horizontal, vertical, color, angle = 0) => {
+        paint.beginPath();
+        paint.ellipse(x, y, horizontal, vertical, angle, 0, Math.PI * 2);
+        paint.fillStyle = color;
+        paint.fill();
+      };
+
+      paint.fillStyle = gradient(60, 0, 710, 590, [[0, '#db9469'], [.52, '#ac503c'], [1, '#752e2f']]);
+      paint.fillRect(0, 0, width, height);
+      fill('M 0 0 H 550 L 669 286 L 0 392 Z', gradient(40, 0, 560, 490, [[0, '#f6bb85'], [.66, '#d6865e'], [1, '#ac4b3c']]));
+      fill('M 0 0 H 120 L 329 336 L 278 350 Z', '#ffdc9c38');
+      fill('M 273 0 H 373 L 545 297 L 501 312 Z', '#ffdc9c29');
+      fill('M 0 375 C 257 339 478 338 730 228 V 640 H 0 Z', gradient(110, 335, 424, 640, [[0, '#b85139'], [.6, '#9d3f35'], [1, '#71303a']]));
+      fill('M 0 517 C 188 492 603 363 730 399 V 640 H 0 Z', '#602a341e');
+
+      paint.save();
+      paint.filter = 'blur(15px)';
+      ellipse(409, 447, 247, 36, '#4b201e8a', -.1);
+      ellipse(256, 450, 151, 19, '#421d247f', -.12);
+      ellipse(550, 390, 124, 20, '#632b2c9e', -.16);
+      paint.restore();
+
+      const blueBody = 'M 388 242 C 392 265 390 281 368 303 C 338 335 333 368 340 399 C 350 441 393 458 452 451 C 501 445 526 424 532 390 C 536 365 520 332 482 299 C 460 281 465 263 461 241 Z';
+      fill(blueBody, gradient(340, 282, 527, 413, [[0, '#6e94a6'], [.33, '#496c89'], [.71, '#253f62'], [1, '#202e4a']]));
+      paint.save();
+      paint.clip(new Path2D(blueBody));
+      stroke('M 332 347 C 372 411 506 395 538 336 M 333 356 C 377 420 505 403 543 346 M 330 407 C 379 460 487 449 537 394', '#ecd2a3b8', 2.6);
+      stroke('M 347 359 Q 398 397 471 373 T 533 326 M 335 373 Q 391 411 471 389 T 535 351', '#f1d6a181', 1.7);
+      for (let index = 0; index < 12; index += 1) {
+        const x = 344 + index * 17;
+        const offset = index - 5;
+        const y = 405 - offset * offset * .83 - offset * 2.1;
+        fill(`M ${x} ${y} q 7 5 0 12 q -7 -5 0 -12 Z`, '#ebcc94');
+        stroke(`M ${x - 6} ${y + 18} l 7 5 l 7 -5`, '#ecd2a39c', 1.25);
+      }
+      stroke('M 377 303 Q 411 291 493 306 M 379 295 Q 422 285 489 299', '#e9ccac91', 1.3);
+      paint.restore();
+      ellipse(424, 241, 38, 12, '#a5abb1', -.025);
+      ellipse(424, 241, 30, 7, '#2f2d42', -.025);
+
+      const foliage = [
+        ['M 424 240 C 431 204 468 146 525 101', 'M 478 151 C 478 126 489 113 509 106 C 511 126 500 139 478 151 Z', '#593d37'],
+        ['M 432 237 C 445 199 474 177 543 160', 'M 506 172 C 529 149 559 141 578 149 C 572 165 546 177 506 172 Z', '#513835'],
+        ['M 425 237 C 420 191 405 143 358 112', 'M 397 146 C 374 145 353 129 346 111 C 368 109 391 122 397 146 Z', '#6d4b3d'],
+        ['M 428 233 C 414 175 428 122 435 79', 'M 429 122 C 417 107 417 87 435 71 C 448 87 445 110 429 122 Z', '#6d4934'],
+        ['M 430 233 C 454 214 488 206 527 202', 'M 490 208 C 508 190 533 185 551 194 C 541 209 520 213 490 208 Z', '#69413b'],
+        ['M 423 231 C 405 204 385 186 343 174', 'M 383 190 C 360 195 343 184 326 170 C 351 165 368 174 383 190 Z', '#77513d'],
+        ['M 443 221 C 482 206 509 187 542 179', 'M 535 180 C 551 168 571 171 582 181 C 573 190 553 194 535 180 Z', '#6f4239']
+      ];
+      foliage.forEach(([branch, leaf, color]) => {
+        stroke(branch, '#573a30', 2.35);
+        fill(leaf, color);
+      });
+      ellipse(423, 241, 24, 2.5, '#302a3a');
+
+      const clayBody = 'M 131 361 C 139 425 167 449 235 452 C 293 454 329 417 340 361 Z';
+      fill(clayBody, gradient(142, 367, 314, 438, [[0, '#efb282'], [.39, '#cf805d'], [.79, '#ad5b4b'], [1, '#844337']]));
+      paint.save();
+      paint.clip(new Path2D(clayBody));
+      for (let index = 0; index < 7; index += 1) {
+        const y = 378 + index * 9;
+        stroke(`M 125 ${y} Q 236 ${y + 65 - index * 4} 327 ${y - 3}`, '#8646347c', 2.2);
+        stroke(`M 125 ${y + 3} Q 237 ${y + 68 - index * 4} 327 ${y}`, '#f3bd8b68', 1.5);
+      }
+      paint.restore();
+      ellipse(236, 361, 104, 29, '#f3bd8c', -.022);
+      ellipse(236, 362, 94, 21, gradient(198, 337, 239, 384, [[0, '#773833'], [.61, '#a75c48'], [1, '#d48164']]), -.022);
+      ellipse(235, 371, 57, 8, '#99514270', -.035);
+      stroke('M 138 366 Q 195 405 304 374', '#fbd1a685', 1.75);
+
+      let seed = 87311;
+      const grain = paint.getImageData(0, 0, width, height);
+      for (let index = 0; index < grain.data.length; index += 4) {
+        seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+        const shade = (seed >>> 24) / 255 * 23 - 11.5;
+        grain.data[index] += shade;
+        grain.data[index + 1] += shade;
+        grain.data[index + 2] += shade;
+      }
+      paint.putImageData(grain, 0, 0);
+    }
+  </script>
+</body>
+</html>
