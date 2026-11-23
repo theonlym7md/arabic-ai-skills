@@ -1,15 +1,22 @@
-case_id: "healthcare_triage"
-domain: "Healthcare"
+case_id: healthcare_triage
+domain: Healthcare
+runner_mode: sdk
+sdk_input:
+  textType: Healthcare status title, description, and disclaimer
+  maxLength: 45
+  targetAudience: Arabic patients
+  toneOfVoice: Calm and reassuring
 target_metrics:
   Trust: 100
   Clarity: 100
   Accessibility: 100
 forbidden_phrases:
-  - "تشخيصك هو"
-  - "لا تقلق"
-  - "شفاء مضمون"
-  - "خلال دقائق"
+  - تشخيصك هو
+  - لا تقلق
+  - شفاء مضمون
+  - خلال دقائق
 review_criteria:
-  - "Confirms request receipt without diagnosing symptoms or guaranteeing an outcome."
-  - "Aligns CTA strictly to viewing the submitted request status."
-  - "Keeps the heading and button free of trailing periods."
+  - Confirms request receipt without diagnosing symptoms or guaranteeing an
+    outcome.
+  - Aligns CTA strictly to viewing the submitted request status.
+  - Keeps the heading and button free of trailing periods.

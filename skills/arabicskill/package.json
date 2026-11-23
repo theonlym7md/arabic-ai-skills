@@ -1,15 +1,26 @@
 {
   "name": "arabicskill",
-  "version": "2.2.0",
-  "description": "A structured Arabic product-writing and localization skill for AI agents.",
-  "main": "SKILL.md",
+  "version": "2.3.0",
+  "description": "Structured Arabic product copywriting, JSON/ICU localization, dialect adaptation, and UI content auditing skill for AI agents.",
+  "skill": "SKILL.md",
   "private": true,
   "license": "MIT",
+  "author": "theonlym7md",
+  "homepage": "https://github.com/theonlym7md/arabic-ai-skills/tree/main/skills/arabicskill",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theonlym7md/arabic-ai-skills.git",
+    "directory": "skills/arabicskill"
+  },
+  "bugs": {
+    "url": "https://github.com/theonlym7md/arabic-ai-skills/issues"
+  },
   "keywords": [
     "arabic",
     "ux-writing",
     "microcopy",
     "localization",
-    "agent-skill"
+    "icu",
+    "agent-skills"
   ]
 }

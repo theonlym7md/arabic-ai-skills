@@ -6,7 +6,7 @@ try {
   ({ chromium } = require("playwright"));
 } catch {
   console.error(
-    "Playwright is required to recapture demo screenshots. Install it with: npx playwright install chromium",
+    "Playwright is required to recapture demo screenshots. Install it with: npm install --no-save playwright && npx playwright install chromium",
   );
   process.exit(1);
 }

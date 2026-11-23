@@ -1,30 +1,43 @@
 {
   "name": "arabicskill",
-  "version": "2.2.0",
-  "description": "ArabicSkill: Arabic product writing, safe localization, and RTL guidance for AI agents.",
+  "version": "2.3.0",
+  "description": "ArabicSkill: Arabic product copywriting, safe JSON/ICU localization, dialect adaptation, and SDK utilities for AI agents.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.js",
-      "default": "./dist/index.js"
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
     }
   },
   "files": [
-    "dist/index.js",
-    "dist/index.js.map",
-    "dist/index.d.ts",
-    "dist/index.d.ts.map",
-    "skills/",
-    "docs/assets/arabicskill-cover.svg",
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "dist/**/*.map",
+    "dist/esm/package.json",
+    "!dist/*.zip",
+    "skills/arabicskill/SKILL.md",
+    "skills/arabicskill/references/dialects.md",
+    "skills/arabicskill/references/experience-patterns.md",
+    "skills/arabicskill/references/localization.md",
+    "skills/arabicskill/references/sector-patterns.md",
+    "skills/arabicskill/references/sensitive-states.md",
+    "skills/arabicskill/references/ui-flows.md",
+    "skills/arabicskill/knowledge/relations/routing.yaml",
+    "skills/arabicskill/knowledge/relations/weights.yaml",
     "LICENSE",
     "README.md",
     "SPEC.md"
   ],
   "private": true,
   "engines": {
-    "node": "^22.0.0 || ^24.0.0"
+    "node": ">=22.0.0"
   },
   "repository": {
     "type": "git",
@@ -35,9 +48,10 @@
     "url": "https://github.com/theonlym7md/arabic-ai-skills/issues"
   },
   "scripts": {
-    "clean": "node -e \"const fs = require('node:fs'); for (const name of ['index.js', 'index.js.map', 'index.d.ts', 'index.d.ts.map']) { fs.rmSync('dist/' + name, { force: true }); }\"",
-    "build": "tsc",
-    "typecheck": "tsc --noEmit",
+    "clean": "node -e \"const fs = require('node:fs'); fs.rmSync('dist', { recursive: true, force: true });\"",
+    "build:routing": "node scripts/build_routing.js",
+    "build": "node scripts/build_dual.js",
+    "typecheck": "node scripts/build_routing.js --check && tsc --noEmit && tsc -p tsconfig.esm.json --noEmit",
     "pretest": "npm run build",
     "test": "node --test tests/*.test.js",
     "validate": "node scripts/validate_all.js",
@@ -45,23 +59,23 @@
     "benchmark": "node scripts/run_benchmark.js",
     "lint": "biome check .",
     "format": "biome format --write .",
-    "check": "npm run validate && npm run sweep && npm run typecheck && npm test && npm run lint",
+    "check": "npm run validate && npm run sweep && npm test && npm run lint",
     "package:zip": "node scripts/package_zip.js"
   },
   "keywords": [
     "ai",
     "agents",
     "arabic",
-    "ux",
+    "ux-writing",
     "copywriting",
     "microcopy",
     "prompt-engineering",
     "agent-skills",
     "rtl",
     "localization",
-    "codex"
+    "icu"
   ],
-  "author": "UX Microcopy Architect",
+  "author": "theonlym7md",
   "license": "MIT",
   "type": "commonjs",
   "dependencies": {

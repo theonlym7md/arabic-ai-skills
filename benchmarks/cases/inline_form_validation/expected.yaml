@@ -1,10 +1,13 @@
-case_id: "inline_form_validation"
-domain: "SaaS"
+case_id: inline_form_validation
+domain: Form_Validation
+runner_mode: agent
+agent_reason: Requires a developer note on dir=ltr and inputmode outside customer copy.
 target_metrics:
   Clarity: 95
 forbidden_phrases:
-  - "إدخال غير صحيح"
-  - "خطأ في الحقل"
+  - إدخال غير صحيح
+  - خطأ في الحقل
 review_criteria:
-  - "Shows the exact expected phone format with a concrete example instead of a generic error."
-  - "Includes an RTL/LTR direction note for numeric phone input."
+  - Shows the exact expected phone format with a concrete example instead of a
+    generic error.
+  - Includes an RTL/LTR direction note for numeric phone input.

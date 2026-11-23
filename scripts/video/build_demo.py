@@ -14,6 +14,13 @@ import numpy as np
 from bidi.algorithm import get_display
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
+RESHAPER = arabic_reshaper.ArabicReshaper(
+    {
+        "delete_harakat": False,
+        "shift_harakat_position": False,
+    },
+)
+
 
 def resolve_ffmpeg() -> str:
     system_ffmpeg = shutil.which("ffmpeg")
@@ -52,6 +59,8 @@ RED_DARK = (107, 40, 48)
 GOLD = (248, 195, 94)
 BLUE = (99, 152, 255)
 
+
+@lru_cache(maxsize=16)
 def resolve_font(candidates: tuple[str, ...], label: str) -> Path:
     font_dirs = [
         Path("C:/Windows/Fonts"),
@@ -84,6 +93,7 @@ ARABIC_REGULAR_CANDIDATES = (
     "arial.ttf",
     "Arial.ttf",
     "NotoSansArabic-Regular.ttf",
+    "NotoSansArabic-VF.ttf",
     "DejaVuSans.ttf",
 )
 ARABIC_BOLD_CANDIDATES = (
@@ -92,6 +102,7 @@ ARABIC_BOLD_CANDIDATES = (
     "arialbd.ttf",
     "Arial Bold.ttf",
     "NotoSansArabic-Bold.ttf",
+    "NotoSansArabic-VF.ttf",
     "DejaVuSans-Bold.ttf",
 )
 LATIN_REGULAR_CANDIDATES = (
@@ -106,6 +117,13 @@ LATIN_BOLD_CANDIDATES = (
     "Arial Bold.ttf",
     "DejaVuSans-Bold.ttf",
 )
+
+
+def preflight_fonts() -> None:
+    resolve_font(ARABIC_REGULAR_CANDIDATES, "Arabic regular")
+    resolve_font(ARABIC_BOLD_CANDIDATES, "Arabic bold")
+    resolve_font(LATIN_REGULAR_CANDIDATES, "Latin regular")
+    resolve_font(LATIN_BOLD_CANDIDATES, "Latin bold")
 
 
 def clamp(value: float, low: float = 0.0, high: float = 1.0) -> float:
@@ -123,7 +141,7 @@ def ease_in_out(value: float) -> float:
 
 
 def ar(text: str) -> str:
-    return get_display(arabic_reshaper.reshape(text))
+    return get_display(RESHAPER.reshape(text), base_dir="R")
 
 
 @lru_cache(maxsize=None)
@@ -136,7 +154,7 @@ def font(size: int, bold: bool = False, latin: bool = False) -> ImageFont.FreeTy
         path = resolve_font(ARABIC_BOLD_CANDIDATES, "Arabic bold")
     else:
         path = resolve_font(ARABIC_REGULAR_CANDIDATES, "Arabic regular")
-    return ImageFont.truetype(str(path), size=size)
+    return ImageFont.truetype(str(path), size=size, layout_engine=ImageFont.Layout.BASIC)
 
 
 @lru_cache(maxsize=1)
@@ -169,12 +187,38 @@ def draw_grid(image: Image.Image, time_value: float) -> None:
     image.alpha_composite(grid)
 
 
-def shape_text(draw: ImageDraw.ImageDraw, text: str, position: tuple[int, int], text_font: ImageFont.FreeTypeFont, fill: tuple[int, ...], *, rtl: bool = True) -> None:
+def shape_text(
+    draw: ImageDraw.ImageDraw,
+    text: str,
+    position: tuple[int, int],
+    text_font: ImageFont.FreeTypeFont,
+    fill: tuple[int, ...],
+    *,
+    rtl: bool = True,
+) -> None:
     x, y = position
     display = ar(text) if rtl else text
     bbox = draw.textbbox((0, 0), display, font=text_font)
     width = bbox[2] - bbox[0]
-    draw.text((x - width if rtl else x, y), display, font=text_font, fill=fill)
+    draw.text(((x - width - bbox[0]) if rtl else (x - bbox[0]), y), display, font=text_font, fill=fill)
+
+
+def draw_centered_text(
+    draw: ImageDraw.ImageDraw,
+    text: str,
+    box: tuple[int, int, int, int],
+    text_font: ImageFont.FreeTypeFont,
+    fill: tuple[int, ...],
+    *,
+    rtl: bool = True,
+) -> None:
+    display = ar(text) if rtl else text
+    bbox = draw.textbbox((0, 0), display, font=text_font)
+    text_w = bbox[2] - bbox[0]
+    text_h = bbox[3] - bbox[1]
+    cx = box[0] + (box[2] - box[0] - text_w) // 2 - bbox[0]
+    cy = box[1] + (box[3] - box[1] - text_h) // 2 - bbox[1]
+    draw.text((cx, cy), display, font=text_font, fill=fill)
 
 
 def wrap_arabic(draw: ImageDraw.ImageDraw, text: str, text_font: ImageFont.FreeTypeFont, max_width: int) -> list[str]:
@@ -202,7 +246,7 @@ def draw_arabic_block(
     text_font: ImageFont.FreeTypeFont,
     fill: tuple[int, ...],
     max_width: int,
-    spacing: int = 14,
+    spacing: int = 16,
 ) -> int:
     lines = wrap_arabic(draw, text, text_font, max_width)
     line_height = text_font.size + spacing
@@ -211,7 +255,14 @@ def draw_arabic_block(
     return top + len(lines) * line_height
 
 
-def rounded(draw: ImageDraw.ImageDraw, box: tuple[int, int, int, int], radius: int, fill: tuple[int, ...], outline: tuple[int, ...] | None = None, width: int = 1) -> None:
+def rounded(
+    draw: ImageDraw.ImageDraw,
+    box: tuple[int, int, int, int],
+    radius: int,
+    fill: tuple[int, ...],
+    outline: tuple[int, ...] | None = None,
+    width: int = 1,
+) -> None:
     draw.rounded_rectangle(box, radius=radius, fill=fill, outline=outline, width=width)
 
 
@@ -219,13 +270,14 @@ def chip(draw: ImageDraw.ImageDraw, text: str, right: int, top: int, accent: tup
     display = ar(text)
     chip_font = font(20, bold=True)
     bbox = draw.textbbox((0, 0), display, font=chip_font)
-    width = bbox[2] - bbox[0] + 42
-    rounded(draw, (right - width, top, right, top + 42), 21, (*accent, 24), (*accent, 90))
-    shape_text(draw, text, (right - 18, top + 7), chip_font, (*accent, 255))
+    width = bbox[2] - bbox[0] + 40
+    pill = (right - width, top, right, top + 42)
+    rounded(draw, pill, 21, (*accent, 24), (*accent, 90))
+    draw_centered_text(draw, text, pill, chip_font, (*accent, 255))
     return right - width - 10
 
 
-def scene_opacity(time_value: float, start: float, end: float, ramp: float = 0.65) -> float:
+def scene_opacity(time_value: float, start: float, end: float, ramp: float = 0.45) -> float:
     return min(clamp((time_value - start) / ramp), clamp((end - time_value) / ramp))
 
 
@@ -239,28 +291,34 @@ def composite_with_opacity(base: Image.Image, layer: Image.Image, opacity: float
     base.alpha_composite(layer)
 
 
-def brand(draw: ImageDraw.ImageDraw) -> None:
+def draw_chrome(image: Image.Image, scene_number: int, total_scenes: int) -> None:
+    chrome = Image.new("RGBA", image.size, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(chrome)
     draw.ellipse((70, 52, 88, 70), fill=CYAN)
     draw.ellipse((77, 59, 81, 63), fill=BG)
     shape_text(draw, "ARABICSKILL", (102, 47), font(18, bold=True, latin=True), (*TEXT, 225), rtl=False)
-
-
-def footer(draw: ImageDraw.ImageDraw, scene_number: int) -> None:
-    draw.line((70, 665, 1210, 665), fill=(255, 255, 255, 22), width=1)
-    shape_text(draw, f"0{scene_number} / 06", (70, 678), font(14, latin=True), (*MUTED, 180), rtl=False)
+    draw.line((70, 665, 1210, 665), fill=(255, 255, 255, 24), width=1)
+    shape_text(
+        draw,
+        f"{scene_number:02d} / {total_scenes:02d}",
+        (70, 678),
+        font(14, latin=True),
+        (*MUTED, 185),
+        rtl=False,
+    )
+    image.alpha_composite(chrome)
 
 
 def title_scene(layer: Image.Image, local_time: float) -> None:
     draw = ImageDraw.Draw(layer)
-    p = ease_out(local_time / 1.0)
-    offset = int(32 * (1 - p))
-    brand(draw)
-    shape_text(draw, "مهارات عربية تُفهم من أول مرة", (1165, 215 + offset), font(58, bold=True), (*TEXT, 255))
-    shape_text(draw, "ليست ترجمة حرفية. إنها تجربة منتج كاملة.", (1165, 304 + offset), font(29), (*MUTED, 255))
-    rounded(draw, (798, 380 + offset, 1165, 444 + offset), 20, (*CYAN, 22), (*CYAN, 80))
-    shape_text(draw, "سياق ← صياغة ← مراجعة", (1135, 394 + offset), font(25, bold=True), (*CYAN, 255))
-    shape_text(draw, "ARABICSKILL", (70, 594), font(86, bold=True, latin=True), (255, 255, 255, 20), rtl=False)
-    footer(draw, 1)
+    p = ease_out(local_time / 0.9)
+    offset = int(28 * (1 - p))
+    shape_text(draw, "مهارات عربية تُفهم من أول مرة", (1165, 200 + offset), font(58, bold=True), (*TEXT, 255))
+    shape_text(draw, "ليست ترجمة حرفية. إنها تجربة منتج كاملة.", (1165, 294 + offset), font(29), (*MUTED, 255))
+    pill = (790, 372 + offset, 1165, 438 + offset)
+    rounded(draw, pill, 20, (*CYAN, 22), (*CYAN, 80))
+    draw_centered_text(draw, "سياق ← صياغة ← مراجعة", pill, font(25, bold=True), (*CYAN, 255))
+    shape_text(draw, "ARABICSKILL", (70, 528), font(82, bold=True, latin=True), (255, 255, 255, 18), rtl=False)
 
 
 def comparison_scene(
@@ -273,46 +331,44 @@ def comparison_scene(
     after_title: str,
     after_body: str,
     tags: list[str],
-    number: int,
 ) -> None:
     draw = ImageDraw.Draw(layer)
     p = ease_out(local_time / 0.8)
-    slide = int(45 * (1 - p))
-    brand(draw)
-    shape_text(draw, title, (1180, 86), font(34, bold=True), (*TEXT, 255))
-    shape_text(draw, context, (1180, 128), font(20), (*MUTED, 255))
+    slide = int(42 * (1 - p))
+    shape_text(draw, title, (1180, 82), font(34, bold=True), (*TEXT, 255))
+    shape_text(draw, context, (1180, 132), font(20), (*MUTED, 255))
 
-    left = (75 - slide, 185, 600 - slide, 590)
-    right = (680 + slide, 185, 1205 + slide, 590)
+    left = (75 - slide, 192, 600 - slide, 594)
+    right = (680 + slide, 192, 1205 + slide, 594)
     rounded(draw, right, 30, (*SURFACE, 248), (*RED, 70), 2)
     rounded(draw, left, 30, (*SURFACE_2, 250), (*CYAN, 100), 2)
 
-    rounded(draw, (right[2] - 118, right[1] + 28, right[2] - 28, right[1] + 72), 18, (*RED_DARK, 220))
-    shape_text(draw, "قبل", (right[2] - 50, right[1] + 34), font(20, bold=True), (*RED, 255))
+    before_pill = (right[2] - 118, right[1] + 28, right[2] - 28, right[1] + 72)
+    rounded(draw, before_pill, 18, (*RED_DARK, 220))
+    draw_centered_text(draw, "قبل", before_pill, font(20, bold=True), (*RED, 255))
     shape_text(draw, before_title, (right[2] - 34, right[1] + 104), font(31, bold=True), (*TEXT, 230))
     draw_arabic_block(draw, before_body, right[2] - 34, right[1] + 165, font(23), (*MUTED, 235), right[2] - right[0] - 68, 17)
     draw.line((right[0] + 34, right[3] - 72, right[2] - 34, right[3] - 72), fill=(*RED, 46), width=2)
     shape_text(draw, "عام • بلا سياق • بلا خطوة واضحة", (right[2] - 34, right[3] - 52), font(18), (*RED, 215))
 
-    rounded(draw, (left[2] - 118, left[1] + 28, left[2] - 28, left[1] + 72), 18, (*CYAN_DARK, 210))
-    shape_text(draw, "بعد", (left[2] - 50, left[1] + 34), font(20, bold=True), (*CYAN, 255))
+    after_pill = (left[2] - 118, left[1] + 28, left[2] - 28, left[1] + 72)
+    rounded(draw, after_pill, 18, (*CYAN_DARK, 210))
+    draw_centered_text(draw, "بعد", after_pill, font(20, bold=True), (*CYAN, 255))
     shape_text(draw, after_title, (left[2] - 34, left[1] + 104), font(31, bold=True), (*TEXT, 255))
     draw_arabic_block(draw, after_body, left[2] - 34, left[1] + 165, font(23), (*TEXT, 225), left[2] - left[0] - 68, 17)
     tag_right = left[2] - 34
     for tag in tags:
         tag_right = chip(draw, tag, tag_right, left[3] - 72, CYAN)
-    footer(draw, number)
 
 
 def pipeline_scene(layer: Image.Image, local_time: float) -> None:
     draw = ImageDraw.Draw(layer)
-    brand(draw)
-    shape_text(draw, "كيف تتحول الكلمات إلى تجربة؟", (1180, 94), font(40, bold=True), (*TEXT, 255))
-    shape_text(draw, "المهارة لا تستبدل كلمة بكلمة؛ بل تبني القرار.", (1180, 148), font(23), (*MUTED, 255))
+    shape_text(draw, "كيف تتحول الكلمات إلى تجربة؟", (1180, 86), font(40, bold=True), (*TEXT, 255))
+    shape_text(draw, "المهارة لا تستبدل كلمة بكلمة؛ بل تبني القرار.", (1180, 146), font(23), (*MUTED, 255))
 
     labels = [
         ("السياق", "من المستخدم؟ وما هدفه؟", CYAN),
-        ("المجال", "حكومي، مالي، صحي...", BLUE),
+        ("المجال", "حكومي، مالي، صحي، وتقني", BLUE),
         ("الصياغة", "معنى مباشر ونبرة مناسبة", GOLD),
         ("المراجعة", "وضوح، ثقة، وإجراء", CYAN),
     ]
@@ -320,50 +376,53 @@ def pipeline_scene(layer: Image.Image, local_time: float) -> None:
     gap = 28
     start_x = 87
     for index, (heading, body, accent) in enumerate(labels):
-        reveal = ease_out((local_time - index * 0.22) / 0.7)
-        y_offset = int(30 * (1 - reveal))
+        reveal = ease_out((local_time - index * 0.18) / 0.65)
+        y_offset = int(28 * (1 - reveal))
         x = WIDTH - start_x - card_width - index * (card_width + gap)
         y = 255 + y_offset
-        rounded(draw, (x, y, x + card_width, y + 230), 28, (*SURFACE, int(245 * reveal)), (*accent, int(90 * reveal)), 2)
-        draw.ellipse((x + 28, y + 28, x + 64, y + 64), fill=(*accent, int(220 * reveal)))
-        shape_text(draw, f"0{index + 1}", (x + 38, y + 35), font(13, bold=True, latin=True), (*BG, int(255 * reveal)), rtl=False)
-        shape_text(draw, heading, (x + card_width - 28, y + 90), font(28, bold=True), (*TEXT, int(255 * reveal)))
-        draw_arabic_block(draw, body, x + card_width - 28, y + 139, font(18), (*MUTED, int(240 * reveal)), card_width - 56, 12)
+        rounded(draw, (x, y, x + card_width, y + 236), 28, (*SURFACE, int(245 * reveal)), (*accent, int(90 * reveal)), 2)
+        badge_box = (x + card_width - 66, y + 28, x + card_width - 28, y + 66)
+        draw.ellipse(badge_box, fill=(*accent, int(220 * reveal)))
+        draw_centered_text(draw, f"0{index + 1}", badge_box, font(14, bold=True, latin=True), (*BG, int(255 * reveal)), rtl=False)
+        shape_text(draw, heading, (x + card_width - 28, y + 96), font(28, bold=True), (*TEXT, int(255 * reveal)))
+        draw_arabic_block(draw, body, x + card_width - 28, y + 146, font(18), (*MUTED, int(240 * reveal)), card_width - 56, 12)
         if index < len(labels) - 1:
-            draw.line((x - gap + 7, y + 115, x - 7, y + 115), fill=(*MUTED, int(90 * reveal)), width=2)
-    footer(draw, 5)
+            connector_alpha = int(90 * min(reveal, ease_out((local_time - (index + 1) * 0.18) / 0.65)))
+            draw.line((x - gap + 7, 372, x - 7, 372), fill=(*MUTED, connector_alpha), width=2)
 
 
 def install_scene(layer: Image.Image, local_time: float) -> None:
     draw = ImageDraw.Draw(layer)
-    brand(draw)
-    shape_text(draw, "مهارتان لهدف واحد", (1180, 96), font(42, bold=True), (*TEXT, 255))
-    shape_text(draw, "تجربة عربية واضحة، طبيعية، وقابلة للتنفيذ.", (1180, 152), font(24), (*MUTED, 255))
+    shape_text(draw, "مهارتان لهدف واحد", (1180, 88), font(42, bold=True), (*TEXT, 255))
+    shape_text(draw, "تجربة عربية واضحة، طبيعية، وقابلة للتنفيذ", (1180, 148), font(24), (*MUTED, 255))
 
     cards = [
         (665, "arabicskill", "كتابة المنتج والتوطين والتدقيق", CYAN),
-        (75, "arabic-uiux-master", "النص العربي مع RTL وإتاحة الاستخدام", GOLD),
+        (75, "arabic-uiux-master", "النص العربي مع RTL وإتاحة الوصول", GOLD),
     ]
     for index, (x, name, description, accent) in enumerate(cards):
-        reveal = ease_out((local_time - index * 0.18) / 0.8)
+        reveal = ease_out((local_time - index * 0.18) / 0.75)
         y = 235 + int(22 * (1 - reveal))
         rounded(draw, (x, y, x + 540, y + 178), 30, (*SURFACE, int(248 * reveal)), (*accent, int(90 * reveal)), 2)
-        draw.ellipse((x + 32, y + 34, x + 78, y + 80), fill=(*accent, int(220 * reveal)))
-        shape_text(draw, "AI", (x + 44, y + 46), font(13, bold=True, latin=True), (*BG, int(255 * reveal)), rtl=False)
-        shape_text(draw, name, (x + 102, y + 34), font(24, bold=True, latin=True), (*TEXT, int(255 * reveal)), rtl=False)
-        shape_text(draw, description, (x + 505, y + 92), font(20), (*MUTED, int(245 * reveal)))
+        badge_box = (x + 540 - 78, y + 32, x + 540 - 32, y + 78)
+        draw.ellipse(badge_box, fill=(*accent, int(220 * reveal)))
+        draw_centered_text(draw, "AI", badge_box, font(14, bold=True, latin=True), (*BG, int(255 * reveal)), rtl=False)
+        name_font = font(24, bold=True, latin=True)
+        name_bbox = draw.textbbox((0, 0), name, font=name_font)
+        name_w = name_bbox[2] - name_bbox[0]
+        shape_text(draw, name, (x + 540 - 98 - name_w, y + 38), name_font, (*TEXT, int(255 * reveal)), rtl=False)
+        shape_text(draw, description, (x + 508, y + 102), font(20), (*MUTED, int(245 * reveal)))
 
     rounded(draw, (75, 460, 1205, 546), 24, (5, 8, 14, 245), (*CYAN, 74), 2)
-    shape_text(draw, "$", (105, 483), font(22, bold=True, latin=True), (*CYAN, 255), rtl=False)
-    shape_text(draw, "npx skills add theonlym7md/arabic-ai-skills --skill arabicskill", (145, 482), font(22, latin=True), (*TEXT, 255), rtl=False)
-    shape_text(draw, "متاح الآن على GitHub و skills.sh", (1180, 584), font(24, bold=True), (*CYAN, 255))
-    footer(draw, 6)
+    shape_text(draw, "$", (105, 486), font(22, bold=True, latin=True), (*CYAN, 255), rtl=False)
+    shape_text(draw, "npx skills add theonlym7md/arabic-ai-skills --skill arabicskill", (145, 485), font(22, latin=True), (*TEXT, 255), rtl=False)
+    shape_text(draw, "متاح الآن على GitHub و skills.sh", (1180, 582), font(24, bold=True), (*CYAN, 255))
 
 
 SCENES = [
     (0.0, 6.0, title_scene),
     (
-        5.4,
+        6.0,
         17.0,
         lambda layer, t: comparison_scene(
             layer,
@@ -375,11 +434,10 @@ SCENES = [
             "لا توجد مخالفات مسجّلة عليك",
             "لا توجد مخالفات مرورية مرتبطة بهويتك حاليًا.",
             ["واضح", "مطمئن", "محدد"],
-            2,
         ),
     ),
     (
-        16.4,
+        17.0,
         28.0,
         lambda layer, t: comparison_scene(
             layer,
@@ -391,11 +449,10 @@ SCENES = [
             "تعذّر إكمال الدفع",
             "تحقق من بيانات البطاقة أو استخدم وسيلة دفع أخرى.",
             ["إجراء واضح", "بلا لوم", "ثقة"],
-            3,
         ),
     ),
     (
-        27.4,
+        28.0,
         38.0,
         lambda layer, t: comparison_scene(
             layer,
@@ -407,11 +464,10 @@ SCENES = [
             "اعرف أقرب فرع إليك",
             "اسمح بالوصول إلى موقعك لعرض الفروع القريبة. يمكنك تغيير الإذن لاحقًا.",
             ["فائدة أولًا", "شفاف", "اختيار"],
-            4,
         ),
     ),
-    (37.4, 45.5, pipeline_scene),
-    (44.9, 54.0, install_scene),
+    (38.0, 45.5, pipeline_scene),
+    (45.5, 54.0, install_scene),
 ]
 
 
@@ -422,19 +478,24 @@ def render_frame(frame_index: int) -> Image.Image:
     add_glow(image, (120 + int(24 * math.cos(time_value / 2.7)), 650), 230, BLUE, 16)
     draw_grid(image, time_value)
 
-    for start, end, renderer in SCENES:
-        opacity = scene_opacity(time_value, start, end)
-        if opacity <= 0:
-            continue
-        layer = Image.new("RGBA", image.size, (0, 0, 0, 0))
-        renderer(layer, time_value - start)
-        composite_with_opacity(image, layer, ease_in_out(opacity))
+    active_scene_number = 1
+    for index, (start, end, renderer) in enumerate(SCENES, start=1):
+        if start <= time_value < end or (index == len(SCENES) and time_value >= end):
+            active_scene_number = index
+            opacity = scene_opacity(time_value, start, end)
+            if opacity > 0:
+                layer = Image.new("RGBA", image.size, (0, 0, 0, 0))
+                renderer(layer, time_value - start)
+                composite_with_opacity(image, layer, ease_in_out(opacity))
+            break
 
+    draw_chrome(image, active_scene_number, len(SCENES))
     return image.convert("RGB")
 
 
 def encode_video() -> None:
     ASSET_DIR.mkdir(parents=True, exist_ok=True)
+    preflight_fonts()
     ffmpeg = resolve_ffmpeg()
     command = [
         ffmpeg,
@@ -466,16 +527,22 @@ def encode_video() -> None:
     ]
     process = subprocess.Popen(command, stdin=subprocess.PIPE)
     assert process.stdin is not None
-    total_frames = DURATION * FPS
-    for frame_index in range(total_frames):
-        frame = render_frame(frame_index)
-        process.stdin.write(frame.tobytes())
-        if frame_index == int(1.8 * FPS):
-            frame.save(POSTER_PATH, quality=95)
-        if frame_index % (FPS * 5) == 0:
-            print(f"Rendered {frame_index / FPS:.0f}s / {DURATION}s", flush=True)
-    process.stdin.close()
-    return_code = process.wait()
+    try:
+        total_frames = DURATION * FPS
+        for frame_index in range(total_frames):
+            frame = render_frame(frame_index)
+            process.stdin.write(frame.tobytes())
+            if frame_index == int(1.8 * FPS):
+                frame.save(POSTER_PATH)
+            if frame_index % (FPS * 5) == 0:
+                print(f"Rendered {frame_index / FPS:.0f}s / {DURATION}s", flush=True)
+    except Exception:
+        process.kill()
+        raise
+    finally:
+        if not process.stdin.closed:
+            process.stdin.close()
+        return_code = process.wait()
     if return_code != 0:
         raise RuntimeError(f"ffmpeg exited with code {return_code}")
 
@@ -493,7 +560,7 @@ def encode_preview() -> None:
         "-ss",
         "1.0",
         "-t",
-        "17",
+        "15.5",
         "-i",
         str(VIDEO_PATH),
         "-vf",

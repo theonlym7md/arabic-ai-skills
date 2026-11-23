@@ -6,6 +6,7 @@ Describe the user-facing or maintainer-facing change.
 
 - [ ] `npm ci`
 - [ ] `npm run check`
+- [ ] `npm run benchmark`
 - [ ] Skill examples and Arabic wording were reviewed where applicable
 - [ ] Documentation and changelog were updated where applicable
 

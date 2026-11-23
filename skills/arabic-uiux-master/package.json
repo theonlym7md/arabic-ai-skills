@@ -1,18 +1,27 @@
 {
   "name": "arabic-uiux-master",
-  "version": "2.2.0",
-  "description": "Arabic UI/UX writing, microcopy, and practical RTL design guidance for AI agents.",
-  "main": "SKILL.md",
+  "version": "2.3.0",
+  "description": "Arabic-first screen UX, RTL layout engineering, Arabic typography, WCAG accessibility, and contextual UI microcopy skill for AI agents.",
+  "skill": "SKILL.md",
   "private": true,
+  "license": "MIT",
+  "author": "theonlym7md",
+  "homepage": "https://github.com/theonlym7md/arabic-ai-skills/tree/main/skills/arabic-uiux-master",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theonlym7md/arabic-ai-skills.git",
+    "directory": "skills/arabic-uiux-master"
+  },
+  "bugs": {
+    "url": "https://github.com/theonlym7md/arabic-ai-skills/issues"
+  },
   "keywords": [
     "arabic",
     "ux-writing",
-    "microcopy",
-    "ui",
-    "copywriting",
-    "agent-skill",
+    "ui-ux",
     "rtl",
-    "localization"
-  ],
-  "license": "MIT"
+    "accessibility",
+    "typography",
+    "agent-skills"
+  ]
 }

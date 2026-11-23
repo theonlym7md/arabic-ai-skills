@@ -3,10 +3,14 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { test } = require("node:test");
 const {
+  ArabicSkillError,
   EXPERIENCE_RULES,
   SECTOR_RULES,
   UI_FLOW_RULES,
+  classifyTextType,
   generateArabicCopy,
+  hasTerminalShortLabelPeriod,
+  validateBaseUrl,
 } = require("../dist/index.js");
 
 const input = {
@@ -90,8 +94,8 @@ test("SDK selectively includes matching sector rules and safety guidance", async
   });
   assert.deepEqual(await generateArabicCopy(input), expected);
   assert.match(request.instructions, /# حالات تحتاج حقائق المنتج/);
-  assert.match(request.instructions, /# سلامة التوطين/);
-  assert.match(request.instructions, /# اللهجات عند الطلب الصريح/);
+  assert.doesNotMatch(request.instructions, /# سلامة التوطين/);
+  assert.doesNotMatch(request.instructions, /# اللهجات عند الطلب الصريح/);
   assert.ok(
     request.instructions.includes("## اختيار النمط وحدوده"),
     "SDK must include shared sector selection bounds",
@@ -120,7 +124,7 @@ test("SDK selectively includes matching sector rules and safety guidance", async
     !request.instructions.includes("## 2. أنماط تسجيل الدخول والمصادقة"),
     "SDK must omit unmatched auth experience patterns",
   );
-  assert.match(request.instructions, /Never place a trailing period/);
+  assert.match(request.instructions, /Omit terminal periods/);
   const referenceDir = path.join(__dirname, "../skills/arabicskill/references");
   const sourceRegister = fs.readFileSync(path.join(referenceDir, "saudi-sources.md"), "utf8");
   assert.ok(
@@ -150,6 +154,7 @@ test("SDK falls back to all sectors when unmatched, selects UI flows, and passes
   });
   assert.ok(request.instructions.includes("## 2. الألعاب والتجارب الاجتماعية"));
   assert.ok(request.instructions.includes("## 1. واجهات الذكاء الاصطناعي والمحادثة"));
+  assert.match(request.instructions, /# اللهجات عند الطلب الصريح/);
   assert.ok(request.input.includes('"region":"Saudi Arabia"'));
   assert.ok(request.input.includes('"dialect":"Modern Standard Arabic"'));
 });
@@ -269,7 +274,7 @@ test("SDK filters individual overlong options when at least one option fits maxL
     responseBody({
       options: [
         { text: "أعد المحاولة", style: "مباشر" },
-        { text: "a ".repeat(11).trim(), style: "طويل" },
+        { text: "كلمة ".repeat(11).trim(), style: "طويل" },
       ],
     }),
   );
@@ -301,8 +306,20 @@ for (const [label, value, message] of [
     /between one and three/,
   ],
   ["empty copy", { options: [{ text: " ", style: "واضح" }] }, /must not be empty/],
+  ["invisible-only copy", { options: [{ text: "\u200F", style: "\u200B" }] }, /must not be empty/],
+  ["BiDi override copy", { options: [{ text: "\u202Eتأكيد الدفع", style: "واضح" }] }, /BiDi/],
+  ["non-Arabic copy", { options: [{ text: "Click here", style: "Direct" }] }, /Arabic script/],
+  [
+    "single giant token",
+    { options: [{ text: "أ".repeat(500), style: "واضح" }] },
+    /maximum character ceiling/,
+  ],
   ["non-string copy", { options: [{ text: 12, style: "واضح" }] }, /text and style/],
-  ["overlong copy", { options: [{ text: "a ".repeat(11), style: "واضح" }] }, /word limit/],
+  [
+    "overlong copy",
+    { options: [{ text: "كلمة ".repeat(11).trim(), style: "واضح" }] },
+    /word limit/,
+  ],
   [
     "unknown root key",
     { options: [{ text: "راجع", style: "واضح" }], extra: true },
@@ -326,7 +343,13 @@ test("SDK rejects a refusal with no output text and surfaces the refusal reason"
       },
     ],
   });
-  await assert.rejects(generateArabicCopy(input), /no output text \(refusal: Synthetic refusal\)/);
+  await assert.rejects(
+    generateArabicCopy(input),
+    (error) =>
+      error instanceof ArabicSkillError &&
+      error.code === "REFUSAL" &&
+      /Synthetic refusal/.test(error.message),
+  );
 });
 
 test("SDK rejects malformed JSON", async (t) => {
@@ -462,11 +485,11 @@ test("SDK normalizes Arabic hamza variants and second-word al- prefixes in rule 
     projectNiche: "General",
     targetAudience: "Arabic users",
     textType: "Status banner",
-    context: "واجهة تعتمد على الذكاء الاصطناعي",
+    context: "واجهة تعتمد على الذكاء الاصطناعي ومشغل الصوت",
   });
 
   assert.match(request.instructions, /1\. واجهات الذكاء الاصطناعي والمحادثة/);
-  assert.match(request.instructions, /5\. أنماط الإعلام والمحتوى العميق والإتاحة/);
+  assert.match(request.instructions, /5\. أنماط الإعلام والمحتوى العميق وإتاحة الوصول/);
 });
 
 test("SDK routes product card queries to E-Commerce instead of FinTech and avoids English false positives", async (t) => {
@@ -553,7 +576,7 @@ test("SDK enforces no-period discipline across extended short labels and Markdow
   );
 });
 
-test("SDK sanitizes layout specs and editor meta notes from system prompt and aligns rule headings", async (t) => {
+test("SDK sanitizes agent-only blocks from system prompt, keeps rule arrays frozen, and aligns headings", async (t) => {
   let request;
   intercept(t, responseBody({ options: [{ text: "استكشف الخطة", style: "هادئ" }] }), (body) => {
     request = body;
@@ -565,9 +588,17 @@ test("SDK sanitizes layout specs and editor meta notes from system prompt and al
     context: "صفحة رحلة وتقسيط",
   });
 
-  assert.doesNotMatch(request.instructions, /1px/);
+  assert.doesNotMatch(request.instructions, /اختيار الشخصية البصرية والمعمارية/);
   assert.doesNotMatch(request.instructions, /ملاحظة للمحرّر/);
-  assert.doesNotMatch(request.instructions, /وضع الوكيل/);
+  assert.doesNotMatch(request.instructions, /agent-only:/);
+  assert.doesNotMatch(request.instructions, /reasoning\/stage_/);
+  // Minimal prompt without dialect or localization triggers omits dialects.md and localization.md
+  assert.doesNotMatch(request.instructions, /اللهجات عند الطلب الصريح/);
+  assert.doesNotMatch(request.instructions, /ملفات الترجمة/);
+
+  assert.equal(Object.isFrozen(SECTOR_RULES), true);
+  assert.equal(Object.isFrozen(UI_FLOW_RULES), true);
+  assert.equal(Object.isFrozen(EXPERIENCE_RULES), true);
 
   const referenceDir = path.join(__dirname, "../skills/arabicskill/references");
   const getHeadings = (file) =>
@@ -591,4 +622,210 @@ test("SDK sanitizes layout specs and editor meta notes from system prompt and al
       );
     }
   }
+});
+
+test("SDK blocks SSRF/insecure baseURLs and supports explicit baseURL and injectable client", async (t) => {
+  assert.throws(
+    () => validateBaseUrl("http://169.254.169.254/latest/meta-data"),
+    (error) => error instanceof ArabicSkillError && error.code === "CONFIGURATION_ERROR",
+  );
+  assert.throws(() => validateBaseUrl("http://api.example.com/v1"), /https:\/\//);
+  assert.throws(() => validateBaseUrl("https://user:pass@api.example.com/v1"), /credentials/);
+  assert.equal(validateBaseUrl("http://127.0.0.1:8080/v1", true), "http://127.0.0.1:8080/v1");
+
+  const previousBase = process.env.OPENAI_BASE_URL;
+  process.env.OPENAI_BASE_URL = "http://169.254.169.254/latest/meta-data";
+  t.after(() => {
+    if (previousBase === undefined) delete process.env.OPENAI_BASE_URL;
+    else process.env.OPENAI_BASE_URL = previousBase;
+  });
+  await assert.rejects(generateArabicCopy(input), /link-local or cloud metadata/);
+  delete process.env.OPENAI_BASE_URL;
+
+  const injectedCalls = [];
+  const fakeClient = {
+    responses: {
+      create: async (payload) => {
+        injectedCalls.push(payload);
+        return responseBody({
+          options: [
+            { text: "أكمل الطلب", style: "مباشر" },
+            { text: "أكمل الطلب", style: "مكرر" },
+          ],
+        });
+      },
+    },
+  };
+  const { apiKey: _unused, ...noKeyInput } = input;
+  const result = await generateArabicCopy({
+    ...noKeyInput,
+    client: fakeClient,
+    maxOutputTokens: 256,
+  });
+  // Deduplicates identical option texts cleanly
+  assert.deepEqual(result, { options: [{ text: "أكمل الطلب", style: "مباشر" }] });
+  assert.equal(injectedCalls[0].max_output_tokens, 256);
+});
+
+test("SDK classifies normalized Arabic/English short labels vs compound body types accurately", () => {
+  for (const shortType of [
+    "عُنوان رئيسي",
+    "ازرار",
+    "دعوة الى الاجراء",
+    "CTA copy",
+    "Button copy",
+    "Login button",
+    "Headline",
+    "Toast title",
+    "Call-to-action button",
+    "Heading (H1)",
+  ]) {
+    assert.equal(classifyTextType(shortType), "short_label", shortType);
+  }
+
+  for (const compoundOrBody of [
+    "عنوان وافصاح",
+    "عنوان ورساله",
+    "عنوان وملاحظة",
+    "عنوان ونص تعريفي",
+    "بطاقة خطأ دفع",
+    "عنوان ووصف",
+    "Card title and description",
+  ]) {
+    assert.notEqual(classifyTextType(compoundOrBody), "short_label", compoundOrBody);
+  }
+
+  for (const badShort of [
+    "»أدر متجرك.«",
+    "أدر متجرك. ✨",
+    "أدر متجرك．",
+    "أدر متجرك.\nابدأ الآن",
+  ]) {
+    assert.equal(hasTerminalShortLabelPeriod(badShort), true, badShort);
+  }
+  assert.equal(hasTerminalShortLabelPeriod("أدر متجرك"), false);
+});
+
+test("SDK handles mixed refusal+output_text, multi-message output, proxy responses without object field, and secret redaction", async (t) => {
+  // Refusal paired with output_text must STILL reject as REFUSAL
+  intercept(t, {
+    status: "completed",
+    output: [
+      {
+        type: "message",
+        role: "assistant",
+        content: [
+          { type: "refusal", refusal: "Policy refusal" },
+          {
+            type: "output_text",
+            text: JSON.stringify({ options: [{ text: "تأكيد", style: "مباشر" }] }),
+          },
+        ],
+      },
+    ],
+  });
+  await assert.rejects(
+    generateArabicCopy(input),
+    (err) => err instanceof ArabicSkillError && err.code === "REFUSAL",
+  );
+
+  // Proxy omitting object: "response" and returning two output_text parts succeeds cleanly
+  intercept(t, {
+    id: "resp_proxy",
+    status: "completed",
+    output: [
+      {
+        type: "message",
+        role: "assistant",
+        content: [
+          {
+            type: "output_text",
+            text: JSON.stringify({ options: [{ text: "تحقّق من الحالة", style: "واضح" }] }),
+          },
+          {
+            type: "output_text",
+            text: JSON.stringify({ options: [{ text: "راجع حالة الدفع", style: "مباشر" }] }),
+          },
+        ],
+      },
+    ],
+  });
+  const proxyResult = await generateArabicCopy(input);
+  assert.deepEqual(proxyResult, { options: [{ text: "راجع حالة الدفع", style: "مباشر" }] });
+
+  // Non-completed response preserves incomplete_details.reason
+  intercept(t, {
+    id: "resp_inc",
+    object: "response",
+    status: "incomplete",
+    incomplete_details: { reason: "max_output_tokens" },
+    output: [],
+  });
+  await assert.rejects(
+    generateArabicCopy(input),
+    (err) =>
+      err instanceof ArabicSkillError &&
+      err.code === "INCOMPLETE_RESPONSE" &&
+      /max_output_tokens/.test(err.message),
+  );
+
+  // API key leaked in upstream 401 message is redacted
+  t.mock.method(globalThis, "fetch", async () => {
+    return new Response(
+      JSON.stringify({
+        error: { message: "Incorrect API key provided: sk-proj-secret1234567890" },
+      }),
+      { status: 401, headers: { "content-type": "application/json" } },
+    );
+  });
+  await assert.rejects(
+    generateArabicCopy(input),
+    (err) =>
+      err instanceof ArabicSkillError &&
+      err.status === 401 &&
+      !err.message.includes("sk-proj-secret") &&
+      err.message.includes("[REDACTED_KEY]"),
+  );
+});
+
+test("SDK enforces AbortSignal cancellation and prevents cross-domain routing false positives", async (t) => {
+  const controller = new AbortController();
+  controller.abort(new Error("user cancelled"));
+  await assert.rejects(
+    generateArabicCopy({ ...input, signal: controller.signal }),
+    (err) => err instanceof ArabicSkillError && err.code === "TIMEOUT",
+  );
+
+  const seen = [];
+  intercept(t, responseBody({ options: [{ text: "راجع التفاصيل", style: "واضح" }] }), (body) => {
+    seen.push(body.instructions);
+  });
+
+  // Excluded phrases prevent false positives while Arabic suffixes route cleanly
+  await generateArabicCopy({
+    ...input,
+    projectNiche: "General",
+    targetAudience: "Users",
+    textType: "Notice",
+    context: "عرض الرسوم البيانية على مدى 3 سنوات لتوفير الوقت في أعراض التهاب الحلق",
+  });
+  assert.doesNotMatch(seen.at(-1), /6\. التقسيط والتمويل والاستثمار/);
+  assert.doesNotMatch(seen.at(-1), /1\. الإعلام والمحتوى/);
+  assert.doesNotMatch(seen.at(-1), /3\. أنماط الدفع، السلة، التقسيط، والتسعير/);
+
+  await generateArabicCopy({
+    ...input,
+    projectNiche: "General",
+    targetAudience: "Shoppers",
+    textType: "CTA",
+    context: "أدر متجرك واعرض الطلبات المتأخرة",
+  });
+  assert.match(seen.at(-1), /4\. منصات التجار والتجارة الإلكترونية/);
+});
+
+test("SDK works natively via ESM import()", async () => {
+  const esm = await import("arabicskill");
+  assert.equal(typeof esm.generateArabicCopy, "function");
+  assert.equal(typeof esm.ArabicSkillError, "function");
+  assert.equal(esm.classifyTextType("CTA copy"), "short_label");
 });

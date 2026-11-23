@@ -1,8 +1,16 @@
-case_id: "short_cta"
-domain: "SaaS"
+case_id: short_cta
+domain: SaaS
+runner_mode: sdk
+sdk_input:
+  textType: CTA button
+  maxLength: 2
+  targetAudience: Arabic product users
+  toneOfVoice: Direct
 target_metrics:
   Clarity: 95
-forbidden_phrases: ["قم","ما الجمهور"]
+forbidden_phrases:
+  - قم
+  - ما الجمهور
 review_criteria:
-  - "Returns only the CTA, at most two whitespace-delimited words."
-  - "Does not block this fully specified small rewrite with questions."
+  - Returns only the CTA, at most two whitespace-delimited words.
+  - Does not block this fully specified small rewrite with questions.

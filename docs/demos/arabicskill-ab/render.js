@@ -1,11 +1,11 @@
 "use strict";
 
 const cases = [
-  { id: "landing", number: "01", title: "صفحة هبوط", subtitle: "اكتشاف ورش نهاية الأسبوع" },
-  { id: "payment", number: "02", title: "صفحة دفع", subtitle: "انقطع الاتصال بعد محاولة الدفع" },
+  { id: "landing", number: "٠١", title: "صفحة هبوط", subtitle: "اكتشاف ورش نهاية الأسبوع" },
+  { id: "payment", number: "٠٢", title: "صفحة دفع", subtitle: "انقطع الاتصال بعد محاولة الدفع" },
   {
     id: "login",
-    number: "03",
+    number: "٠٣",
     title: "تسجيل دخول",
     subtitle: "البريد للتذاكر، والتصفح متاح للجميع",
   },
@@ -20,9 +20,18 @@ function make(tag, className, text) {
 
 function buildScreen(scenario, mode, copy) {
   const pane = make("div", "pane");
-  pane.append(
-    make("p", `mode mode--${mode}`, mode === "with" ? "بعد · مع ArabicSkill" : "قبل · بدون مهارة"),
-  );
+  const modeHeading = make("h3", `mode mode--${mode}`);
+  if (mode === "with") {
+    modeHeading.append("بعد · مع ");
+    const brand = make("bdi", null, "ArabicSkill");
+    brand.dir = "ltr";
+    brand.lang = "en";
+    modeHeading.append(brand);
+  } else {
+    modeHeading.textContent = "قبل · بدون مهارة";
+  }
+  pane.append(modeHeading);
+
   const screen = make("div", `screen screen--${scenario.id}`);
   const bar = make("div", "screen-bar");
   const wordmark = make("span", "wordmark", "فسحة");
@@ -36,7 +45,7 @@ function buildScreen(scenario, mode, copy) {
   const copyBox = make("div", "copy");
   copyBox.append(
     make("p", "eyebrow", copy.eyebrow),
-    make("h3", "screen-title", copy.title),
+    make("h4", "screen-title", copy.title),
     make("p", "body-copy", copy.body),
   );
 
@@ -49,6 +58,7 @@ function buildScreen(scenario, mode, copy) {
     const email = make("div", "email");
     const example = make("bdi", null, "name@example.com");
     example.dir = "ltr";
+    example.lang = "en";
     email.append(make("span", null, "البريد الإلكتروني"), example);
     copyBox.append(email);
   }
@@ -73,14 +83,15 @@ const gallery = document.querySelector("#demos");
 for (const scenario of cases) {
   const board = make("section", `board board--${scenario.id}`);
   board.id = scenario.id;
+  const headingId = `${scenario.id}-heading`;
+  board.setAttribute("aria-labelledby", headingId);
   const header = make("header", "board-head");
   const number = make("span", "board-id", scenario.number);
-  number.dir = "ltr";
+  number.setAttribute("aria-hidden", "true");
   const heading = make("div");
-  heading.append(
-    make("p", "board-series", "مختبر الواجهات العربية"),
-    make("h2", null, scenario.title),
-  );
+  const h2 = make("h2", null, scenario.title);
+  h2.id = headingId;
+  heading.append(make("p", "board-series", "مختبر الواجهات العربية"), h2);
   header.append(number, heading);
   const pair = make("div", "pair");
   for (const mode of ["without", "with"]) {

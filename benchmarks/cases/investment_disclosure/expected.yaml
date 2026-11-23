@@ -1,9 +1,19 @@
 case_id: investment_disclosure
-domain: Investment
+domain: FinTech
+runner_mode: sdk
+sdk_input:
+  textType: Investment risk disclosure
+  maxLength: 40
+  targetAudience: Arabic retail investors
+  toneOfVoice: Formal and transparent
 target_metrics:
   Trust: 100
-forbidden_phrases: ["بلا مخاطرة", "اسحب متى تريد", "عائد مضمون", "أفضل استثمار"]
+forbidden_phrases:
+  - بلا مخاطرة
+  - اسحب متى تريد
+  - عائد مضمون
+  - أفضل استثمار
 review_criteria:
-  - "Retains expected/non-guaranteed status and partial/total loss risk."
-  - "Preserves the withdrawal restriction and maturity period."
-  - "Makes no recommendation or unsupported licensing claim."
+  - Retains expected/non-guaranteed status and partial/total loss risk.
+  - Preserves the withdrawal restriction and maturity period.
+  - Makes no recommendation or unsupported licensing claim.

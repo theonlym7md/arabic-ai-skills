@@ -1,13 +1,21 @@
-case_id: "media_podcast_bdi"
-domain: "Media"
+case_id: media_podcast_bdi
+domain: Media
+runner_mode: sdk
+sdk_input:
+  textType: Podcast card title, description, and CTA
+  maxLength: 35
+  targetAudience: Arabic podcast listeners
+  toneOfVoice: Editorial and concise
 target_metrics:
   Clarity: 95
   Localization: 95
 forbidden_phrases:
-  - "أكمل المشاهدة"
-  - "حصريًا للمشتركين"
-  - "min"
+  - أكمل المشاهدة
+  - حصريًا للمشتركين
+  - min
 review_criteria:
-  - "Isolates numeric episode duration with `<bdi dir=\"ltr\">` while keeping the Arabic unit `دقيقة`."
-  - "Separates episode title, program name, and confirmed play action without inventing subscription locks."
-  - "Omits trailing periods on the heading and play button."
+  - Isolates numeric episode duration with `<bdi dir="ltr">` while keeping the
+    Arabic unit `دقيقة`.
+  - Separates episode title, program name, and confirmed play action without
+    inventing subscription locks.
+  - Omits trailing periods on the heading and play button.

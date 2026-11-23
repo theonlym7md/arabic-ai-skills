@@ -1,11 +1,11 @@
 # Contributing to ArabicSkill
 
-We welcome contributions from Arabic linguists, UX writers, product designers, and AI engineers!
+We welcome contributions from Arabic linguists, UX writers, product designers, and AI engineers.
 
 ## How to Contribute
-1. **Add Ontology Entities:** Submit pull requests to `skills/arabicskill/knowledge/entities/` following `_schema.yaml`.
-2. **Develop Plugins:** Create declarative domain packs in `skills/arabicskill/plugins/`.
-3. **Submit Benchmarks:** Add synthetic cases in `benchmarks/cases/`; include review criteria, not invented model scores.
+1. **Add Ontology Entities:** Submit pull requests to `skills/arabicskill/knowledge/entities/` following `_schema.yaml`, and register routing entries in `skills/arabicskill/knowledge/relations/routing.yaml` (then run `npm run build:routing`) and optional domain/intent overrides in `skills/arabicskill/knowledge/relations/weights.yaml`.
+2. **Develop Plugins:** Create declarative domain packs in `skills/arabicskill/plugins/` following `plugins/README.md`.
+3. **Submit Benchmarks:** Add synthetic cases in `benchmarks/cases/` with canonical `domain`, `runner_mode` (`sdk` or `agent`), and review criteria — not invented model scores.
 
 ## Submitting a PR
 - Create a focused branch and explain the user-facing outcome.
@@ -16,10 +16,10 @@ We welcome contributions from Arabic linguists, UX writers, product designers, a
 
 ## Adding or updating a skill
 
-- Keep skills under `skills/<skill-name>/` with a `SKILL.md` and `README.md`.
-- Use standards-compatible YAML frontmatter with `name`, `description`, and optional `metadata`.
+- Keep skills under `skills/<skill-name>/` with `SKILL.md`, `README.md`, `package.json` (aligned with the root `version`, without a non-JS `main` entry), and `agents/openai.yaml`.
+- Use standards-compatible YAML frontmatter with `name`, `description`, and `metadata.version`.
 - Keep detailed domain material in focused supporting files and link it from `SKILL.md`.
-- Add the skill to the root README table and deterministic repository tests.
+- Register the skill in `skills.sh.json` and the root `README.md` table (repository tests discover `skills/*` dynamically).
 
 ## Security reports
 

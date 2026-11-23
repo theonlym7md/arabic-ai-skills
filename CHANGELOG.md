@@ -2,14 +2,46 @@
 
 All notable changes are documented here. This project follows Semantic Versioning.
 
+## [Unreleased]
+
+## [2.3.0] - 2026-11-23
+
+### Security
+
+- Validated `baseURL` and `OPENAI_BASE_URL` in the Node.js SDK against cleartext HTTP, embedded credentials, and link-local/cloud metadata SSRF addresses (requiring explicit `allowInsecureBaseURL: true` for local `http://localhost` testing).
+- Hardened `scripts/validate_schema.js` and `scripts/validate_plugin.js` against path-traversal slugs (`../weights`, `_schema`) and added strict key allowlists and calendar-date checks.
+- Rejected invisible-only options, BiDi override characters (`\u202A`–`\u202E`, `\u2066`–`\u2069`), C0 control characters, non-Arabic outputs (by default), and leaked API keys in SDK error messages.
+
+### Added
+
+- Added `references/design-decisions.md` in both `arabicskill` and standalone `arabic-uiux-master` to compare page layouts by user intent, content, and mobile constraints, backed by the `2026-11-23` public website review (`docs/research/site-review-2026-11-23.md`).
+- Added B2B SaaS, Healthcare, Error Recovery & Resilience, Notifications & Onboarding, and a Voice Spectrum Matrix to `arabicskill`, plus B2B SaaS, Healthcare, Arabic typography (`letter-spacing: 0`, `line-height`, numeral consistency), logical CSS, and WCAG 2.2 component anatomy guidance to `arabic-uiux-master`.
+- Populated multi-domain ontology entities (`general_civic`, `fintech_disclosures`, `saas_b2b`, `healthcare_clinical`) alongside region-scoped `saudi_govtech` (`inherits: ["general_civic"]`, `region_scope`).
+- Added dual CommonJS + native ESM SDK builds (`dist/index.js` + `dist/esm/index.js`), typed `ArabicSkillError`, `AbortSignal` cancellation, injectable `client`, `baseURL`, `timeoutMs`, `maxRetries`, `maxOutputTokens`, and `componentKind` options.
+- Expanded the benchmark suite to 25 synthetic cases (adding `luxury_hospitality`, `healthcare_triage`, `media_podcast_bdi`, and `screen_rtl_table`) with explicit `runner_mode` (`sdk` vs `agent`) and structured `sdk_input` metadata.
+
+### Improved
+
+- Decomposed `src/index.ts` into focused modules (`types`, `normalize`, `markdown`, `routing`, `prompt`, `validate`, `client`) driven from a single compiled `routing.yaml` source of truth (`scripts/build_routing.js`).
+- Slimmed SDK system prompts by gating `dialects.md`, `localization.md`, and `sensitive-states.md` on actual input signals, replacing brittle prose `.replace()` sanitization with explicit `<!-- agent-only -->` markers, and preventing cross-domain routing false positives with `exclude_phrases`.
+- Consolidated `reasoning/` into three sequential stages (`stage_1`–`stage_3`) and collapsed duplicated `domain_weights/*.yaml` and orphaned `rule_weights.md` into one canonical `weights.yaml` aligned with the evaluation rubric.
+- Unified Arabic normalization and short-label trailing-period checks across `scripts/shared_rules.js`, `sweep.js`, `validate_benchmarks.js`, `run_benchmark.js`, and `tests/`.
+- Improved CI (`windows-latest` matrix, `package:zip`, `sweep.sh` executable bit and checks, Python syntax check, Dependabot `pip` updates) and prefixed release ZIP extraction (`ArabicSkill-v2.3.0/`).
+
+### Fixed
+
+- Fixed Arabic linguistic and UX terminology errors inside skill references (`مفاتيح المرور`, `توجد رسوم`/`برسوم`, `موظف الدفع`, `مسار التنقل`, `الدقائق والثواني`, WCAG 2.5.3 `aria-label`, gender-neutral examples, plain-text `placeholder`, and dialect accuracy for Egyptian/Saudi/Levantine/Jordanian/Moroccan).
+- Fixed SDK `validateResult` normalization on Arabic diacritics/hamza/ta-marbuta, English `CTA copy`/`Headline`/`Login button`, mixed `refusal` + `output_text` handling, multi-message output parsing, proxy responses omitting `object: "response"`, and bounded wall-clock timeout enforcement.
+- Fixed `scripts/video/build_demo.py` harakat preservation (`delete_harakat=False`), `ImageFont.Layout.BASIC`, `base_dir="R"`, alpha-composited grid, persistent chrome without cross-fade ghosting, and regenerated demo video/poster/GIF assets.
+- Fixed WCAG 1.4.11 contrast, logical CSS, `<bdi dir="ltr" lang="en">`, heading semantics, and Playwright install hints in `docs/demos/`.
+
 ## [2.2.0] - 2026-11-14
 
 ### Improved
 
-- Added `skills/arabicskill/references/experience-patterns.md` and `skills/arabic-uiux-master/references/flow-patterns.md` synthesizing cross-domain UI/UX, product thinking, auth gateways (6 variants), payment/checkout/pricing flows (6 variants), intent-routed forms, and visual/editorial styles from a `2026-11-13` multi-page audit of 71 live Arabic/GCC/Saudi portals (out of 81 unique candidate domains after deduplicating 115 raw URLs, with transparent documentation of WAF/CAPTCHA/maintenance/DNS exclusions) alongside the `2026-10-04` initial baseline.
-- Enforced strict no-trailing-period punctuation on main headings, section titles, card titles, badges, and CTA buttons (reserving periods for multi-sentence body descriptions and disclosures) across skills, references, examples, SDK instructions, and automated tests.
-- Added anti-repetition and idea-fit selection guidance so generated UI copy and flows adapt to each product brief rather than locking a domain to a single stock template.
-- Expanded selective bundling and semantic routing, added optional region and dialect settings, and expanded the benchmark suite to 25 synthetic cases (including Luxury hospitality, Healthcare triage, Podcast `<bdi>` isolation, and the 3-column RTL screen review table fixture).
+- Added `skills/arabicskill/references/experience-patterns.md` and `skills/arabic-uiux-master/references/flow-patterns.md` synthesizing cross-domain UI/UX, auth gateways (6 variants), payment/checkout/pricing flows (6 variants), intent-routed forms, and visual/editorial styles from the `2026-11-13` multi-page audit alongside the `2026-10-04` initial baseline.
+- Enforced no-trailing-period punctuation on main headings, card titles, badges, and CTA buttons across skills, SDK instructions, and automated tests.
+- Expanded selective bundling and semantic routing, added optional region and dialect settings, and expanded the benchmark suite to 21 synthetic cases.
 - Redesigned the main README, including a repository-hosted cover, quick install, before/after examples, and links to both skills and their references.
 
 ### Fixed
@@ -102,6 +134,13 @@ All notable changes are documented here. This project follows Semantic Versionin
 - Published `arabic-intelligence` and `arabic-uiux-master` with deterministic validators.
 - Added skills.sh metadata, benchmarks, documentation, and the before/after demo video.
 
+[Unreleased]: https://github.com/theonlym7md/arabic-ai-skills/compare/v2.3.0...HEAD
+[2.3.0]: https://github.com/theonlym7md/arabic-ai-skills/compare/v2.2.0...v2.3.0
+[2.2.0]: https://github.com/theonlym7md/arabic-ai-skills/compare/3bb721b...v2.2.0
+[2.1.0]: https://github.com/theonlym7md/arabic-ai-skills/compare/v2.0.2...3bb721b
+[2.0.2]: https://github.com/theonlym7md/arabic-ai-skills/compare/v2.0.1...v2.0.2
+[2.0.1]: https://github.com/theonlym7md/arabic-ai-skills/compare/v2.0.0...v2.0.1
+[2.0.0]: https://github.com/theonlym7md/arabic-ai-skills/compare/v1.2.3...v2.0.0
 [1.2.3]: https://github.com/theonlym7md/arabic-ai-skills/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/theonlym7md/arabic-ai-skills/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/theonlym7md/arabic-ai-skills/compare/v1.2.0...v1.2.1

@@ -1,9 +1,15 @@
 case_id: booking_availability
-domain: Culture
+domain: Travel
+runner_mode: agent
+agent_reason: Requires an editor note listing missing event facts outside customer copy.
 target_metrics:
   Trust: 100
-forbidden_phrases: ["احجز الآن", "انضم لقائمة الانتظار", "المركز مغلق", "الدخول مجاني"]
+forbidden_phrases:
+  - احجز الآن
+  - انضم لقائمة الانتظار
+  - المركز مغلق
+  - الدخول مجاني
 review_criteria:
-  - "Distinguishes sold-out seats from venue closure."
-  - "Keeps only the details action and preserves age/language."
-  - "Does not claim actual RTL testing or invent missing event data."
+  - Distinguishes sold-out seats from venue closure.
+  - Keeps only the details action and preserves age/language.
+  - Does not claim actual RTL testing or invent missing event data.

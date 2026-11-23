@@ -9,5 +9,5 @@ Managing raw text guidance files scales poorly beyond ~20 files, causing instruc
 Represent domain knowledge as machine-parseable YAML entity graphs supporting `inherits`, `depends_on`, `conflicts_with`, and `anti_examples`.
 
 ## Consequences
-- **Positive:** Deterministic query pipeline (`SELECT -> Expand -> Rank -> Resolve -> Return`), formal conflict resolution via rule weights.
-- **Negative:** Requires YAML schema validation for new knowledge additions.
+- **Intended benefit (not implemented as a runtime query engine):** A declarative entity graph and weight spec (`knowledge/relations/weights.yaml`) that could back a deterministic pipeline (`SELECT -> Expand -> Rank -> Resolve -> Return`) if a runtime query engine is ever built.
+- **Current cost:** Requires YAML schema and reference validation (`scripts/validate_schema.js`) for every knowledge addition.

@@ -1,5 +1,8 @@
-case_id: "screen_rtl_table"
-domain: "UIUX_RTL"
+case_id: screen_rtl_table
+domain: Auth_Security
+runner_mode: agent
+agent_reason: Multi-component 3-column RTL review table exceeds SDK single-copy
+  scope per SPEC.md.
 target_metrics:
   Trust: 95
   Clarity: 95
@@ -7,12 +10,14 @@ target_metrics:
   HumanScore: 95
   AISmell: 0
 forbidden_phrases:
-  - "قم بـ"
-  - "تم بنجاح"
-  - "الرجاء"
-  - "حدث خطأ غير متوقع"
+  - قم بـ
+  - تم بنجاح
+  - الرجاء
+  - حدث خطأ غير متوقع
 review_criteria:
-  - "Delivers copy using the 3-column table format (المكوّن | النص العربي | ملاحظة UX/RTL)."
-  - "Omits trailing periods in heading, badge, and CTA button table cells."
-  - "Uses <bdi dir=\"ltr\"> to isolate OTP digit counts, emails, and Latin codes."
-  - "Keeps OTP pre-verification messaging neutral without confirming account existence."
+  - Delivers copy using the 3-column table format (المكوّن | النص العربي |
+    ملاحظة UX/RTL).
+  - Omits trailing periods in heading, badge, and CTA button table cells.
+  - Uses <bdi dir="ltr"> to isolate OTP digit counts, emails, and Latin codes.
+  - Keeps OTP pre-verification messaging neutral without confirming account
+    existence.

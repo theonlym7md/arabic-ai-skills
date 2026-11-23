@@ -3,23 +3,12 @@ const path = require("node:path");
 const { execFileSync } = require("node:child_process");
 const YAML = require("yaml");
 const { scanText } = require("./sweep.js");
+const { findForbiddenViolations, validateCaseStructure } = require("./validate_benchmarks.js");
 
+const rootDir = path.join(__dirname, "..");
 const validator = path.join(__dirname, "validate_benchmarks.js");
-const casesDir = path.join(__dirname, "../benchmarks/cases");
-
-function resolveCaseSpec(folder) {
-  const specs = {
-    heading_punctuation: { textType: "Heading and description", maxLength: 35 },
-    short_cta: { textType: "CTA button", maxLength: 5 },
-    screen_rtl_table: { textType: "Screen copy table", maxLength: 90 },
-    translation_variables: { textType: "JSON translation bundle", maxLength: 60 },
-    arabic_plural: { textType: "ICU plural message", maxLength: 80 },
-    media_podcast_bdi: { textType: "Podcast card title and description", maxLength: 35 },
-    luxury_hospitality: { textType: "Hospitality card title and description", maxLength: 40 },
-    healthcare_triage: { textType: "Healthcare status message", maxLength: 45 },
-  };
-  return specs[folder] ?? { textType: folder.replace(/_/g, " "), maxLength: 40 };
-}
+const casesDir = path.join(rootDir, "benchmarks/cases");
+const suitePath = path.join(rootDir, "benchmarks/regression_suite.yaml");
 
 function parseArgs(argv) {
   let live = false;
@@ -62,63 +51,110 @@ function listCases(selectedCase) {
   return [selectedCase];
 }
 
+function newestSourceMtimeMs(srcDir) {
+  let latest = 0;
+  for (const entry of fs.readdirSync(srcDir, { withFileTypes: true })) {
+    const full = path.join(srcDir, entry.name);
+    if (entry.isDirectory()) {
+      latest = Math.max(latest, newestSourceMtimeMs(full));
+    } else if (entry.name.endsWith(".ts")) {
+      latest = Math.max(latest, fs.statSync(full).mtimeMs);
+    }
+  }
+  return latest;
+}
+
 async function runLive(caseFolders) {
   if (!process.env.OPENAI_API_KEY?.trim()) {
     console.error("Cannot run --live benchmark without OPENAI_API_KEY.");
     process.exit(1);
   }
 
-  const srcEntry = path.join(__dirname, "../src/index.ts");
-  const distEntry = path.join(__dirname, "../dist/index.js");
+  const srcDir = path.join(rootDir, "src");
+  const distEntry = path.join(rootDir, "dist/index.js");
   if (!fs.existsSync(distEntry)) {
     console.error(
       "Missing dist/index.js. Run `npm run build` before `npm run benchmark -- --live`.",
     );
     process.exit(1);
   }
-  if (fs.existsSync(srcEntry) && fs.statSync(srcEntry).mtimeMs > fs.statSync(distEntry).mtimeMs) {
-    console.error("dist/index.js is older than src/index.ts. Run `npm run build` first.");
+  if (newestSourceMtimeMs(srcDir) > fs.statSync(distEntry).mtimeMs) {
+    console.error("dist/index.js is older than src/*.ts. Run `npm run build` first.");
     process.exit(1);
   }
 
+  const suite = YAML.parse(fs.readFileSync(suitePath, "utf8"));
+  const rules = suite?.threshold_rules ?? {};
   const { generateArabicCopy } = require(distEntry);
+  let passed = 0;
+  let skipped = 0;
   let failures = 0;
 
   for (const folder of caseFolders) {
     const caseDir = path.join(casesDir, folder);
     const prompt = fs.readFileSync(path.join(caseDir, "prompt.md"), "utf8").trim();
     const expected = YAML.parse(fs.readFileSync(path.join(caseDir, "expected.yaml"), "utf8"));
-    const forbidden = expected.forbidden_phrases ?? [];
-    const caseSpec = resolveCaseSpec(folder);
 
+    if (expected.runner_mode === "agent") {
+      skipped += 1;
+      console.log(`[SKIP] ${folder}: agent-only (${expected.agent_reason})`);
+      continue;
+    }
+
+    const sdkInput = expected.sdk_input;
     const started = Date.now();
     try {
       const result = await generateArabicCopy({
-        projectNiche: expected.domain || "General",
-        targetAudience: "Arabic product users",
-        toneOfVoice: "Clear and natural",
-        textType: caseSpec.textType,
+        projectNiche: expected.domain,
+        targetAudience: sdkInput.targetAudience,
+        toneOfVoice: sdkInput.toneOfVoice,
+        textType: sdkInput.textType,
         context: prompt,
-        maxLength: caseSpec.maxLength,
+        maxLength: sdkInput.maxLength,
+        ...(sdkInput.region ? { region: sdkInput.region } : {}),
+        ...(sdkInput.dialect ? { dialect: sdkInput.dialect } : {}),
+        ...(sdkInput.componentKind ? { componentKind: sdkInput.componentKind } : {}),
       });
 
-      const badHits = [];
+      const forbiddenHits = new Set();
+      const slopHits = new Set();
+      const structureHits = new Set();
+
       for (const option of result.options) {
-        for (const phrase of forbidden) {
-          if (option.text.includes(phrase)) {
-            badHits.push(phrase);
+        if (rules.fail_on_forbidden_phrase !== false) {
+          for (const phrase of findForbiddenViolations(option.text, expected.forbidden_phrases)) {
+            forbiddenHits.add(phrase);
           }
         }
-        for (const slopLabel of scanText(option.text)) {
-          badHits.push(`slop:${slopLabel}`);
+        if (rules.fail_on_slop_match !== false) {
+          for (const slopLabel of scanText(option.text)) {
+            slopHits.add(slopLabel);
+          }
+        }
+        if (rules.fail_on_broken_structure !== false) {
+          for (const issue of validateCaseStructure(folder, prompt, option.text)) {
+            structureHits.add(issue);
+          }
         }
       }
 
       const ms = Date.now() - started;
-      if (badHits.length > 0) {
+      const problems = [];
+      if (forbiddenHits.size > 0) {
+        problems.push(`forbidden: ${[...forbiddenHits].join(", ")}`);
+      }
+      if (slopHits.size > 0) {
+        problems.push(`slop: ${[...slopHits].join(", ")}`);
+      }
+      if (structureHits.size > 0) {
+        problems.push(`structure: ${[...structureHits].join("; ")}`);
+      }
+
+      if (problems.length > 0) {
         failures += 1;
-        console.error(`[FAIL] ${folder} (${ms}ms): forbidden phrase(s): ${badHits.join(", ")}`);
+        console.error(`[FAIL] ${folder} (${ms}ms): ${problems.join(" | ")}`);
       } else {
+        passed += 1;
         console.log(`[PASS] ${folder} (${ms}ms): ${result.options[0].text}`);
       }
     } catch (error) {
@@ -128,7 +164,7 @@ async function runLive(caseFolders) {
   }
 
   console.log(
-    "Live mode checks SDK execution and forbidden_phrases; it does not compute human evaluation scores.",
+    `Live SDK summary: passed=${passed}, skipped=${skipped} (agent-only), failed=${failures}.`,
   );
   if (failures > 0) {
     process.exit(1);

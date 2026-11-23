@@ -1,142 +1,241 @@
-# Capability & Semantic Routing Matrix
+# Canonical Capability & Semantic Routing Matrix (Single Source of Truth for Agent & SDK)
 
-version: "2.2.0"
+version: "2.3.0"
 
 domains:
-  GovTech:
-    reference: "references/sector-patterns.md"
-    section: "3. الخدمات الحكومية والمدنية"
-    entity: "saudi_govtech"
-    weight_profile: "government"
-    plugin: "govtech"
-    keywords: ["حكومي", "مخالفات", "رخصة", "تصريح", "سجل", "بلدي", "سدايا"]
-
-  FinTech:
-    reference: "references/sector-patterns.md"
-    section: "6. التقسيط والتمويل والاستثمار"
-    weight_profile: "fintech"
-    keywords: ["تمويل", "استثمار", "عائد", "رسوم", "اشتراك", "بطاقة ائتمانية", "خطة دفعات"]
-
-  E-Commerce:
-    reference: "references/sector-patterns.md"
-    section: "4. منصات التجار والتجارة الإلكترونية"
-    weight_profile: "ecommerce"
-    keywords: ["متجر", "تاجر", "طلب", "إرجاع", "تخفيض", "مشتريات"]
-
-  SaaS:
-    reference: "references/ui-flows.md"
-    section: "3. تحقق النماذج المضمن"
-    weight_profile: "saas"
-    keywords: ["مهام", "لوحة", "إعدادات", "حقل", "تحقق مضمن"]
-
-  Account_Deletion:
-    reference: "references/sensitive-states.md"
-    section: "الحذف"
-    weight_profile: "saas"
-    keywords: ["حذف", "حذف الحساب", "إلغاء الحساب", "أرشفة"]
-
-  Payments_Uncertain:
-    reference: "references/sensitive-states.md"
-    section: "الدفع والاشتراكات"
-    weight_profile: "fintech"
-    keywords: ["حالة الدفع", "انتهت المهلة", "خصم المبلغ", "استرداد", "إلغاء الاشتراك"]
-
-  Permissions_Privacy:
-    reference: "references/sensitive-states.md"
-    section: "الأذونات والخصوصية"
-    weight_profile: "government"
-    keywords: ["إذن", "أذونات", "خصوصية", "تتبع", "صلاحية الوصول"]
-
-  Dialects:
-    reference: "references/dialects.md"
-    keywords: ["لهجة", "عامية", "سعودية", "مصرية", "شامية", "دارجة"]
-
   Media:
     reference: "references/sector-patterns.md"
     section: "1. الإعلام والمحتوى"
-    weight_profile: "media"
-    keywords: ["حلقة", "برنامج", "مقال", "بودكاست", "فيديو", "تشغيل"]
+    sdk_group: "sector"
+    weight_profile: "Media"
+    keywords: ["بودكاست", "حلقة", "حلقات", "مقال", "مقالات", "نشرة", "فيديو", "مكتبة محتوى", "برنامج صوتي", "تشغيل الحلقة", "اعلام", "إعلامي", "صحفي", "توثيقي"]
+    english_keywords: ["podcast", "episode", "article", "newsletter", "media", "editorial", "audio", "video"]
+    exclude_phrases: ["التهاب الحلق", "الم الحلق", "اعلام المستخدم", "إعلام المستخدم"]
 
   Gaming:
     reference: "references/sector-patterns.md"
     section: "2. الألعاب والتجارب الاجتماعية"
-    weight_profile: "saas"
-    keywords: ["لعبة", "جولة", "غرفة", "نقاط", "لاعب"]
+    sdk_group: "sector"
+    weight_profile: "SaaS"
+    keywords: ["لعبة", "العاب", "جولة", "جولات", "لاعب", "لاعبون", "غرفة لعب", "تحدي", "بطولة", "نقاط اللعبة", "جماعي"]
+    english_keywords: ["game", "gaming", "player", "match", "multiplayer", "tournament", "leaderboard"]
+    exclude_phrases: ["جولات سياحية", "جولة خاصة", "جولة إرشادية", "نقاط الولاء", "نقاط البيع"]
+
+  GovTech:
+    reference: "references/sector-patterns.md"
+    section: "3. الخدمات الحكومية والمدنية"
+    sdk_group: "sector"
+    entity: "general_civic"
+    weight_profile: "Government"
+    keywords: ["حكومي", "حكومية", "مخالفات", "مخالفة", "رخصة", "ترخيص", "تصريح", "معاملة", "سجل تجاري", "استحقاق", "مدني", "وزاري", "بلدية"]
+    english_keywords: ["govtech", "government", "civic", "permit", "license", "municipality", "ministry", "violation"]
+
+  Saudi_GovTech:
+    reference: "references/sector-patterns.md"
+    section: "3. الخدمات الحكومية والمدنية"
+    sdk_group: "agent_only"
+    entity: "saudi_govtech"
+    weight_profile: "Government"
+    plugin: "govtech"
+    region_scope: ["SA", "KSA", "Saudi Arabia", "السعودية"]
+    keywords: ["بلدي", "ناجز", "نفاذ", "سدايا", "أبشر", "صحتي", "بوابة حكومية سعودية"]
+    english_keywords: ["saudi govtech", "balady", "najiz", "nafath", "absher", "sdaia"]
+
+  E-Commerce:
+    reference: "references/sector-patterns.md"
+    section: "4. منصات التجار والتجارة الإلكترونية"
+    sdk_group: "sector"
+    weight_profile: "E-Commerce"
+    keywords: ["متجر", "تاجر", "تجار", "تجارة إلكترونية", "بطاقة منتج", "منتجات", "سلة", "شحن", "إرجاع", "تخفيض", "مشتريات", "طلبات متأخرة", "طلبات العملاء", "نقطة بيع", "مخزون"]
+    english_keywords: ["ecommerce", "e-commerce", "merchant", "shop", "cart", "checkout", "shipping", "product card", "retail"]
 
   Travel:
     reference: "references/sector-patterns.md"
     section: "5. السفر والسياحة والثقافة والضيافة"
-    weight_profile: "ecommerce"
-    keywords: ["رحلة", "فندق", "فعالية", "إقامة", "سياحة", "ورشة"]
+    sdk_group: "sector"
+    weight_profile: "E-Commerce"
+    keywords: ["سفر", "سياحة", "وجهة", "فندق", "فنادق", "إقامة فندقية", "فعالية", "فعاليات", "ورشة", "معرض", "تذكرة سفر", "تذاكر", "طيران", "رحلة جوية", "حجز تذاكر", "متحف"]
+    english_keywords: ["travel", "tourism", "hotel", "flight", "airline", "hospitality", "booking", "event", "museum", "itinerary"]
+    exclude_phrases: ["رحلة المستخدم", "تذكرة دعم", "تجديد الإقامة", "إقامة سارية", "بطاقة الإقامة"]
 
-  Healthcare:
-    reference: "references/sensitive-states.md"
-    weight_profile: "healthcare"
-    keywords: ["صحي", "طبي", "عيادة", "تشخيص", "دواء", "موعد"]
+  FinTech:
+    reference: "references/sector-patterns.md"
+    section: "6. التقسيط والتمويل والاستثمار"
+    sdk_group: "sector"
+    entity: "fintech_disclosures"
+    weight_profile: "FinTech"
+    keywords: ["دفع", "تمويل", "تقسيط", "أقساط", "استثمار", "عائد", "دفعات", "خطة دفعات", "بوابة مدفوعات", "مدفوعات", "رسوم", "بطاقة ائتمانية", "محفظة رقمية", "تحويل بنكي", "بنك", "مصرفي", "فاتورة"]
+    english_keywords: ["fintech", "finance", "payment", "payments", "installment", "bnpl", "investment", "loan", "banking", "wallet", "billing"]
+    exclude_phrases: ["الرسوم البيانية", "رسوم بيانية", "رسوم توضيحية", "رسوم متحركة", "رسوم كاريكاتيرية", "بطاقة منتج", "بطاقة تعريف"]
 
   Luxury:
     reference: "references/sector-patterns.md"
     section: "7. العلامات الفاخرة والضيافة الراقية والتجارب الحصرية"
-    weight_profile: "luxury"
-    keywords: ["فاخر", "حصري", "نخبة", "فخامة", "كونسيرج"]
+    sdk_group: "sector"
+    weight_profile: "Luxury"
+    keywords: ["فاخر", "فاخرة", "فخامة", "حصري", "حصرية", "كونسيرج", "ضيافة راقية", "منتجع", "أجنحة خاصة", "دعوة خاصة", "مجوهرات", "عطور فاخرة", "نخبة"]
+    english_keywords: ["luxury", "concierge", "private suite", "bespoke", "exclusive", "resort", "boutique"]
+
+  SaaS:
+    reference: "references/sector-patterns.md"
+    section: "8. البرمجيات السحابية ومنصات الأعمال (B2B SaaS)"
+    sdk_group: "sector"
+    entity: "saas_b2b"
+    weight_profile: "SaaS"
+    keywords: ["مساحة عمل", "لوحة تحكم", "مقاعد", "صلاحيات الفريق", "أدوار", "مدير الفوترة", "فترة تجريبية", "سجل تدقيق", "مفاتيح API", "دعوة أعضاء", "مهام الفريق", "إعدادات الحساب"]
+    english_keywords: ["saas", "b2b", "workspace", "dashboard", "rbac", "seats", "quota", "webhook", "api key", "audit log", "team invite", "trial"]
+
+  Healthcare:
+    reference: "references/sector-patterns.md"
+    section: "9. الرعاية الصحية والتطبيقات الطبية (Healthcare)"
+    sdk_group: "sector"
+    entity: "healthcare_clinical"
+    weight_profile: "Healthcare"
+    keywords: ["صحي", "صحية", "طبي", "طبية", "عيادة", "مستشفى", "تشخيص", "دواء", "وصفة طبية", "موعد طبي", "نتيجة الفحص", "تحاليل", "أعراض", "استشارة طبية", "مريض"]
+    english_keywords: ["healthcare", "medical", "clinic", "patient", "diagnosis", "lab result", "triage", "prescription", "telehealth"]
 
   AI_Chat:
     reference: "references/ui-flows.md"
     section: "1. واجهات الذكاء الاصطناعي والمحادثة"
-    weight_profile: "saas"
-    keywords: ["ذكاء اصطناعي", "محادثة", "توليد", "مساعد", "تلخيص"]
+    sdk_group: "ui_flow"
+    weight_profile: "SaaS"
+    keywords: ["ذكاء اصطناعي", "مساعد ذكي", "محادثة ذكية", "توليد نص", "إعادة التوليد", "تلخيص ذكي", "بحث دلالي", "تدفق الرد", "هلوسة"]
+    english_keywords: ["ai assistant", "chatbot", "llm", "generative", "streaming response", "hallucination", "copilot", "ai uncertainty"]
+    exclude_phrases: ["نص مساعد", "ملخص الطلب", "order summary"]
 
   Auth_Security:
     reference: "references/ui-flows.md"
-    section: "2. المصادقة والأمان ورموز التحقق"
-    weight_profile: "fintech"
-    keywords: ["تحقق", "OTP", "كلمة مرور", "أمان", "صلاحية", "حساب"]
+    section: "2. المصادقة والأمان ورموز التحقق (OTP / 2FA)"
+    sdk_group: "ui_flow"
+    weight_profile: "FinTech"
+    keywords: ["رمز تحقق", "رمز التحقق", "تسجيل دخول", "مصادقة", "مفاتيح المرور", "كلمة مرور", "قفل مؤقت", "تجاوز المحاولات", "تحقق ثنائي"]
+    english_keywords: ["otp", "2fa", "mfa", "passkey", "passkeys", "login", "sign in", "authentication", "verification code", "password"]
+
+  Form_Validation:
+    reference: "references/ui-flows.md"
+    section: "3. تحقق النماذج المضمن (Inline Form Validation)"
+    sdk_group: "ui_flow"
+    weight_profile: "SaaS"
+    keywords: ["تحقق مضمن", "تحقق سطري", "حقل نموذج", "صيغة الرقم", "آيبان", "رقم آيبان", "إدخال غير صحيح", "حقل اختياري", "بريد إلكتروني غير صالح"]
+    english_keywords: ["inline validation", "form validation", "field error", "iban", "input format", "optional field"]
+
+  Accessibility_Microcopy:
+    reference: "references/ui-flows.md"
+    section: "4. إتاحة الوصول في النصوص (Accessibility Microcopy)"
+    sdk_group: "ui_flow"
+    weight_profile: "SaaS"
+    keywords: ["إتاحة الوصول", "قارئ الشاشة", "نص بديل", "صورة بديلة", "وصف بديل", "لوحة المفاتيح", "تباين لوني"]
+    english_keywords: ["accessibility", "a11y", "wcag", "aria-label", "screen reader", "alt text", "keyboard focus"]
+    exclude_phrases: ["إتاحة الخدمة", "إتاحة المنتج", "إتاحة الموعد", "اتاحة الخدمة"]
+
+  Error_Recovery:
+    reference: "references/ui-flows.md"
+    section: "5. استرداد الأخطاء ومرونة النظام (Error Recovery & Resilience)"
+    sdk_group: "ui_flow"
+    weight_profile: "SaaS"
+    keywords: ["انقطاع الاتصال", "بدون إنترنت", "فشل الشبكة", "انتهاء الجلسة", "تجاوز الحد", "فشل جزئي", "تراجع", "خدمة غير متوفرة"]
+    english_keywords: ["offline", "network error", "session expired", "rate limit", "403", "404", "429", "503", "partial failure", "undo"]
+
+  Notifications_Onboarding:
+    reference: "references/ui-flows.md"
+    section: "6. الإشعارات والتهيئة التمهيدية (Notifications & Onboarding)"
+    sdk_group: "ui_flow"
+    weight_profile: "SaaS"
+    keywords: ["إشعار فوري", "شاشة القفل", "رسالة نصية", "إشعارات", "تهيئة المستخدم", "شاشة الترحيب", "خطوات البداية"]
+    english_keywords: ["push notification", "lock screen", "sms notification", "whatsapp notification", "onboarding checklist", "welcome flow"]
+
+  Account_Deletion:
+    reference: "references/sensitive-states.md"
+    section: "الحذف"
+    sdk_group: "sensitive"
+    weight_profile: "SaaS"
+    keywords: ["حذف الحساب", "إلغاء الحساب", "حذف نهائي", "حذف المشروع", "أرشفة", "إزالة الحساب"]
+    english_keywords: ["delete account", "deletion", "permanent delete", "archive", "deactivate account"]
+
+  Payments_Uncertain:
+    reference: "references/sensitive-states.md"
+    section: "الدفع والاشتراكات"
+    sdk_group: "sensitive"
+    weight_profile: "FinTech"
+    keywords: ["حالة الدفع", "انتهت مهلة", "مهلة الاتصال", "خصم المبلغ", "استرداد", "إلغاء الاشتراك", "معاملة معلقة"]
+    english_keywords: ["payment status", "uncertain payment", "payment timeout", "charge status", "refund", "cancel subscription", "pending payment"]
+
+  Permissions_Privacy:
+    reference: "references/sensitive-states.md"
+    section: "الأذونات والخصوصية"
+    sdk_group: "sensitive"
+    weight_profile: "Government"
+    keywords: ["طلب إذن", "إذن الموقع", "أذونات", "خصوصية", "تتبع", "صلاحية الوصول", "الكاميرا", "ملفات الارتباط"]
+    english_keywords: ["permission", "location permission", "privacy", "tracking", "consent", "cookies"]
 
   Localization:
     reference: "references/localization.md"
-    keywords: ["JSON", "ICU", "جمع", "متغيرات", "RTL", "توطين"]
+    sdk_group: "localization"
+    keywords: ["توطين", "ملف ترجمة", "صيغ الجمع", "متغيرات", "عزل الاتجاه", "ثنائي الاتجاه", "تقويم هجري"]
+    english_keywords: ["json", "icu", "plural", "plurals", "cldr", "placeholder", "variables", "rtl", "bidi", "bdi", "localization", "i18n"]
+
+  Dialects:
+    reference: "references/dialects.md"
+    sdk_group: "dialects"
+    keywords: ["لهجة", "عامية", "سعودية", "مصرية", "شامية", "لبنانية", "أردنية", "مغربية", "دارجة", "خليجية"]
+    english_keywords: ["dialect", "colloquial", "egyptian", "saudi", "levantine", "moroccan", "gulf", "regional tone"]
+
+  Page_Design:
+    reference: "references/design-decisions.md"
+    sdk_group: "agent_only"
+    keywords: ["تصميم صفحة", "بنية الشاشة", "تكوين الصفحة", "صفحة هبوط", "مقارنة بديلين", "تخطيط الشاشة"]
+    english_keywords: ["page layout", "screen structure", "landing page", "information architecture", "layout alternatives"]
 
   Headings_Identity:
     reference: "references/experience-patterns.md"
     section: "1. العناوين، التنوع البصري، ومنع التكرار"
-    weight_profile: "saas"
-    keywords: ["عنوان", "بطل", "ترويسة", "أسلوب", "تصميم", "تنوع", "نقطة"]
+    sdk_group: "experience"
+    weight_profile: "SaaS"
+    keywords: ["عنوان رئيسي", "عنوان بطاقة", "نقطة ختامية", "ترقيم العناوين", "شخصية بصرية", "ترويسة"]
+    english_keywords: ["hero heading", "card title", "terminal period", "heading punctuation", "visual archetype"]
 
   Auth_Gateways:
     reference: "references/experience-patterns.md"
-    section: "2. أنماط تسجيل الدخول والمصادقة"
-    weight_profile: "fintech"
-    keywords: ["بوابة دخول", "تسجيل دخول", "نفاذ", "مصادقة", "تصفح كضيف"]
+    section: "2. أنماط تسجيل الدخول والمصادقة (6 أشكال قابلة للاختيار)"
+    sdk_group: "experience"
+    weight_profile: "FinTech"
+    keywords: ["بوابة دخول", "تسجيل دخول", "تصفح كضيف", "دخول برمز QR", "بوابة الفئات", "هوية وطنية"]
+    english_keywords: ["auth gateway", "login screen", "sign-in flow", "guest checkout", "qr login", "sso"]
 
   Checkout_Pricing:
     reference: "references/experience-patterns.md"
-    section: "3. أنماط الدفع، السلة، التقسيط، والتسعير"
-    weight_profile: "ecommerce"
-    keywords: ["بوابة دفع", "دفع", "تقسيط", "سلة", "شحن", "إهداء", "مقارنة", "تسعير", "باقة"]
+    section: "3. أنماط الدفع، السلة، التقسيط، والتسعير (6 أشكال قابلة للاختيار)"
+    sdk_group: "experience"
+    weight_profile: "E-Commerce"
+    keywords: ["بوابة دفع", "إتمام الدفع", "تقسيط", "سلة التسوق", "شحن مجاني", "إهداء", "مقارنة الباقات", "تسعير", "باقة سنوية", "ضمان وسيط"]
+    english_keywords: ["checkout", "payments", "pricing table", "split-pay", "installments", "cart progress", "gift delegation", "escrow", "annual plan"]
+    exclude_phrases: ["على مدى", "مدى الحياة", "توفير الوقت", "توفير الجهد"]
 
   Discovery_Forms:
     reference: "references/experience-patterns.md"
     section: "4. أنماط الاكتشاف، الحجز، وبناء النماذج"
-    weight_profile: "saas"
-    keywords: ["نموذج", "بحث", "تصفية", "خريطة", "حجز", "استفسار", "تذكرة"]
-
-  Accessibility_Microcopy:
-    reference: "references/ui-flows.md"
-    section: "4. إتاحة الاستخدام في النصوص (Accessibility Microcopy)"
-    weight_profile: "saas"
-    keywords: ["قارئ شاشة", "نص بديل", "صورة بديلة", "aria", "تباين"]
+    sdk_group: "experience"
+    weight_profile: "SaaS"
+    keywords: ["توجيه الطلب", "استمارة متعددة", "خريطة تفاعلية", "محدد الموقع", "وصّل هنا", "تصفية النتائج", "قائمة انتظار", "خلايا التقويم"]
+    english_keywords: ["intent router", "multi-step form", "map view", "location picker", "waitlist", "filter drawer", "calendar availability"]
+    exclude_phrases: ["موقعك الإلكتروني", "موقع الويب", "الموقع الإلكتروني"]
 
   Media_Accessibility:
     reference: "references/experience-patterns.md"
-    section: "5. أنماط الإعلام والمحتوى العميق والإتاحة"
-    weight_profile: "media"
-    keywords: ["مدة القراءة", "مشغل الصوت", "تبويبات", "إتاحة"]
+    section: "5. أنماط الإعلام والمحتوى العميق وإتاحة الوصول"
+    sdk_group: "experience"
+    weight_profile: "Media"
+    keywords: ["مدة القراءة", "مشغل الصوت", "تبويبات الصفحة", "استمع للمقال", "الشفافية التحريرية"]
+    english_keywords: ["reading time", "audio player", "sticky player", "editorial transparency"]
 
   UX_Pitfalls:
     reference: "references/experience-patterns.md"
     section: "6. أخطاء تجربة حقيقية مرصودة يجب تجنّبها"
-    weight_profile: "saas"
-    keywords: ["انقلاب الترقيم", "نوافذ الكوكيز", "اتجاه الأسهم", "مفاتيح خام"]
+    sdk_group: "experience"
+    weight_profile: "SaaS"
+    keywords: ["انقلاب الترقيم", "نافذة الكوكيز", "اتجاه الأسهم", "مفاتيح خام", "بقايا برمجية"]
+    english_keywords: ["bidi punctuation", "cookie banner", "rtl arrows", "raw translation keys"]
+    exclude_phrases: ["نقاط الولاء", "نقاط البيع"]
 
 capabilities:
   - Generate

@@ -1,6 +1,6 @@
 # Request for Comments (RFC) Process
 
-Major changes to the core reasoning engine, ontology schema, or stage contracts must go through the RFC process.
+Major changes to the skill execution contract, ontology or plugin schemas, routing and weight specs, or SDK contract must go through the RFC process.
 
 ## Steps
 1. Create an issue or GitHub Discussion labeled `rfc` outlining the proposed change and motivation.

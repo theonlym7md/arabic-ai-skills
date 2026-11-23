@@ -1,12 +1,14 @@
-# Ontological Knowledge Engine
+# Knowledge Graph & Routing Resources
 
-These are declarative resources for an agent, not an implemented query engine. Follow `reasoning/stage_5_knowledge_selection.md` and `knowledge/relations/routing.yaml` for current guidance; do not invent relevance scores or nonexistent dependencies. The `confidence` field is editorial metadata, not a measured probability or regulatory endorsement.
+These are declarative resources for agents and build-time SDK routing synchronization. Follow [stage_2_knowledge_routing.md](../reasoning/stage_2_knowledge_routing.md) and [routing.yaml](relations/routing.yaml) for current guidance; do not invent relevance scores, probabilities, or regulatory endorsements.
 
-`knowledge/relations/routing.yaml` maps domains to their primary guide in `references/` and optional `entities/`, `domain_weights/`, and `plugins/` files.
+- `relations/routing.yaml` is the single source of truth mapping domains and intents to `references/`, optional `entities/`, `weights.yaml` profiles, and `plugins/` (and is compiled into the SDK router at build time).
+- `relations/weights.yaml` is the single canonical priority-weight configuration (base weights, domain overrides, intent overrides, and evaluation rubric mapping).
+- `entities/*.yaml` store reusable domain and regional archetypes validated against `entities/_schema.yaml` (`review_status` is editorial metadata, not regulatory endorsement).
 
-## Conceptual Selection Flow
+## Selection Flow
 
-1. **Match Domain:** Look up the domain in `knowledge/relations/routing.yaml`.
-2. **Load Primary Reference:** Read only the matched section in `references/` first.
-3. **Load Optional Domain Pack:** If an `entity`, `weight_profile`, or `plugin` exists and applies to the region/context, load it and resolve any declared dependencies (`inherits`, `depends_on`, `requires`, `conflicts_with`).
+1. **Match Domain & Intent:** Look up matching entries in `relations/routing.yaml` (respecting `exclude_keywords` and `region_scope`).
+2. **Load Primary Reference:** Read only the matched section(s) in `references/` first.
+3. **Load Optional Entity / Plugin / Weight Profile:** If an `entity` or `plugin` matches the task and region, load it and resolve declared graph edges (`inherits`, `depends_on`, `requires`, `conflicts_with`, `fallback`).
 4. **Apply Safety Gate:** Factual accuracy, user safety, privacy, and variable preservation always override brand tone or creativity weights.

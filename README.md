@@ -22,8 +22,8 @@ npx skills add theonlym7md/arabic-ai-skills --skill arabicskill
 
 | المهارة | متى تختارها؟ |
 | --- | --- |
-| [arabicskill](https://skills.sh/theonlym7md/arabic-ai-skills/arabicskill) | عندما تحتاج كتابة نصوص منتج، أو تدقيقها، أو توطين رسائل ومنتجات رقمية للعربية |
-| [arabic-uiux-master](https://skills.sh/theonlym7md/arabic-ai-skills/arabic-uiux-master) | عندما تريد مراجعة شاشة أو رحلة كاملة تجمع النص واتجاه RTL وإتاحة الاستخدام |
+| [arabicskill](https://skills.sh/theonlym7md/arabic-ai-skills/arabicskill) | عندما تحتاج كتابة نصوص منتج، أو تدقيقها، أو تكييف اللهجة، أو توطين ملفات JSON/ICU للعربية |
+| [arabic-uiux-master](https://skills.sh/theonlym7md/arabic-ai-skills/arabic-uiux-master) | عندما تريد تصميم أو مراجعة شاشة عربية كاملة تجمع هندسة RTL والطباعة العربية وإتاحة الوصول (WCAG 2.2) |
 
 لتثبيت المهارة المرافقة:
 
@@ -57,19 +57,19 @@ npx skills add theonlym7md/arabic-ai-skills --skill arabic-uiux-master
 
 [طريقة المقارنة وإعادة التصوير](https://github.com/theonlym7md/arabic-ai-skills/blob/main/docs/demos/login-build/README.md) · [مقارنة الشاشات الثلاث (A/B)](https://github.com/theonlym7md/arabic-ai-skills/blob/main/docs/demos/arabicskill-ab/README.md). هذه عينة واحدة لكل شرط؛ الاختلاف الملحوظ لا يثبت تفوقًا عامًا.
 
-## ما الجديد في 2.2
+## ما الجديد في 2.3
 
-- **تصميم المسار، لا النص وحده:** ستة أنماط للمصادقة، وستة للدفع والسلة والتسعير، مع إرشادات للحجز وتوجيه الاستمارات حسب هدف المستخدم.
-- **رسائل أكثر تحديدًا:** تدفقات للرموز المؤقتة والتحقق داخل النماذج، ورسائل تفرّق بين نتيجة مؤكدة ونتيجة غير مؤكدة في واجهات الذكاء الاصطناعي.
-- **عربية أوضح داخل الواجهة:** لا نقطة ختامية في العناوين والأزرار والشارات. التوطين يحافظ على المتغيرات والمفاتيح وصيغ الجمع، وإرشادات RTL تفرّق بين الحقول الرقمية والحقول التي تقبل الحروف والأرقام.
-- **تكامل برمجي ينتقي الإرشادات بحسب الطلب:** يدعم تحديد المنطقة واللهجة، ويستبعد الخيارات الطويلة أو التي تخالف قاعدة النقطة في العناوين والأزرار والشارات المعروفة.
+- **توسيع المجالات وتصميم الصفحة:** مرجع مستقل لاختيار تكوين الشاشة حسب المهمة في المهارتين، وتغطية كاملة لبرمجيات الأعمال (B2B SaaS) والرعاية الصحية واسترداد الأخطاء والإشعارات وطيف النبرة، مع قواعد طباعة عربية وهندسة RTL/WCAG 2.2 متكاملة في `arabic-uiux-master`.
+- **توحيد قاعدة المعرفة والتوجيه:** مصفوفة توجيه واحدة (`routing.yaml`) وملف أوزان وحيد (`weights.yaml`) ومراحل تفكير متسلسلة (`1`–`3`)، مع عزل صريح لكيانات السعودية عبر `region_scope` لمنع تسرّبها إلى بقية الدول العربية.
+- **عربية أوضح وانضباط ترقيم أدق:** منع النقطة الختامية والنقاط الزخرفية (`..` / `...` / `…`) في العناوين الرئيسية وعناوين الأقسام والبطاقات وتسميات الحقول والأزرار والشارات والتبويبات، وتصحيح مصطلحات التوطين واللهجات وإتاحة الوصول.
+- **حزمة SDK معيارية وآمنة (CJS + ESM):** تقسيم `src/` إلى وحدات مستقلة، ودعم ESM أصيل، وتأمين `baseURL` ضد SSRF، وإلغاء عبر `AbortSignal`، ومعالجة دقيقة لرفض النموذج والأخطاء المهيكلة (`ArabicSkillError`)، وتقليص حجم البرومبت بالتحميل الانتقائي.
 
-[أنماط التجربة](skills/arabicskill/references/experience-patterns.md) · [أمثلة الواجهات](skills/arabicskill/references/ui-flows.md) · [مرجع RTL للشاشات](skills/arabic-uiux-master/references/flow-patterns.md)
+[اختيار تصميم الصفحة](skills/arabicskill/references/design-decisions.md) · [أنماط التجربة](skills/arabicskill/references/experience-patterns.md) · [أمثلة الواجهات](skills/arabicskill/references/ui-flows.md) · [مرجع RTL للشاشات](skills/arabic-uiux-master/references/flow-patterns.md)
 
 <details>
 <summary>كيف بُنيت الأمثلة، وما الذي تثبته الاختبارات؟</summary>
 
-يوثّق [سجل المصادر](skills/arabicskill/references/saudi-sources.md) مراجعة واجهات عامة من قائمة بدأت بـ١١٥ رابطًا، وحدود الوصول لبعض المواقع. استُخلصت منها أنماط للتكييف، دون نسخ أسعار أو شروط أو شعارات. هذا تطوير لتعليمات المهارة، وليس تدريبًا للنموذج أو اعتمادًا من العلامات المذكورة.
+يوثّق سجل 23 نوفمبر 2026 الصفحات والأدلة العامة لـ81 مدخلًا بعد دمج التكرار، ودرجة الوصول لكل مرجع، والفحص البصري لعينة من الصفحات. تشرح قاعدة المعرفة كيف تستخدم المهارة نتائج المراجعة في اختيار تكوين الشاشة. [سجل المراجعة](https://github.com/theonlym7md/arabic-ai-skills/blob/main/docs/research/site-review-2026-11-23.md) · [سجل المصادر السابق](skills/arabicskill/references/saudi-sources.md)
 
 يتضمن المشروع **٢٥ حالة تقييم مرجعية**. الفحوص الآلية تتحقق من ملفاتها وبنية المخرجات والروابط والعقود البرمجية. لا تثبت تحسّن جودة نموذج حي أو امتثال واجهة فعلية. راجع [منهجية التقييم](benchmarks/README.md) و[مسار العمل](docs/WORKFLOW.md).
 
@@ -77,11 +77,12 @@ npx skills add theonlym7md/arabic-ai-skills --skill arabic-uiux-master
 
 ## للمطوّرين
 
-التكامل البرمجي اختياري. يتطلب Node.js 22 أو 24، ومفتاح OpenAI للطلبات الحية فقط.
+التكامل البرمجي اختياري (يدعم CommonJS وESM). يتطلب Node.js 22 فأحدث، ومفتاح OpenAI للطلبات الحية فقط.
 
 ```bash
 npm ci
 npm run check
+npm run benchmark
 node examples/sdk.cjs
 ```
 
@@ -91,7 +92,7 @@ node examples/sdk.cjs
 
 ## العرض والمساهمة
 
-[شاهد العرض التوضيحي السابق — ٥٤ ثانية](https://github.com/theonlym7md/arabic-ai-skills/blob/main/docs/assets/arabic-ai-skills-demo.mp4). الفيديو يحمل الهوية السابقة ويعرض أمثلة تحريرية، ولا يشرح جميع إضافات 2.2.
+[شاهد العرض التوضيحي — ٥٤ ثانية](https://github.com/theonlym7md/arabic-ai-skills/blob/main/docs/assets/arabic-ai-skills-demo.mp4). يحمل الفيديو هوية ArabicSkill الحالية بتصميم داكن مع أمثلة تحريرية مبكرة (قبل إضافات 2.3).
 
 وجدت صياغة مربكة أو حالة لا تغطيها المهارة؟ شارك مثالًا بعد إزالة البيانات الشخصية، مع السياق والصياغة المتوقعة.
 

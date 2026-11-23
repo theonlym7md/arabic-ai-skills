@@ -1,12 +1,19 @@
-case_id: "ai_uncertainty"
-domain: "AI_Chat"
+case_id: ai_uncertainty
+domain: AI_Chat
+runner_mode: sdk
+sdk_input:
+  textType: AI disclaimer and action labels
+  maxLength: 35
+  targetAudience: Arabic enterprise users
+  toneOfVoice: Clear and cautious
 target_metrics:
   Trust: 100
   Clarity: 95
 forbidden_phrases:
-  - "دقة 99%"
-  - "معتمد قانونيًا"
-  - "خلال ثوانٍ"
+  - دقة 99%
+  - معتمد قانونيًا
+  - خلال ثوانٍ
 review_criteria:
-  - "Marks output as AI-generated and advises human review."
-  - "Uses only the supplied actions and invents no accuracy or legal compliance claim."
+  - Marks output as AI-generated and advises human review.
+  - Uses only the supplied actions and invents no accuracy or legal compliance
+    claim.

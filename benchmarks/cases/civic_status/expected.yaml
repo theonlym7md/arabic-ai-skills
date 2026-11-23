@@ -1,8 +1,17 @@
 case_id: civic_status
 domain: GovTech
+runner_mode: sdk
+sdk_input:
+  textType: Civic status title, description, and CTA
+  maxLength: 35
+  targetAudience: Arabic civic portal users
+  toneOfVoice: Official and clear
 target_metrics:
   Trust: 100
-forbidden_phrases: ["صدر تصريحك", "خلال 24 ساعة", "ابدأ الفعالية"]
+forbidden_phrases:
+  - صدر تصريحك
+  - خلال 24 ساعة
+  - ابدأ الفعالية
 review_criteria:
-  - "Separates receipt and review from issuance."
-  - "Uses only the available request-view action and no invented deadline."
+  - Separates receipt and review from issuance.
+  - Uses only the available request-view action and no invented deadline.

@@ -1,4 +1,4 @@
-const { generateArabicCopy } = require("../dist/index.js");
+const { generateArabicCopy } = require("arabicskill");
 
 async function main() {
   const result = await generateArabicCopy({

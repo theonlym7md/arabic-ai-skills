@@ -2,18 +2,41 @@ const fs = require("node:fs");
 const path = require("node:path");
 const YAML = require("yaml");
 
-const pluginsDir = path.join(__dirname, "../skills/arabicskill/plugins");
-const entitiesDir = path.join(__dirname, "../skills/arabicskill/knowledge/entities");
-const frameworkPkgPath = path.join(__dirname, "../skills/arabicskill/package.json");
+const rootDir = path.join(__dirname, "..");
+const pluginsDir = path.join(rootDir, "skills/arabicskill/plugins");
+const entitiesDir = path.join(rootDir, "skills/arabicskill/knowledge/entities");
+const routingPath = path.join(rootDir, "skills/arabicskill/knowledge/relations/routing.yaml");
+const frameworkPkgPath = path.join(rootDir, "skills/arabicskill/package.json");
+const rootPkgPath = path.join(rootDir, "package.json");
+
+const SLUG_RE = /^[a-z0-9_-]+$/;
+
 const plugins = fs
   .readdirSync(pluginsDir)
-  .filter((entry) => fs.statSync(path.join(pluginsDir, entry)).isDirectory());
+  .filter((entry) => fs.statSync(path.join(pluginsDir, entry)).isDirectory())
+  .sort();
 
 if (plugins.length === 0) {
   throw new Error("No plugin directories were found.");
 }
 
+const validEntities = new Set(
+  fs
+    .readdirSync(entitiesDir)
+    .filter((file) => file.endsWith(".yaml") && !file.startsWith("_"))
+    .map((file) => file.replace(/\.yaml$/, "")),
+);
+
+const routingData = YAML.parse(fs.readFileSync(routingPath, "utf8"));
+const validCapabilities = new Set(routingData?.capabilities ?? []);
+
 const frameworkVersion = JSON.parse(fs.readFileSync(frameworkPkgPath, "utf8")).version;
+const rootVersion = JSON.parse(fs.readFileSync(rootPkgPath, "utf8")).version;
+if (frameworkVersion !== rootVersion) {
+  throw new Error(
+    `skills/arabicskill/package.json version (${frameworkVersion}) must match root package.json (${rootVersion}).`,
+  );
+}
 
 function parseSemver(version) {
   if (typeof version !== "string") {
@@ -35,7 +58,16 @@ function compareSemver(a, b) {
   return 0;
 }
 
-function validateFrameworkRange(rangeExpr, targetSemver) {
+function isValidIsoDate(value) {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return false;
+  }
+  const [y, m, d] = value.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  return dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d;
+}
+
+function validateFrameworkRange(rangeExpr, targetSemver, minSemver, maxSemver) {
   if (typeof rangeExpr !== "string" || !rangeExpr.trim()) {
     return { valid: false, reason: "framework_version must be a non-empty string" };
   }
@@ -47,17 +79,32 @@ function validateFrameworkRange(rangeExpr, targetSemver) {
     }
     const op = match[1] ?? "=";
     const bound = parseSemver(match[2]);
-    const cmp = compareSemver(targetSemver, bound);
-    const ok =
-      (op === ">=" && cmp >= 0) ||
-      (op === "<=" && cmp <= 0) ||
-      (op === ">" && cmp > 0) ||
-      (op === "<" && cmp < 0) ||
-      (op === "=" && cmp === 0);
-    if (!ok) {
+    const check = (candidate) => {
+      const cmp = compareSemver(candidate, bound);
+      return (
+        (op === ">=" && cmp >= 0) ||
+        (op === "<=" && cmp <= 0) ||
+        (op === ">" && cmp > 0) ||
+        (op === "<" && cmp < 0) ||
+        (op === "=" && cmp === 0)
+      );
+    };
+    if (!check(targetSemver)) {
       return {
         valid: false,
         reason: `framework version ${targetSemver.join(".")} does not satisfy "${token}"`,
+      };
+    }
+    if (minSemver && !check(minSemver)) {
+      return {
+        valid: false,
+        reason: `min_framework_version ${minSemver.join(".")} contradicts framework_version "${token}"`,
+      };
+    }
+    if (maxSemver && !check(maxSemver)) {
+      return {
+        valid: false,
+        reason: `max_framework_version ${maxSemver.join(".")} contradicts framework_version "${token}"`,
       };
     }
   }
@@ -82,10 +129,20 @@ const requiredFields = [
   "capabilities",
   "entities",
 ];
+const allowedFields = new Set([
+  ...requiredFields,
+  "framework_version",
+  "deprecated_after",
+  "replacement",
+  "migration_guide",
+  "dependencies",
+]);
+
 let failed = false;
 
 for (const plugin of plugins) {
   const manifestPath = path.join(pluginsDir, plugin, "plugin.yaml");
+  const errors = [];
 
   if (!fs.existsSync(manifestPath)) {
     failed = true;
@@ -108,61 +165,79 @@ for (const plugin of plugins) {
     continue;
   }
 
-  const missing = requiredFields.filter((field) => manifest[field] === undefined);
-  if (missing.length > 0) {
-    failed = true;
-    console.error(`${plugin}: missing ${missing.join(", ")}`);
-    continue;
+  const unknownKeys = Object.keys(manifest).filter((key) => !allowedFields.has(key));
+  if (unknownKeys.length > 0) {
+    errors.push(`unexpected key(s): ${unknownKeys.join(", ")}`);
   }
 
-  if (typeof manifest.name !== "string" || manifest.name !== plugin) {
-    failed = true;
-    console.error(`${plugin}: manifest name "${manifest.name}" must match folder name "${plugin}"`);
-    continue;
+  const missing = requiredFields.filter((field) => manifest[field] === undefined);
+  if (missing.length > 0) {
+    errors.push(`missing ${missing.join(", ")}`);
+  }
+
+  if (
+    typeof manifest.name !== "string" ||
+    manifest.name !== plugin ||
+    !SLUG_RE.test(manifest.name)
+  ) {
+    errors.push(`manifest name "${manifest.name}" must match folder slug "${plugin}"`);
   }
 
   if (typeof manifest.description !== "string" || !manifest.description.trim()) {
-    failed = true;
-    console.error(`${plugin}: description must be a non-empty string`);
-    continue;
+    errors.push("description must be a non-empty string");
   }
 
   if (manifest.api_version !== 1) {
-    failed = true;
-    console.error(`${plugin}: unsupported api_version (${manifest.api_version}); expected 1`);
-    continue;
-  }
-
-  if (manifest.framework_version !== undefined) {
-    const rangeCheck = validateFrameworkRange(manifest.framework_version, currentSemver);
-    if (!rangeCheck.valid) {
-      failed = true;
-      console.error(`${plugin}: ${rangeCheck.reason}`);
-      continue;
-    }
+    errors.push(`unsupported api_version (${manifest.api_version}); expected 1`);
   }
 
   const minSemver = parseSemver(manifest.min_framework_version);
   const maxSemver = parseSemver(manifest.max_framework_version);
   const pluginSemver = parseSemver(manifest.plugin_version);
   if (!minSemver || !maxSemver || !pluginSemver) {
-    failed = true;
-    console.error(`${plugin}: version fields must follow X.Y.Z semver`);
-    continue;
+    errors.push("version fields must follow X.Y.Z semver");
+  } else {
+    if (compareSemver(minSemver, maxSemver) > 0) {
+      errors.push("min_framework_version exceeds max_framework_version");
+    }
+    if (
+      compareSemver(minSemver, currentSemver) > 0 ||
+      compareSemver(currentSemver, maxSemver) > 0
+    ) {
+      errors.push(
+        `framework version ${frameworkVersion} is outside ${manifest.min_framework_version}..${manifest.max_framework_version}`,
+      );
+    }
   }
 
-  if (compareSemver(minSemver, maxSemver) > 0) {
-    failed = true;
-    console.error(`${plugin}: min_framework_version exceeds max_framework_version`);
-    continue;
-  }
-
-  if (compareSemver(minSemver, currentSemver) > 0 || compareSemver(currentSemver, maxSemver) > 0) {
-    failed = true;
-    console.error(
-      `${plugin}: framework version ${frameworkVersion} is outside ${manifest.min_framework_version}..${manifest.max_framework_version}`,
+  if (manifest.framework_version !== undefined) {
+    const rangeCheck = validateFrameworkRange(
+      manifest.framework_version,
+      currentSemver,
+      minSemver,
+      maxSemver,
     );
-    continue;
+    if (!rangeCheck.valid) {
+      errors.push(rangeCheck.reason);
+    }
+  }
+
+  if (
+    manifest.deprecated_after !== undefined &&
+    manifest.deprecated_after !== "" &&
+    !isValidIsoDate(manifest.deprecated_after)
+  ) {
+    errors.push(`deprecated_after "${manifest.deprecated_after}" must be empty or YYYY-MM-DD`);
+  }
+  if (
+    manifest.replacement !== undefined &&
+    manifest.replacement !== "" &&
+    (typeof manifest.replacement !== "string" || !SLUG_RE.test(manifest.replacement))
+  ) {
+    errors.push(`replacement "${manifest.replacement}" must be empty or a valid plugin slug`);
+  }
+  if (manifest.migration_guide !== undefined && typeof manifest.migration_guide !== "string") {
+    errors.push("migration_guide must be a string");
   }
 
   if (
@@ -177,34 +252,30 @@ for (const plugin of plugins) {
         list.some((item) => typeof item !== "string" || !item.trim()),
     )
   ) {
-    failed = true;
-    console.error(`${plugin}: triggers must map each key to a non-empty array of strings`);
-    continue;
+    errors.push("triggers must map each key to a non-empty array of strings");
   }
 
   if (
     !Array.isArray(manifest.capabilities) ||
     manifest.capabilities.length === 0 ||
-    manifest.capabilities.some((cap) => typeof cap !== "string" || !cap.trim())
+    manifest.capabilities.some((cap) => typeof cap !== "string" || !validCapabilities.has(cap))
   ) {
-    failed = true;
-    console.error(`${plugin}: capabilities must be a non-empty array of strings`);
-    continue;
+    errors.push(
+      `capabilities must be non-empty values from routing.yaml (${[...validCapabilities].join(", ")})`,
+    );
   }
 
-  if (!Array.isArray(manifest.entities) || manifest.entities.some((e) => typeof e !== "string")) {
-    failed = true;
-    console.error(`${plugin}: entities must be an array of strings`);
-    continue;
-  }
-
-  const missingEntities = manifest.entities.filter(
-    (entity) => !fs.existsSync(path.join(entitiesDir, `${entity}.yaml`)),
-  );
-  if (missingEntities.length > 0) {
-    failed = true;
-    console.error(`${plugin}: unknown entities ${missingEntities.join(", ")}`);
-    continue;
+  if (
+    !Array.isArray(manifest.entities) ||
+    manifest.entities.length === 0 ||
+    manifest.entities.some(
+      (entity) => typeof entity !== "string" || !SLUG_RE.test(entity) || !validEntities.has(entity),
+    ) ||
+    new Set(manifest.entities).size !== manifest.entities.length
+  ) {
+    errors.push(
+      "entities must be a non-empty list of unique valid entity slugs (excluding _schema)",
+    );
   }
 
   if (manifest.dependencies !== undefined) {
@@ -212,26 +283,27 @@ for (const plugin of plugins) {
       !Array.isArray(manifest.dependencies) ||
       manifest.dependencies.some((dep) => typeof dep !== "string" || !dep.trim())
     ) {
-      failed = true;
-      console.error(`${plugin}: dependencies must be an array of non-empty strings`);
-      continue;
+      errors.push("dependencies must be an array of non-empty strings");
+    } else {
+      const badDeps = manifest.dependencies.filter((dep) => dep === plugin || !pluginSet.has(dep));
+      if (badDeps.length > 0) {
+        errors.push(`invalid dependencies ${badDeps.join(", ")}`);
+      }
+      if (new Set(manifest.dependencies).size !== manifest.dependencies.length) {
+        errors.push("duplicate dependencies listed");
+      }
+      pluginDependencies.set(plugin, manifest.dependencies);
     }
-
-    const badDeps = manifest.dependencies.filter((dep) => dep === plugin || !pluginSet.has(dep));
-    if (badDeps.length > 0) {
-      failed = true;
-      console.error(`${plugin}: invalid dependencies ${badDeps.join(", ")}`);
-      continue;
-    }
-    if (new Set(manifest.dependencies).size !== manifest.dependencies.length) {
-      failed = true;
-      console.error(`${plugin}: duplicate dependencies listed`);
-      continue;
-    }
-    pluginDependencies.set(plugin, manifest.dependencies);
   }
 
-  console.log(`${plugin}: valid`);
+  if (errors.length > 0) {
+    failed = true;
+    for (const msg of errors) {
+      console.error(`${plugin}: ${msg}`);
+    }
+  } else {
+    console.log(`${plugin}: valid`);
+  }
 }
 
 const visitingPlugins = new Set();

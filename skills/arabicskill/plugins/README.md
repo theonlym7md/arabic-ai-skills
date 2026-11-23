@@ -2,26 +2,28 @@
 
 `api_version: 1`
 
-Plugins extend the ontology graph with domain-specific rules without altering the core framework logic.
+Plugins extend the knowledge graph with regional or domain-specific entities without altering the core skill contract.
 
 ## Manifest Schema (`plugin.yaml`)
 
 ```yaml
 api_version: 1
-framework_version: ">=1.0.0"
-min_framework_version: "1.0.0"
+framework_version: ">=2.0.0 <3.0.0"
+min_framework_version: "2.0.0"
 max_framework_version: "2.9.9"
 plugin_version: "1.0.0"
-deprecated_after: ""      # ISO date string if plugin is deprecated (e.g. "2027-01-01")
-replacement: ""           # Recommended replacement plugin name
-migration_guide: ""       # URL or path to migration instructions
+deprecated_after: ""      # Optional ISO date string if plugin is deprecated (e.g. "2027-01-01")
+replacement: ""           # Optional recommended replacement plugin slug
+migration_guide: ""       # Optional URL or repo path to migration instructions
 name: "plugin-name"
 description: "Plugin purpose"
 triggers:
   domain: ["TargetDomain"]
   region: ["TargetRegion"]
 capabilities:
-  - "capability_1"
+  - "Generate"
+  - "Rewrite"
+  - "Audit"
 dependencies: []
 entities:
   - "entity_name"

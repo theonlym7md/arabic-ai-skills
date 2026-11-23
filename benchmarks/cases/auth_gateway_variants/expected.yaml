@@ -1,17 +1,26 @@
-case_id: "auth_gateway_variants"
-domain: "Auth_Gateways"
+case_id: auth_gateway_variants
+domain: Auth_Gateways
+runner_mode: sdk
+sdk_input:
+  textType: Login screen title, description, and actions
+  maxLength: 55
+  targetAudience: Arabic event attendees
+  toneOfVoice: Clear and welcoming
 target_metrics:
   Trust: 100
   Clarity: 95
   HumanScore: 95
   AISmell: 0
 forbidden_phrases:
-  - "عزيزي المستخدم"
-  - "الرجاء"
-  - "لقد أخطأت"
-  - "قم بـ"
+  - عزيزي المستخدم
+  - الرجاء
+  - لقد أخطأت
+  - قم بـ
 review_criteria:
-  - "Presents a clear benefit-led login gateway with non-intrusive guest browsing option."
-  - "Clearly labels both identifiers and uses a neutral post-request message that does not disclose account existence."
-  - "Limits OTP and privacy wording to confirmed product behavior, without promises about data use."
-  - "Headings and buttons omit trailing periods."
+  - Presents a clear benefit-led login gateway with non-intrusive guest browsing
+    option.
+  - Clearly labels both identifiers and uses a neutral post-request message that
+    does not disclose account existence.
+  - Limits OTP and privacy wording to confirmed product behavior, without
+    promises about data use.
+  - Headings and buttons omit trailing periods.

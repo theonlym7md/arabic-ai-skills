@@ -1,8 +1,17 @@
 case_id: game_onboarding
 domain: Gaming
+runner_mode: sdk
+sdk_input:
+  textType: Onboarding steps and CTA
+  maxLength: 40
+  targetAudience: Arabic casual players
+  toneOfVoice: Friendly and light
 target_metrics:
   Clarity: 95
-forbidden_phrases: ["قبل انتهاء الوقت", "نقاط السرعة", "فوز مضمون"]
+forbidden_phrases:
+  - قبل انتهاء الوقت
+  - نقاط السرعة
+  - فوز مضمون
 review_criteria:
-  - "Preserves the supplied sequence and cooperative mode."
-  - "Does not add competition, timers or reward mechanics."
+  - Preserves the supplied sequence and cooperative mode.
+  - Does not add competition, timers or reward mechanics.

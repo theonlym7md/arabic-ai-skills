@@ -1,4 +1,7 @@
-# Categorized Rule Weights Configuration
+# Single Canonical Rule Weights & Evaluation Alignment Configuration
+# Omitted metrics in domain_overrides or intent_overrides inherit from base weights.
+
+inheritance: "merge_with_base"
 
 weights:
   quality:
@@ -24,17 +27,20 @@ domain_overrides:
       Trust: 100
       Clarity: 100
       Accessibility: 95
+      InformationDensity: 90
     style:
       Localization: 95
       Brand: 90
       Tone: 90
       SentenceRhythm: 80
     optimization:
+      Humanization: 65
+      Persuasiveness: 40
       Creativity: 10
   FinTech:
     quality:
       Trust: 100
-      Clarity: 95
+      Clarity: 100
       Accessibility: 90
       InformationDensity: 90
     style:
@@ -42,7 +48,8 @@ domain_overrides:
       Brand: 85
       Tone: 90
     optimization:
-      Creativity: 30
+      Persuasiveness: 55
+      Creativity: 25
   E-Commerce:
     quality:
       Trust: 100
@@ -64,27 +71,29 @@ domain_overrides:
       Accessibility: 100
       InformationDensity: 90
     style:
+      Localization: 95
       Tone: 95
-      Localization: 90
     optimization:
+      Humanization: 80
+      Persuasiveness: 30
       Creativity: 10
-      Humanization: 85
   Luxury:
     quality:
       Trust: 100
       Clarity: 95
+      Accessibility: 90
     style:
       Brand: 95
-      Tone: 90
+      Tone: 95
       Localization: 90
       SentenceRhythm: 90
     optimization:
-      Creativity: 85
-      Persuasiveness: 80
+      Creativity: 80
+      Persuasiveness: 75
   Media:
     quality:
-      Trust: 95
-      Clarity: 90
+      Trust: 100
+      Clarity: 95
       Accessibility: 90
     style:
       Localization: 95
@@ -99,6 +108,7 @@ domain_overrides:
       Trust: 100
       Clarity: 95
       Accessibility: 90
+      InformationDensity: 90
     style:
       Localization: 95
       Brand: 85
@@ -106,4 +116,37 @@ domain_overrides:
       SentenceRhythm: 85
     optimization:
       Humanization: 80
-      Creativity: 65
+      Creativity: 60
+
+intent_overrides:
+  Error_Message:
+    quality:
+      Trust: 100
+      Clarity: 100
+      Accessibility: 95
+    optimization:
+      Persuasiveness: 20
+      Creativity: 10
+  Payment_Uncertain:
+    quality:
+      Trust: 100
+      Clarity: 100
+    optimization:
+      Persuasiveness: 0
+      Creativity: 0
+  Destructive_Action:
+    quality:
+      Trust: 100
+      Clarity: 100
+      Accessibility: 95
+    optimization:
+      Persuasiveness: 10
+      Creativity: 5
+
+rubric_mapping:
+  الدقة والسلامة: ["Trust"]
+  وضوح الإجراء: ["Clarity", "InformationDensity"]
+  العربية الطبيعية: ["Humanization", "SentenceRhythm"]
+  السياق والنبرة: ["Tone", "Brand", "Persuasiveness", "Creativity"]
+  الاتساق وسلامة التوطين: ["Localization"]
+  إتاحة الوصول وقيود العرض: ["Accessibility"]

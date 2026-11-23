@@ -1,8 +1,11 @@
-case_id: "arabic_plural"
-domain: "Localization"
+case_id: arabic_plural
+domain: Localization
+runner_mode: agent
+agent_reason: ICU MessageFormat plural bundles are handled by the agent skill per SPEC.md.
 target_metrics:
   Clarity: 95
 forbidden_phrases: []
 review_criteria:
-  - "Preserves the count variable and valid balanced ICU syntax."
-  - "Includes zero, one, two, few, many, other; manually exercise 0, 1, 2, 3, 11, 100 and 1.5."
+  - Preserves the count variable and valid balanced ICU syntax.
+  - Includes zero, one, two, few, many, other; manually exercise 0, 1, 2, 3, 11,
+    100 and 1.5.

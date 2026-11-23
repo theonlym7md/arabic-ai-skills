@@ -1,6 +1,7 @@
 :root {
   color-scheme: light;
-  font-family: Tahoma, Arial, sans-serif;
+  font-family: "IBM Plex Sans Arabic", "Noto Sans Arabic", Tahoma, Arial, sans-serif;
+  letter-spacing: 0;
   color: #17251f;
   background: #ebeae3;
   font-synthesis: none;
@@ -15,7 +16,8 @@ body {
 p,
 h1,
 h2,
-h3 {
+h3,
+h4 {
   margin: 0;
 }
 .gallery {
@@ -34,12 +36,12 @@ h3 {
 }
 .gallery > p:last-child {
   color: #364a3e;
-  line-height: 1.6;
+  line-height: 1.65;
 }
 .board {
   background: #f8f7f1;
   padding: 28px;
-  border: 1px solid #d6d7ca;
+  border: 1px solid #96998a;
   border-radius: 24px;
   margin-block-end: 24px;
 }
@@ -57,9 +59,9 @@ h3 {
   border-radius: 16px;
   background: #1b3b32;
   color: #edf3dd;
-  font:
-    700 27px Consolas,
-    monospace;
+  font-size: 26px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 .board-series {
   font-size: 15px;
@@ -106,23 +108,23 @@ h3 {
 }
 .screen--landing {
   --surface: #f4e8d9;
-  --outline: #cfb9a3;
+  --outline: #8b715c;
   --ink: #392820;
-  --subtle: #654b3c;
+  --subtle: #5c4335;
   --button: #753923;
   --button-ink: #fff9ef;
 }
 .screen--payment {
   --surface: #edf1f8;
-  --outline: #c5cddc;
+  --outline: #6c7c96;
   --ink: #1d2a42;
-  --subtle: #3e506b;
+  --subtle: #384a66;
   --button: #273f75;
   --button-ink: #fff;
 }
 .screen--login {
   --surface: #233c36;
-  --outline: #4d675e;
+  --outline: #7fa397;
   --ink: #fcf8e9;
   --subtle: #d1e2d7;
   --button: #e4ec9a;
@@ -130,7 +132,8 @@ h3 {
 }
 .screen-bar {
   min-height: 58px;
-  padding: 12px 24px;
+  padding-block: 12px;
+  padding-inline: 24px;
   border-block-end: 1px solid var(--outline);
   display: flex;
   justify-content: space-between;
@@ -154,7 +157,7 @@ h3 {
 }
 .screen-meta {
   font-size: 14px;
-  line-height: 1.45;
+  line-height: 1.5;
   color: var(--subtle);
 }
 .layout {
@@ -178,7 +181,7 @@ h3 {
   font-size: 15px;
   font-weight: 700;
   color: var(--subtle);
-  line-height: 1.45;
+  line-height: 1.5;
 }
 .screen-title {
   font-size: clamp(24px, 2.3vw, 35px);
@@ -195,14 +198,17 @@ h3 {
   flex-wrap: wrap;
   align-items: center;
   gap: 8px 11px;
-  margin: 6px 0 0;
+  margin-block-start: 6px;
+  margin-block-end: 0;
+  margin-inline: 0;
   padding: 0;
   list-style: none;
 }
 .actions li {
   font-size: 15px;
   line-height: 1.35;
-  padding: 10px 12px;
+  padding-block: 10px;
+  padding-inline: 12px;
   border-radius: 8px;
   font-weight: 700;
 }
@@ -217,7 +223,8 @@ h3 {
 .order,
 .email {
   border-radius: 10px;
-  padding: 11px 13px;
+  padding-block: 11px;
+  padding-inline: 13px;
   border: 1px solid var(--outline);
 }
 .order {
@@ -232,8 +239,9 @@ h3 {
   background: #192d28;
 }
 .email bdi {
-  text-align: left;
-  color: #c4d6c9;
+  text-align: start;
+  width: fit-content;
+  color: #d1e2d7;
   font-family: Arial, sans-serif;
 }
 .workshop-art {
@@ -247,8 +255,8 @@ h3 {
   position: absolute;
   width: 84%;
   aspect-ratio: 1;
-  left: 12%;
-  top: 17%;
+  inset-inline-end: 12%;
+  inset-block-start: 17%;
   border-radius: 50%;
   background: #694738;
   box-shadow: inset 0 0 0 18px #8a5c42;
@@ -257,8 +265,8 @@ h3 {
   position: absolute;
   height: 66%;
   width: 54%;
-  top: 15%;
-  left: 4%;
+  inset-block-start: 15%;
+  inset-inline-end: 4%;
   border-radius: 60% 0 55% 0;
   background: #f7e4b5;
   rotate: 17deg;
@@ -267,8 +275,8 @@ h3 {
   position: absolute;
   width: 27%;
   aspect-ratio: 1;
-  top: 54%;
-  right: 8%;
+  inset-block-start: 54%;
+  inset-inline-start: 8%;
   border-radius: 6px 50% 50% 50%;
   background: #b64e32;
   rotate: 23deg;
@@ -302,16 +310,16 @@ h3 {
   }
   .art-orbit {
     width: 36%;
-    left: 34%;
-    top: -5%;
+    inset-inline-end: 34%;
+    inset-block-start: -5%;
   }
   .art-cut {
     width: 49%;
     height: 85%;
-    top: 6%;
+    inset-block-start: 6%;
   }
   .art-seed {
     width: 23%;
-    top: 41%;
+    inset-block-start: 41%;
   }
 }

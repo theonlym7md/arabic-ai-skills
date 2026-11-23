@@ -6,4 +6,4 @@ ArabicSkill is maintainer-led. Contributors propose changes through pull request
 The project maintainers review RFCs, approve breaking changes, and release official framework versions.
 
 ## Decision Making
-Major architectural modifications follow the **RFC Process** (`docs/RFC_PROCESS.md`).
+Major architectural modifications follow the [RFC Process](docs/RFC_PROCESS.md).

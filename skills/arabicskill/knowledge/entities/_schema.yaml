@@ -4,7 +4,7 @@ type: "object"
 additionalProperties: false
 required:
   - entity
-  - confidence
+  - review_status
   - source
   - last_reviewed
   - priority
@@ -16,80 +16,116 @@ required:
 properties:
   entity:
     type: "string"
-    description: "Unique identifier of the entity"
-  confidence:
-    type: "number"
-    minimum: 0
-    maximum: 1
-    description: "Metadata confidence rating of the entity (0.0 to 1.0)"
+    minLength: 1
+    pattern: "^[a-z0-9_-]+$"
+    description: "Unique slug identifier of the entity"
+  review_status:
+    type: "string"
+    enum: ["editorial", "verified_source"]
+    description: "Editorial status of this entity (not a regulatory endorsement or measured probability)"
   source:
     type: "string"
-    description: "Authority source of the entity guidance (e.g. SDAIA / DGA Standard)"
+    minLength: 1
+    description: "Project-maintained or documented source note (never imply official regulatory endorsement)"
   last_reviewed:
     type: "string"
     pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
-    description: "ISO date string of last review"
+    description: "Valid ISO calendar date (YYYY-MM-DD) of last review"
   priority:
     type: "integer"
     minimum: 1
     maximum: 100
     description: "Base priority score (1-100)"
-  inherits:
+  region_scope:
     type: "array"
+    minItems: 1
+    uniqueItems: true
     items:
       type: "string"
+      minLength: 1
+    description: "Optional regional applicability tokens restricting when this entity loads"
+  inherits:
+    type: "array"
+    uniqueItems: true
+    items:
+      type: "string"
+      minLength: 1
+      pattern: "^[a-z0-9_-]+$"
     description: "Parent entities inherited by this node"
   depends_on:
     type: "array"
+    uniqueItems: true
     items:
       type: "string"
+      minLength: 1
+      pattern: "^[a-z0-9_-]+$"
     description: "Prerequisite entities that must be loaded"
   conflicts_with:
     type: "array"
+    uniqueItems: true
     items:
       type: "string"
+      minLength: 1
+      pattern: "^[a-z0-9_-]+$"
     description: "Entities that cannot co-exist with this node"
   requires:
     type: "array"
+    uniqueItems: true
     items:
       type: "string"
+      minLength: 1
+      pattern: "^[a-z0-9_-]+$"
     description: "Mandatory companion entities"
   optional:
     type: "array"
+    uniqueItems: true
     items:
       type: "string"
+      minLength: 1
+      pattern: "^[a-z0-9_-]+$"
     description: "Optional helpful entities"
   fallback:
     type: "string"
-    description: "Default fallback entity if this node fails"
+    minLength: 1
+    pattern: "^[a-z0-9_-]+$"
+    description: "Default fallback entity if this node does not apply"
   priority_override:
     type: "object"
-    description: "Domain-specific priority adjustments"
+    additionalProperties:
+      type: "integer"
+      minimum: 1
+      maximum: 100
+    description: "Domain-specific priority adjustments (1-100)"
   aliases:
     type: "array"
     minItems: 1
     uniqueItems: true
     items:
       type: "string"
+      minLength: 1
     description: "Semantic search triggers"
   relationship:
     type: "string"
+    minLength: 1
     description: "The entity's role in the knowledge graph"
   directives:
     type: "array"
     minItems: 1
     items:
       type: "string"
+      minLength: 1
     description: "Actionable positive instructions enforced by this entity"
   examples:
     type: "array"
     minItems: 1
     items:
       type: "string"
+      minLength: 1
     description: "Positive gold-standard phrasing examples for this entity"
   negative_examples:
     type: "array"
     minItems: 1
     items:
       type: "string"
+      minLength: 1
     description: "Explicit negative patterns, AI clichés, and forbidden slop phrases for this entity"

@@ -1,8 +1,19 @@
-case_id: "regional_tone"
-domain: "SaaS"
+case_id: regional_tone
+domain: Dialects
+runner_mode: sdk
+sdk_input:
+  textType: Empty state title and CTA
+  maxLength: 25
+  targetAudience: Egyptian app users
+  toneOfVoice: Friendly and informal
+  region: Egypt
+  dialect: Egyptian colloquial
 target_metrics:
   Clarity: 95
-forbidden_phrases: ["وش","الحين","دلوقتي"]
+forbidden_phrases:
+  - وش
+  - الحين
+  - دلوقتي
 review_criteria:
-  - "Uses clear Modern Standard Arabic, without assigning a country."
-  - "Uses the available creation action and consistent terminology."
+  - Uses clear Modern Standard Arabic, without assigning a country.
+  - Uses the available creation action and consistent terminology.

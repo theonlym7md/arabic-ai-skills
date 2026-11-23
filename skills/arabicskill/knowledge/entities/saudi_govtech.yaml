@@ -1,23 +1,31 @@
 entity: "saudi_govtech"
-confidence: 1.0
-source: "Project-maintained Saudi GovTech language guidelines"
-last_reviewed: "2026-09-25"
+review_status: "editorial"
+source: "Project-maintained Saudi GovTech language guidelines (non-official)"
+last_reviewed: "2026-11-23"
 priority: 100
-inherits: []
+region_scope:
+  - "SA"
+  - "KSA"
+  - "Saudi Arabia"
+  - "السعودية"
+inherits:
+  - "general_civic"
 depends_on: []
+fallback: "general_civic"
 aliases:
   - "الحكومة السعودية"
-  - "القطاع الحكومي"
-  - "سدايا"
-  - "رؤية 2030"
-relationship: "Domain_Archetype"
+  - "بوابات سعودية"
+  - "بلدي"
+  - "ناجز"
+  - "نفاذ"
+relationship: "Regional_Domain_Archetype"
 directives:
-  - "استخدام الفعل المبني للمعلوم المباشر (مثل: أتمم الطلب وليس يتم إتمام الطلب)."
-  - "تجنب الكلمات الرنانة الخالية من المعنى مثل: رائد، شامخ، ثوري."
-  - "الحفاظ على الوقار المؤسسي مع الوضوح التام في خطوات الإجراء."
+  - "استخدام الفعل المباشر الواضح (مثل: أكمل الطلب، راجع المستندات) وتجنب الصياغة الإدارية الثقيلة."
+  - "تجنب الكلمات التفخيمية الخالية من المعنى مثل: رائد، شامخ، ثوري."
+  - "الالتزام بالمصطلح الرسمي المثبت في الخدمة السعودية الحالية وعدم نسخ رسوم أو مدد من مراجع سابقة."
 examples:
   - "لا توجد مخالفات مسجّلة عليك"
-  - "أتمم الطلب"
+  - "أكمل الطلب"
   - "نراجع بياناتك الآن"
 negative_examples:
   - "في إطار حرصنا المستمر على تقديم أفضل الخدمات..."

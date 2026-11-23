@@ -7,7 +7,7 @@ try {
   ({ chromium } = require("playwright"));
 } catch {
   console.error(
-    "Playwright is required to recapture demo screenshots. Install it with: npx playwright install chromium",
+    "Playwright is required to recapture demo screenshots. Install it with: npm install --no-save playwright && npx playwright install chromium",
   );
   process.exit(1);
 }
@@ -39,9 +39,11 @@ async function capture() {
           [".screen-title", "title"],
           [".body-copy", "body"],
           [".primary", "primary"],
-          [".secondary", "secondary"],
         ]) {
           assert.equal(await screen.locator(selector).textContent(), copy[field]);
+        }
+        if (copy.secondary) {
+          assert.equal(await screen.locator(".secondary").textContent(), copy.secondary);
         }
       }
       const [first, second] = await Promise.all([

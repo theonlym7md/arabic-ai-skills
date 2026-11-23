@@ -1,8 +1,16 @@
 case_id: media_actions
 domain: Media
+runner_mode: sdk
+sdk_input:
+  textType: Media card title, description, and CTA buttons
+  maxLength: 35
+  targetAudience: Arabic readers and listeners
+  toneOfVoice: Editorial and clear
 target_metrics:
   Clarity: 95
-forbidden_phrases: ["أكمل الاستماع", "اشترك الآن"]
+forbidden_phrases:
+  - أكمل الاستماع
+  - اشترك الآن
 review_criteria:
-  - "Uses distinct episode-play and program-follow actions."
-  - "Does not invent saved progress, a paywall or editorial facts."
+  - Uses distinct episode-play and program-follow actions.
+  - Does not invent saved progress, a paywall or editorial facts.

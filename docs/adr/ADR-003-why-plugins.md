@@ -6,8 +6,8 @@ Historical design proposal. Domain packs are declarative guidance, not executabl
 Core framework modifications to support new domains (e.g. Healthcare, Legal) risk breaking existing production domains like GovTech and FinTech.
 
 ## Decision
-Adopt an isolated Plugin Architecture in `plugins/` where external domain modules declare triggers, capabilities, and entity dependencies independently.
+Adopt declarative domain pack manifests under `skills/arabicskill/plugins/` where domain modules declare triggers, capabilities, regional scope, and entity dependencies independently.
 
 ## Consequences
-- **Positive:** Core reasoning engine remains frozen and stable; community can contribute domain packs without merge conflicts.
-- **Negative:** Requires strict plugin manifest version checking (`api_version`).
+- **Intended benefit (declarative packs only; no runtime plugin loader):** Keeps core guidance isolated from domain-specific packs so contributors can add domain manifests without modifying core contracts.
+- **Current cost:** Requires strict plugin manifest, capability, and compatibility validation (`scripts/validate_plugin.js`).

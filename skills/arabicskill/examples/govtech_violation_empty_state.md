@@ -1,27 +1,27 @@
-# GovTech empty-state example
+# مثال تطبيقي: حالة فارغة في خدمة حكومية
 
-This is an authored editorial example, not a recorded model run. The product confirms the query succeeded and no violations were returned.
+مثال تحريري يوضح فصل الحالة المؤكدة عن الحشو الإداري عندما يؤكد النظام نجاح الاستعلام وخلو السجل من المخالفات.
 
-## Input
+## الطلب
 
 > اكتب نص حالة فارغة لصفحة المخالفات المرورية في تطبيق حكومي سعودي.
 
-## Context summary
+## ملخص السياق
 
-- Domain: Saudi GovTech
-- Component: mobile empty state
-- User intent: check whether traffic violations exist
-- Risk: the user may mistake an empty page for a loading failure
-- Constraint: short, formal, and direct
+- المجال: خدمات حكومية (السعودية)
+- المكوّن: حالة فارغة في تطبيق جوال
+- هدف المستخدم: التحقق من وجود مخالفات مرورية
+- الخطر: التباس الصفحة الفارغة بتعطّل التحميل أو خطأ في الاتصال
+- القيد: نص موجز ورسمي ومباشر
 
-## Output
+## الناتج
 
 - **العنوان:** لا توجد مخالفات مسجّلة عليك
 - **الوصف:** لا توجد مخالفات مرورية مرتبطة بهويتك حاليًا.
 
-## Review notes
+## ملاحظات المراجعة
 
-- The title states the result directly.
-- The description clarifies that the page is not simply empty.
-- Production copy must use the authority's approved term for identity linkage.
-- A call to action is unnecessary unless the product offers a useful next step.
+- يثبت العنوان النتيجة مباشرة بلا نقطة ختامية.
+- يوضح الوصف أن السجل مفحوص فعلًا وليس مجرد شاشة فارغة.
+- يُراجع المصطلح الرسمي لربط الهوية قبل النشر بحسب دليل الجهة.
+- لا حاجة لزر إجراء إضافي ما لم يقدّم المنتج خطوة مفيدة تالية.

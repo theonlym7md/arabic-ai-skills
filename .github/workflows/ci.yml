@@ -11,16 +11,23 @@ permissions:
 
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   verify:
-    name: Node.js ${{ matrix.node-version }}
-    runs-on: ubuntu-latest
+    name: ${{ matrix.os }} · Node.js ${{ matrix.node-version }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
-        node-version: [22, 24]
+        include:
+          - os: ubuntu-latest
+            node-version: 22
+          - os: ubuntu-latest
+            node-version: 24
+          - os: windows-latest
+            node-version: 24
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -30,3 +37,11 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run benchmark
+      - run: npm run package:zip
+      - name: Verify POSIX sweep wrapper and Python video syntax
+        if: runner.os == 'Linux'
+        run: |
+          sh -n scripts/sweep.sh
+          test -x scripts/sweep.sh
+          ./scripts/sweep.sh
+          python3 -m py_compile scripts/video/build_demo.py
